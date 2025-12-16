@@ -1,0 +1,16 @@
+.depend
+Make.dep
+*.o
+*.a
+*.i
+/.context
+/.config
+/.depend
+/*.lib
+.kconfig
+apps/Kconfig
+etctmp*
+*.dba
+*.inf
+*.dbo
+*.tmp

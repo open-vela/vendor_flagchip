@@ -1,0 +1,2416 @@
+/****************************************************************************
+ * Copyright (C) 2025 Xiaomi Corporation
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.  The
+ * ASF licenses this file to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the
+ * License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ ****************************************************************************/
+
+/****************************************************************************
+ * Included Files
+ ****************************************************************************/
+
+#include <nuttx/config.h>
+#include <nuttx/can.h>
+#include <arch/board/board.h>
+
+#include "fc7300_flexcan.h"
+
+/****************************************************************************
+ *
+ * The following arrays are used as filter elements for FLEXCAN mailbox(mb)
+ * and enhanced rx fifo(erf).
+ *
+ * The format of mb filter is : {ID, MASK}.
+ * The format of erf filter is : {FORMAT, {ID, MASK}}.
+ *
+ * The length of mb filter array depends on:
+ *    1. Whether CAN or CANFD.
+ *    2. The data size when CANFD.
+ *    3. The rx mb count.
+ *
+ * The length of erf filter array depends on:
+ *    1. Whether enhanced rx fifo enable or disable.
+ *    2. The enhanced rx fifo filter total count.
+ *
+ * If you don't need some filter element, please remaining the correspond
+ *  array element as default : {0x0, 0x0} for mb filter,
+ *  {ID_MASK_FORMAT, {0x0, 0x0}} for erf filter.
+ *
+ ****************************************************************************/
+
+/****************************************************************************
+ *                                                                          *
+ *               Don't deleting or adding any array element.                *
+ *                                                                          *
+ ****************************************************************************/
+
+#define DECLARE_ERF_FILTER(X,Y,Z)  \
+{                                  \
+  .format      = X,                \
+  .filter      =                   \
+  {                                \
+    .can_id    = Y,                \
+    .can_mask  = Z,                \
+  },                               \
+}
+
+#if defined(CONFIG_FC7300_FLEXCAN0)
+const struct can_filter flexcan0_rxmb_filter[] =
+{
+#if defined(CONFIG_FC7300_FLEXCAN0_MB0_IS_FOR_RX)
+  {0x0, 0x0}, /* MB0 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_MB1_IS_FOR_RX)
+  {0x0, 0x0}, /* MB1 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_MB2_IS_FOR_RX)
+  {0x0, 0x0}, /* MB2 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_MB3_IS_FOR_RX)
+  {0x0, 0x0}, /* MB3 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_MB4_IS_FOR_RX)
+  {0x0, 0x0}, /* MB4 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_MB5_IS_FOR_RX)
+  {0x0, 0x0}, /* MB5 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_MB6_IS_FOR_RX)
+  {0x0, 0x0}, /* MB6 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_MB7_IS_FOR_RX)
+  {0x0, 0x0}, /* MB7 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_MB8_IS_FOR_RX)
+  {0x0, 0x0}, /* MB8 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_MB9_IS_FOR_RX)
+  {0x0, 0x0}, /* MB9 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_MB10_IS_FOR_RX)
+  {0x0, 0x0}, /* MB10 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_MB11_IS_FOR_RX)
+  {0x0, 0x0}, /* MB11 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_MB12_IS_FOR_RX)
+  {0x0, 0x0}, /* MB12 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_MB13_IS_FOR_RX)
+  {0x0, 0x0}, /* MB13 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_MB14_IS_FOR_RX)
+  {0x0, 0x0}, /* MB14 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_MB15_IS_FOR_RX)
+  {0x0, 0x0}, /* MB15 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_MB16_IS_FOR_RX)
+  {0x0, 0x0}, /* MB16 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_MB17_IS_FOR_RX)
+  {0x0, 0x0}, /* MB17 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_MB18_IS_FOR_RX)
+  {0x0, 0x0}, /* MB18 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_MB19_IS_FOR_RX)
+  {0x0, 0x0}, /* MB19 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_MB20_IS_FOR_RX)
+  {0x0, 0x0}, /* MB20 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_MB21_IS_FOR_RX)
+  {0x0, 0x0}, /* MB21 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_MB22_IS_FOR_RX)
+  {0x0, 0x0}, /* MB22 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_MB23_IS_FOR_RX)
+  {0x0, 0x0}, /* MB23 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_MB24_IS_FOR_RX)
+  {0x0, 0x0}, /* MB24 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_MB25_IS_FOR_RX)
+  {0x0, 0x0}, /* MB25 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_MB26_IS_FOR_RX)
+  {0x0, 0x0}, /* MB26 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_MB27_IS_FOR_RX)
+  {0x0, 0x0}, /* MB27 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_MB28_IS_FOR_RX)
+  {0x0, 0x0}, /* MB28 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_MB29_IS_FOR_RX)
+  {0x0, 0x0}, /* MB29 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_MB30_IS_FOR_RX)
+  {0x0, 0x0}, /* MB30 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_MB31_IS_FOR_RX)
+  {0x0, 0x0}, /* MB31 */
+#endif
+};
+
+#ifdef CONFIG_FC7300_FLEXCAN0_ENHANCED_RX_FIFO
+const struct can_erf_filter flexcan0_erf_filter[] =
+{
+#if defined(CONFIG_FC7300_FLEXCAN0_ERFEL0_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL0/1 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL0 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL1 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_ERFEL1_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN0_ERFEL1_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL2/3 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL2 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL3 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_ERFEL2_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN0_ERFEL2_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL4/5 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL4 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL5 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_ERFEL3_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN0_ERFEL3_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL6/7 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL6 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL7 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_ERFEL4_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN0_ERFEL4_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL8/9 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL8 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL9 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_ERFEL5_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN0_ERFEL5_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL10/11 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL10 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL11 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_ERFEL6_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN0_ERFEL6_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL12/13 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL12 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL13 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_ERFEL7_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN0_ERFEL7_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL14/15 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL14 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL15 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_ERFEL8_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN0_ERFEL8_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL16/17 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL16 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL17 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_ERFEL9_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN0_ERFEL9_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL18/19 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL18 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL19 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_ERFEL10_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN0_ERFEL10_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL20/21 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL20 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL21 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_ERFEL11_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN0_ERFEL11_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL22/23 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL22 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL23 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_ERFEL12_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN0_ERFEL12_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL24/25 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL24 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL25 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_ERFEL13_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN0_ERFEL13_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL26/27 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL26 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL27 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_ERFEL14_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN0_ERFEL14_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL28/29 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL28 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL29 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN0_ERFEL15_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN0_ERFEL15_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL30/31 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL30 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL31 */
+#endif
+#endif
+};
+#endif
+#endif
+
+#if defined(CONFIG_FC7300_FLEXCAN1)
+const struct can_filter flexcan1_rxmb_filter[] =
+{
+#if defined(CONFIG_FC7300_FLEXCAN1_MB0_IS_FOR_RX)
+  {0x200, 0x1fffffff}, /* MB0 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_MB1_IS_FOR_RX)
+  {0x201, 0x1fffffff}, /* MB1 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_MB2_IS_FOR_RX)
+  {0x202, 0x1fffffff}, /* MB2 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_MB3_IS_FOR_RX)
+  {0x203, 0x1fffffff}, /* MB3 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_MB4_IS_FOR_RX)
+  {0x204, 0x1fffffff}, /* MB4 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_MB5_IS_FOR_RX)
+  {0x205, 0x1fffffff}, /* MB5 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_MB6_IS_FOR_RX)
+  {0x206, 0x1fffffff}, /* MB6 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_MB7_IS_FOR_RX)
+  {0x207, 0x1fffffff}, /* MB7 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_MB8_IS_FOR_RX)
+  {0x208, 0x1fffffff}, /* MB8 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_MB9_IS_FOR_RX)
+  {0x209, 0x1fffffff}, /* MB9 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_MB10_IS_FOR_RX)
+  {0x20a, 0x1fffffff}, /* MB10 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_MB11_IS_FOR_RX)
+  {0x20b, 0x1fffffff}, /* MB11 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_MB12_IS_FOR_RX)
+  {0x20c, 0x1fffffff}, /* MB12 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_MB13_IS_FOR_RX)
+  {0x20d, 0x1fffffff}, /* MB13 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_MB14_IS_FOR_RX)
+  {0x20e, 0x1fffffff}, /* MB14 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_MB15_IS_FOR_RX)
+  {0x20f, 0x1fffffff}, /* MB15 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_MB16_IS_FOR_RX)
+  {0x210, 0x1fffffff}, /* MB16 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_MB17_IS_FOR_RX)
+  {0x211, 0x1fffffff}, /* MB17 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_MB18_IS_FOR_RX)
+  {0x212, 0x1fffffff}, /* MB18 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_MB19_IS_FOR_RX)
+  {0x213, 0x1fffffff}, /* MB19 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_MB20_IS_FOR_RX)
+  {0x214, 0x1fffffff}, /* MB20 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_MB21_IS_FOR_RX)
+  {0x215, 0x1fffffff}, /* MB21 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_MB22_IS_FOR_RX)
+  {0x216, 0x1fffffff}, /* MB22 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_MB23_IS_FOR_RX)
+  {0x217, 0x1fffffff}, /* MB23 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_MB24_IS_FOR_RX)
+  {0x218, 0x1fffffff}, /* MB24 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_MB25_IS_FOR_RX)
+  {0x219, 0x1fffffff}, /* MB25 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_MB26_IS_FOR_RX)
+  {0x21a, 0x1fffffff}, /* MB26 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_MB27_IS_FOR_RX)
+  {0x21b, 0x1fffffff}, /* MB27 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_MB28_IS_FOR_RX)
+  {0x21c, 0x1fffffff}, /* MB28 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_MB29_IS_FOR_RX)
+  {0x21d, 0x1fffffff}, /* MB29 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_MB30_IS_FOR_RX)
+  {0x21e, 0x1fffffff}, /* MB30 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_MB31_IS_FOR_RX)
+  {0x21f, 0x1fffffff}, /* MB31 */
+#endif
+};
+
+#ifdef CONFIG_FC7300_FLEXCAN1_ENHANCED_RX_FIFO
+const struct can_erf_filter flexcan1_erf_filter[] =
+{
+#if defined(CONFIG_FC7300_FLEXCAN1_ERFEL0_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x5FF, 0x400), /* ERFEL0/1 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x4FF, 0x400), /* ERFEL0 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x5FF, 0x500), /* ERFEL1 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_ERFEL1_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN1_ERFEL1_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x5FF, 0x400), /* ERFEL2/3 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x4FF, 0x400), /* ERFEL2 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x5FF, 0x500), /* ERFEL3 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_ERFEL2_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN1_ERFEL2_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL4/5 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL4 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL5 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_ERFEL3_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN1_ERFEL3_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL6/7 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL6 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL7 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_ERFEL4_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN1_ERFEL4_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL8/9 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL8 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL9 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_ERFEL5_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN1_ERFEL5_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL10/11 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL10 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL11 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_ERFEL6_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN1_ERFEL6_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL12/13 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL12 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL13 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_ERFEL7_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN1_ERFEL7_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL14/15 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL14 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL15 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_ERFEL8_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN1_ERFEL8_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL16/17 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL16 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL17 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_ERFEL9_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN1_ERFEL9_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL18/19 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL18 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL19 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_ERFEL10_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN1_ERFEL10_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL20/21 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL20 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL21 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_ERFEL11_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN1_ERFEL11_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL22/23 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL22 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL23 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_ERFEL12_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN1_ERFEL12_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL24/25 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL24 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL25 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_ERFEL13_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN1_ERFEL13_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL26/27 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL26 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL27 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_ERFEL14_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN1_ERFEL14_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL28/29 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL28 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL29 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN1_ERFEL15_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN1_ERFEL15_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL30/31 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL30 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL31 */
+#endif
+#endif
+};
+#endif
+#endif
+
+#if defined(CONFIG_FC7300_FLEXCAN2)
+const struct can_filter flexcan2_rxmb_filter[] =
+{
+#if defined(CONFIG_FC7300_FLEXCAN2_MB0_IS_FOR_RX)
+  {0x0, 0x0}, /* MB0 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_MB1_IS_FOR_RX)
+  {0x0, 0x0}, /* MB1 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_MB2_IS_FOR_RX)
+  {0x0, 0x0}, /* MB2 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_MB3_IS_FOR_RX)
+  {0x0, 0x0}, /* MB3 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_MB4_IS_FOR_RX)
+  {0x0, 0x0}, /* MB4 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_MB5_IS_FOR_RX)
+  {0x0, 0x0}, /* MB5 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_MB6_IS_FOR_RX)
+  {0x0, 0x0}, /* MB6 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_MB7_IS_FOR_RX)
+  {0x0, 0x0}, /* MB7 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_MB8_IS_FOR_RX)
+  {0x0, 0x0}, /* MB8 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_MB9_IS_FOR_RX)
+  {0x0, 0x0}, /* MB9 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_MB10_IS_FOR_RX)
+  {0x0, 0x0}, /* MB10 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_MB11_IS_FOR_RX)
+  {0x0, 0x0}, /* MB11 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_MB12_IS_FOR_RX)
+  {0x0, 0x0}, /* MB12 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_MB13_IS_FOR_RX)
+  {0x0, 0x0}, /* MB13 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_MB14_IS_FOR_RX)
+  {0x0, 0x0}, /* MB14 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_MB15_IS_FOR_RX)
+  {0x0, 0x0}, /* MB15 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_MB16_IS_FOR_RX)
+  {0x0, 0x0}, /* MB16 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_MB17_IS_FOR_RX)
+  {0x0, 0x0}, /* MB17 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_MB18_IS_FOR_RX)
+  {0x0, 0x0}, /* MB18 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_MB19_IS_FOR_RX)
+  {0x0, 0x0}, /* MB19 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_MB20_IS_FOR_RX)
+  {0x0, 0x0}, /* MB20 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_MB21_IS_FOR_RX)
+  {0x0, 0x0}, /* MB21 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_MB22_IS_FOR_RX)
+  {0x0, 0x0}, /* MB22 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_MB23_IS_FOR_RX)
+  {0x0, 0x0}, /* MB23 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_MB24_IS_FOR_RX)
+  {0x0, 0x0}, /* MB24 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_MB25_IS_FOR_RX)
+  {0x0, 0x0}, /* MB25 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_MB26_IS_FOR_RX)
+  {0x0, 0x0}, /* MB26 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_MB27_IS_FOR_RX)
+  {0x0, 0x0}, /* MB27 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_MB28_IS_FOR_RX)
+  {0x0, 0x0}, /* MB28 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_MB29_IS_FOR_RX)
+  {0x0, 0x0}, /* MB29 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_MB30_IS_FOR_RX)
+  {0x0, 0x0}, /* MB30 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_MB31_IS_FOR_RX)
+  {0x0, 0x0}, /* MB31 */
+#endif
+};
+
+#ifdef CONFIG_FC7300_FLEXCAN2_ENHANCED_RX_FIFO
+const struct can_erf_filter flexcan2_erf_filter[] =
+{
+#if defined(CONFIG_FC7300_FLEXCAN2_ERFEL0_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL0/1 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL0 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL1 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_ERFEL1_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN2_ERFEL1_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL2/3 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL2 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL3 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_ERFEL2_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN2_ERFEL2_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL4/5 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL4 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL5 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_ERFEL3_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN2_ERFEL3_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL6/7 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL6 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL7 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_ERFEL4_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN2_ERFEL4_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL8/9 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL8 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL9 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_ERFEL5_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN2_ERFEL5_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL10/11 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL10 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL11 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_ERFEL6_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN2_ERFEL6_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL12/13 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL12 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL13 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_ERFEL7_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN2_ERFEL7_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL14/15 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL14 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL15 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_ERFEL8_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN2_ERFEL8_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL16/17 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL16 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL17 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_ERFEL9_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN2_ERFEL9_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL18/19 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL18 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL19 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_ERFEL10_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN2_ERFEL10_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL20/21 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL20 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL21 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_ERFEL11_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN2_ERFEL11_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL22/23 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL22 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL23 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_ERFEL12_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN2_ERFEL12_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL24/25 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL24 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL25 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_ERFEL13_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN2_ERFEL13_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL26/27 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL26 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL27 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_ERFEL14_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN2_ERFEL14_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL28/29 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL28 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL29 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN2_ERFEL15_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN2_ERFEL15_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL30/31 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL30 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL31 */
+#endif
+#endif
+};
+#endif
+#endif
+
+#if defined(CONFIG_FC7300_FLEXCAN3)
+const struct can_filter flexcan3_rxmb_filter[] =
+{
+#if defined(CONFIG_FC7300_FLEXCAN3_MB0_IS_FOR_RX)
+  {0x0, 0x0}, /* MB0 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_MB1_IS_FOR_RX)
+  {0x0, 0x0}, /* MB1 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_MB2_IS_FOR_RX)
+  {0x0, 0x0}, /* MB2 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_MB3_IS_FOR_RX)
+  {0x0, 0x0}, /* MB3 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_MB4_IS_FOR_RX)
+  {0x0, 0x0}, /* MB4 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_MB5_IS_FOR_RX)
+  {0x0, 0x0}, /* MB5 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_MB6_IS_FOR_RX)
+  {0x0, 0x0}, /* MB6 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_MB7_IS_FOR_RX)
+  {0x0, 0x0}, /* MB7 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_MB8_IS_FOR_RX)
+  {0x0, 0x0}, /* MB8 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_MB9_IS_FOR_RX)
+  {0x0, 0x0}, /* MB9 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_MB10_IS_FOR_RX)
+  {0x0, 0x0}, /* MB10 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_MB11_IS_FOR_RX)
+  {0x0, 0x0}, /* MB11 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_MB12_IS_FOR_RX)
+  {0x0, 0x0}, /* MB12 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_MB13_IS_FOR_RX)
+  {0x0, 0x0}, /* MB13 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_MB14_IS_FOR_RX)
+  {0x0, 0x0}, /* MB14 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_MB15_IS_FOR_RX)
+  {0x0, 0x0}, /* MB15 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_MB16_IS_FOR_RX)
+  {0x0, 0x0}, /* MB16 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_MB17_IS_FOR_RX)
+  {0x0, 0x0}, /* MB17 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_MB18_IS_FOR_RX)
+  {0x0, 0x0}, /* MB18 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_MB19_IS_FOR_RX)
+  {0x0, 0x0}, /* MB19 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_MB20_IS_FOR_RX)
+  {0x0, 0x0}, /* MB20 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_MB21_IS_FOR_RX)
+  {0x0, 0x0}, /* MB21 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_MB22_IS_FOR_RX)
+  {0x0, 0x0}, /* MB22 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_MB23_IS_FOR_RX)
+  {0x0, 0x0}, /* MB23 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_MB24_IS_FOR_RX)
+  {0x0, 0x0}, /* MB24 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_MB25_IS_FOR_RX)
+  {0x0, 0x0}, /* MB25 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_MB26_IS_FOR_RX)
+  {0x0, 0x0}, /* MB26 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_MB27_IS_FOR_RX)
+  {0x0, 0x0}, /* MB27 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_MB28_IS_FOR_RX)
+  {0x0, 0x0}, /* MB28 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_MB29_IS_FOR_RX)
+  {0x0, 0x0}, /* MB29 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_MB30_IS_FOR_RX)
+  {0x0, 0x0}, /* MB30 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_MB31_IS_FOR_RX)
+  {0x0, 0x0}, /* MB31 */
+#endif
+};
+
+#ifdef CONFIG_FC7300_FLEXCAN3_ENHANCED_RX_FIFO
+const struct can_erf_filter flexcan3_erf_filter[] =
+{
+#if defined(CONFIG_FC7300_FLEXCAN3_ERFEL0_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL0/1 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL0 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL1 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_ERFEL1_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN3_ERFEL1_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL2/3 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL2 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL3 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_ERFEL2_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN3_ERFEL2_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL4/5 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL4 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL5 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_ERFEL3_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN3_ERFEL3_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL6/7 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL6 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL7 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_ERFEL4_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN3_ERFEL4_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL8/9 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL8 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL9 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_ERFEL5_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN3_ERFEL5_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL10/11 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL10 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL11 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_ERFEL6_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN3_ERFEL6_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL12/13 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL12 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL13 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_ERFEL7_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN3_ERFEL7_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL14/15 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL14 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL15 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_ERFEL8_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN3_ERFEL8_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL16/17 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL16 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL17 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_ERFEL9_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN3_ERFEL9_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL18/19 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL18 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL19 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_ERFEL10_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN3_ERFEL10_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL20/21 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL20 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL21 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_ERFEL11_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN3_ERFEL11_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL22/23 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL22 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL23 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_ERFEL12_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN3_ERFEL12_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL24/25 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL24 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL25 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_ERFEL13_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN3_ERFEL13_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL26/27 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL26 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL27 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_ERFEL14_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN3_ERFEL14_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL28/29 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL28 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL29 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN3_ERFEL15_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN3_ERFEL15_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL30/31 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL30 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL31 */
+#endif
+#endif
+};
+#endif
+#endif
+
+#if defined(CONFIG_FC7300_FLEXCAN4)
+const struct can_filter flexcan4_rxmb_filter[] =
+{
+#if defined(CONFIG_FC7300_FLEXCAN4_MB0_IS_FOR_RX)
+  {0x0, 0x0}, /* MB0 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_MB1_IS_FOR_RX)
+  {0x0, 0x0}, /* MB1 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_MB2_IS_FOR_RX)
+  {0x0, 0x0}, /* MB2 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_MB3_IS_FOR_RX)
+  {0x0, 0x0}, /* MB3 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_MB4_IS_FOR_RX)
+  {0x0, 0x0}, /* MB4 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_MB5_IS_FOR_RX)
+  {0x0, 0x0}, /* MB5 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_MB6_IS_FOR_RX)
+  {0x0, 0x0}, /* MB6 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_MB7_IS_FOR_RX)
+  {0x0, 0x0}, /* MB7 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_MB8_IS_FOR_RX)
+  {0x0, 0x0}, /* MB8 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_MB9_IS_FOR_RX)
+  {0x0, 0x0}, /* MB9 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_MB10_IS_FOR_RX)
+  {0x0, 0x0}, /* MB10 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_MB11_IS_FOR_RX)
+  {0x0, 0x0}, /* MB11 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_MB12_IS_FOR_RX)
+  {0x0, 0x0}, /* MB12 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_MB13_IS_FOR_RX)
+  {0x0, 0x0}, /* MB13 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_MB14_IS_FOR_RX)
+  {0x0, 0x0}, /* MB14 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_MB15_IS_FOR_RX)
+  {0x0, 0x0}, /* MB15 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_MB16_IS_FOR_RX)
+  {0x0, 0x0}, /* MB16 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_MB17_IS_FOR_RX)
+  {0x0, 0x0}, /* MB17 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_MB18_IS_FOR_RX)
+  {0x0, 0x0}, /* MB18 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_MB19_IS_FOR_RX)
+  {0x0, 0x0}, /* MB19 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_MB20_IS_FOR_RX)
+  {0x0, 0x0}, /* MB20 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_MB21_IS_FOR_RX)
+  {0x0, 0x0}, /* MB21 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_MB22_IS_FOR_RX)
+  {0x0, 0x0}, /* MB22 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_MB23_IS_FOR_RX)
+  {0x0, 0x0}, /* MB23 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_MB24_IS_FOR_RX)
+  {0x0, 0x0}, /* MB24 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_MB25_IS_FOR_RX)
+  {0x0, 0x0}, /* MB25 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_MB26_IS_FOR_RX)
+  {0x0, 0x0}, /* MB26 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_MB27_IS_FOR_RX)
+  {0x0, 0x0}, /* MB27 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_MB28_IS_FOR_RX)
+  {0x0, 0x0}, /* MB28 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_MB29_IS_FOR_RX)
+  {0x0, 0x0}, /* MB29 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_MB30_IS_FOR_RX)
+  {0x0, 0x0}, /* MB30 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_MB31_IS_FOR_RX)
+  {0x0, 0x0}, /* MB31 */
+#endif
+};
+
+#ifdef CONFIG_FC7300_FLEXCAN4_ENHANCED_RX_FIFO
+const struct can_erf_filter flexcan4_erf_filter[] =
+{
+#if defined(CONFIG_FC7300_FLEXCAN4_ERFEL0_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL0/1 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL0 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL1 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_ERFEL1_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN4_ERFEL1_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL2/3 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL2 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL3 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_ERFEL2_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN4_ERFEL2_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL4/5 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL4 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL5 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_ERFEL3_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN4_ERFEL3_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL6/7 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL6 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL7 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_ERFEL4_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN4_ERFEL4_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL8/9 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL8 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL9 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_ERFEL5_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN4_ERFEL5_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL10/11 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL10 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL11 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_ERFEL6_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN4_ERFEL6_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL12/13 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL12 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL13 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_ERFEL7_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN4_ERFEL7_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL14/15 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL14 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL15 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_ERFEL8_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN4_ERFEL8_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL16/17 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL16 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL17 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_ERFEL9_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN4_ERFEL9_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL18/19 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL18 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL19 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_ERFEL10_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN4_ERFEL10_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL20/21 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL20 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL21 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_ERFEL11_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN4_ERFEL11_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL22/23 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL22 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL23 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_ERFEL12_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN4_ERFEL12_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL24/25 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL24 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL25 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_ERFEL13_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN4_ERFEL13_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL26/27 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL26 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL27 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_ERFEL14_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN4_ERFEL14_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL28/29 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL28 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL29 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN4_ERFEL15_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN4_ERFEL15_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL30/31 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL30 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL31 */
+#endif
+#endif
+};
+#endif
+#endif
+
+#if defined(CONFIG_FC7300_FLEXCAN5)
+const struct can_filter flexcan5_rxmb_filter[] =
+{
+#if defined(CONFIG_FC7300_FLEXCAN5_MB0_IS_FOR_RX)
+  {0x0, 0x0}, /* MB0 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_MB1_IS_FOR_RX)
+  {0x0, 0x0}, /* MB1 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_MB2_IS_FOR_RX)
+  {0x0, 0x0}, /* MB2 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_MB3_IS_FOR_RX)
+  {0x0, 0x0}, /* MB3 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_MB4_IS_FOR_RX)
+  {0x0, 0x0}, /* MB4 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_MB5_IS_FOR_RX)
+  {0x0, 0x0}, /* MB5 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_MB6_IS_FOR_RX)
+  {0x0, 0x0}, /* MB6 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_MB7_IS_FOR_RX)
+  {0x0, 0x0}, /* MB7 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_MB8_IS_FOR_RX)
+  {0x0, 0x0}, /* MB8 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_MB9_IS_FOR_RX)
+  {0x0, 0x0}, /* MB9 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_MB10_IS_FOR_RX)
+  {0x0, 0x0}, /* MB10 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_MB11_IS_FOR_RX)
+  {0x0, 0x0}, /* MB11 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_MB12_IS_FOR_RX)
+  {0x0, 0x0}, /* MB12 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_MB13_IS_FOR_RX)
+  {0x0, 0x0}, /* MB13 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_MB14_IS_FOR_RX)
+  {0x0, 0x0}, /* MB14 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_MB15_IS_FOR_RX)
+  {0x0, 0x0}, /* MB15 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_MB16_IS_FOR_RX)
+  {0x0, 0x0}, /* MB16 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_MB17_IS_FOR_RX)
+  {0x0, 0x0}, /* MB17 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_MB18_IS_FOR_RX)
+  {0x0, 0x0}, /* MB18 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_MB19_IS_FOR_RX)
+  {0x0, 0x0}, /* MB19 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_MB20_IS_FOR_RX)
+  {0x0, 0x0}, /* MB20 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_MB21_IS_FOR_RX)
+  {0x0, 0x0}, /* MB21 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_MB22_IS_FOR_RX)
+  {0x0, 0x0}, /* MB22 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_MB23_IS_FOR_RX)
+  {0x0, 0x0}, /* MB23 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_MB24_IS_FOR_RX)
+  {0x0, 0x0}, /* MB24 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_MB25_IS_FOR_RX)
+  {0x0, 0x0}, /* MB25 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_MB26_IS_FOR_RX)
+  {0x0, 0x0}, /* MB26 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_MB27_IS_FOR_RX)
+  {0x0, 0x0}, /* MB27 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_MB28_IS_FOR_RX)
+  {0x0, 0x0}, /* MB28 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_MB29_IS_FOR_RX)
+  {0x0, 0x0}, /* MB29 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_MB30_IS_FOR_RX)
+  {0x0, 0x0}, /* MB30 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_MB31_IS_FOR_RX)
+  {0x0, 0x0}, /* MB31 */
+#endif
+};
+
+#ifdef CONFIG_FC7300_FLEXCAN5_ENHANCED_RX_FIFO
+const struct can_erf_filter flexcan5_erf_filter[] =
+{
+#if defined(CONFIG_FC7300_FLEXCAN5_ERFEL0_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL0/1 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL0 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL1 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_ERFEL1_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN5_ERFEL1_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL2/3 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL2 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL3 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_ERFEL2_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN5_ERFEL2_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL4/5 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL4 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL5 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_ERFEL3_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN5_ERFEL3_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL6/7 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL6 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL7 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_ERFEL4_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN5_ERFEL4_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL8/9 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL8 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL9 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_ERFEL5_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN5_ERFEL5_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL10/11 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL10 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL11 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_ERFEL6_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN5_ERFEL6_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL12/13 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL12 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL13 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_ERFEL7_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN5_ERFEL7_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL14/15 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL14 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL15 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_ERFEL8_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN5_ERFEL8_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL16/17 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL16 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL17 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_ERFEL9_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN5_ERFEL9_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL18/19 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL18 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL19 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_ERFEL10_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN5_ERFEL10_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL20/21 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL20 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL21 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_ERFEL11_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN5_ERFEL11_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL22/23 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL22 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL23 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_ERFEL12_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN5_ERFEL12_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL24/25 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL24 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL25 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_ERFEL13_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN5_ERFEL13_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL26/27 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL26 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL27 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_ERFEL14_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN5_ERFEL14_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL28/29 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL28 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL29 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN5_ERFEL15_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN5_ERFEL15_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL30/31 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL30 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL31 */
+#endif
+#endif
+};
+#endif
+#endif
+
+#if defined(CONFIG_FC7300_FLEXCAN6)
+const struct can_filter flexcan6_rxmb_filter[] =
+{
+#if defined(CONFIG_FC7300_FLEXCAN6_MB0_IS_FOR_RX)
+  {0x200, 0x1fffffff}, /* MB0 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_MB1_IS_FOR_RX)
+  {0x201, 0x1fffffff}, /* MB1 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_MB2_IS_FOR_RX)
+  {0x202, 0x1fffffff}, /* MB2 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_MB3_IS_FOR_RX)
+  {0x203, 0x1fffffff}, /* MB3 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_MB4_IS_FOR_RX)
+  {0x204, 0x1fffffff}, /* MB4 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_MB5_IS_FOR_RX)
+  {0x205, 0x1fffffff}, /* MB5 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_MB6_IS_FOR_RX)
+  {0x206, 0x1fffffff}, /* MB6 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_MB7_IS_FOR_RX)
+  {0x207, 0x1fffffff}, /* MB7 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_MB8_IS_FOR_RX)
+  {0x208, 0x1fffffff}, /* MB8 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_MB9_IS_FOR_RX)
+  {0x209, 0x1fffffff}, /* MB9 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_MB10_IS_FOR_RX)
+  {0x20a, 0x1fffffff}, /* MB10 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_MB11_IS_FOR_RX)
+  {0x20b, 0x1fffffff}, /* MB11 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_MB12_IS_FOR_RX)
+  {0x20c, 0x1fffffff}, /* MB12 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_MB13_IS_FOR_RX)
+  {0x20d, 0x1fffffff}, /* MB13 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_MB14_IS_FOR_RX)
+  {0x20e, 0x1fffffff}, /* MB14 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_MB15_IS_FOR_RX)
+  {0x20f, 0x1fffffff}, /* MB15 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_MB16_IS_FOR_RX)
+  {0x210, 0x1fffffff}, /* MB16 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_MB17_IS_FOR_RX)
+  {0x211, 0x1fffffff}, /* MB17 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_MB18_IS_FOR_RX)
+  {0x212, 0x1fffffff}, /* MB18 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_MB19_IS_FOR_RX)
+  {0x213, 0x1fffffff}, /* MB19 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_MB20_IS_FOR_RX)
+  {0x214, 0x1fffffff}, /* MB20 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_MB21_IS_FOR_RX)
+  {0x215, 0x1fffffff}, /* MB21 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_MB22_IS_FOR_RX)
+  {0x216, 0x1fffffff}, /* MB22 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_MB23_IS_FOR_RX)
+  {0x217, 0x1fffffff}, /* MB23 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_MB24_IS_FOR_RX)
+  {0x218, 0x1fffffff}, /* MB24 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_MB25_IS_FOR_RX)
+  {0x219, 0x1fffffff}, /* MB25 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_MB26_IS_FOR_RX)
+  {0x21a, 0x1fffffff}, /* MB26 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_MB27_IS_FOR_RX)
+  {0x21b, 0x1fffffff}, /* MB27 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_MB28_IS_FOR_RX)
+  {0x21c, 0x1fffffff}, /* MB28 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_MB29_IS_FOR_RX)
+  {0x21d, 0x1fffffff}, /* MB29 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_MB30_IS_FOR_RX)
+  {0x21e, 0x1fffffff}, /* MB30 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_MB31_IS_FOR_RX)
+  {0x21f, 0x1fffffff}, /* MB31 */
+#endif
+};
+
+#ifdef CONFIG_FC7300_FLEXCAN6_ENHANCED_RX_FIFO
+const struct can_erf_filter flexcan6_erf_filter[] =
+{
+#if defined(CONFIG_FC7300_FLEXCAN6_ERFEL0_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_RANGE_FORMAT, 0x5ff, 0x400), /* ERFEL0/1 */
+#else
+  DECLARE_ERF_FILTER(ID_RANGE_FORMAT, 0x4ff, 0x400), /* ERFEL0 */
+  DECLARE_ERF_FILTER(ID_RANGE_FORMAT, 0x5ff, 0x500), /* ERFEL1 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_ERFEL1_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN6_ERFEL1_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_RANGE_FORMAT, 0x5ff, 0x400), /* ERFEL2/3 */
+#else
+  DECLARE_ERF_FILTER(ID_RANGE_FORMAT, 0x4ff, 0x400), /* ERFEL2 */
+  DECLARE_ERF_FILTER(ID_RANGE_FORMAT, 0x5ff, 0x500), /* ERFEL3 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_ERFEL2_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN6_ERFEL2_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL4/5 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL4 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL5 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_ERFEL3_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN6_ERFEL3_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL6/7 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL6 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL7 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_ERFEL4_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN6_ERFEL4_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL8/9 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL8 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL9 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_ERFEL5_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN6_ERFEL5_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL10/11 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL10 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL11 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_ERFEL6_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN6_ERFEL6_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL12/13 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL12 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL13 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_ERFEL7_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN6_ERFEL7_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL14/15 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL14 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL15 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_ERFEL8_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN6_ERFEL8_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL16/17 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL16 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL17 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_ERFEL9_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN6_ERFEL9_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL18/19 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL18 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL19 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_ERFEL10_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN6_ERFEL10_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL20/21 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL20 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL21 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_ERFEL11_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN6_ERFEL11_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL22/23 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL22 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL23 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_ERFEL12_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN6_ERFEL12_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL24/25 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL24 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL25 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_ERFEL13_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN6_ERFEL13_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL26/27 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL26 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL27 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_ERFEL14_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN6_ERFEL14_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL28/29 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL28 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL29 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN6_ERFEL15_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN6_ERFEL15_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL30/31 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL30 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL31 */
+#endif
+#endif
+};
+#endif
+#endif
+
+#if defined(CONFIG_FC7300_FLEXCAN7)
+const struct can_filter flexcan7_rxmb_filter[] =
+{
+#if defined(CONFIG_FC7300_FLEXCAN7_MB0_IS_FOR_RX)
+  {0x0, 0x0}, /* MB0 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_MB1_IS_FOR_RX)
+  {0x0, 0x0}, /* MB1 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_MB2_IS_FOR_RX)
+  {0x0, 0x0}, /* MB2 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_MB3_IS_FOR_RX)
+  {0x0, 0x0}, /* MB3 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_MB4_IS_FOR_RX)
+  {0x0, 0x0}, /* MB4 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_MB5_IS_FOR_RX)
+  {0x0, 0x0}, /* MB5 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_MB6_IS_FOR_RX)
+  {0x0, 0x0}, /* MB6 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_MB7_IS_FOR_RX)
+  {0x0, 0x0}, /* MB7 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_MB8_IS_FOR_RX)
+  {0x0, 0x0}, /* MB8 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_MB9_IS_FOR_RX)
+  {0x0, 0x0}, /* MB9 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_MB10_IS_FOR_RX)
+  {0x0, 0x0}, /* MB10 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_MB11_IS_FOR_RX)
+  {0x0, 0x0}, /* MB11 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_MB12_IS_FOR_RX)
+  {0x0, 0x0}, /* MB12 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_MB13_IS_FOR_RX)
+  {0x0, 0x0}, /* MB13 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_MB14_IS_FOR_RX)
+  {0x0, 0x0}, /* MB14 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_MB15_IS_FOR_RX)
+  {0x0, 0x0}, /* MB15 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_MB16_IS_FOR_RX)
+  {0x0, 0x0}, /* MB16 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_MB17_IS_FOR_RX)
+  {0x0, 0x0}, /* MB17 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_MB18_IS_FOR_RX)
+  {0x0, 0x0}, /* MB18 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_MB19_IS_FOR_RX)
+  {0x0, 0x0}, /* MB19 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_MB20_IS_FOR_RX)
+  {0x0, 0x0}, /* MB20 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_MB21_IS_FOR_RX)
+  {0x0, 0x0}, /* MB21 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_MB22_IS_FOR_RX)
+  {0x0, 0x0}, /* MB22 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_MB23_IS_FOR_RX)
+  {0x0, 0x0}, /* MB23 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_MB24_IS_FOR_RX)
+  {0x0, 0x0}, /* MB24 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_MB25_IS_FOR_RX)
+  {0x0, 0x0}, /* MB25 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_MB26_IS_FOR_RX)
+  {0x0, 0x0}, /* MB26 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_MB27_IS_FOR_RX)
+  {0x0, 0x0}, /* MB27 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_MB28_IS_FOR_RX)
+  {0x0, 0x0}, /* MB28 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_MB29_IS_FOR_RX)
+  {0x0, 0x0}, /* MB29 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_MB30_IS_FOR_RX)
+  {0x0, 0x0}, /* MB30 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_MB31_IS_FOR_RX)
+  {0x0, 0x0}, /* MB31 */
+#endif
+};
+
+#ifdef CONFIG_FC7300_FLEXCAN7_ENHANCED_RX_FIFO
+const struct can_erf_filter flexcan7_erf_filter[] =
+{
+#if defined(CONFIG_FC7300_FLEXCAN7_ERFEL0_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL0/1 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL0 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL1 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_ERFEL1_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN7_ERFEL1_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL2/3 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL2 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL3 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_ERFEL2_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN7_ERFEL2_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL4/5 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL4 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL5 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_ERFEL3_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN7_ERFEL3_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL6/7 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL6 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL7 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_ERFEL4_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN7_ERFEL4_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL8/9 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL8 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL9 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_ERFEL5_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN7_ERFEL5_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL10/11 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL10 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL11 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_ERFEL6_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN7_ERFEL6_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL12/13 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL12 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL13 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_ERFEL7_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN7_ERFEL7_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL14/15 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL14 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL15 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_ERFEL8_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN7_ERFEL8_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL16/17 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL16 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL17 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_ERFEL9_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN7_ERFEL9_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL18/19 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL18 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL19 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_ERFEL10_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN7_ERFEL10_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL20/21 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL20 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL21 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_ERFEL11_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN7_ERFEL11_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL22/23 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL22 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL23 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_ERFEL12_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN7_ERFEL12_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL24/25 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL24 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL25 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_ERFEL13_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN7_ERFEL13_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL26/27 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL26 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL27 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_ERFEL14_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN7_ERFEL14_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL28/29 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL28 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL29 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN7_ERFEL15_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN7_ERFEL15_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL30/31 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL30 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL31 */
+#endif
+#endif
+};
+#endif
+#endif
+
+#if defined(CONFIG_FC7300_FLEXCAN8)
+const struct can_filter flexcan8_rxmb_filter[] =
+{
+#if defined(CONFIG_FC7300_FLEXCAN8_MB0_IS_FOR_RX)
+  {0x0, 0x0}, /* MB0 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_MB1_IS_FOR_RX)
+  {0x0, 0x0}, /* MB1 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_MB2_IS_FOR_RX)
+  {0x0, 0x0}, /* MB2 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_MB3_IS_FOR_RX)
+  {0x0, 0x0}, /* MB3 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_MB4_IS_FOR_RX)
+  {0x0, 0x0}, /* MB4 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_MB5_IS_FOR_RX)
+  {0x0, 0x0}, /* MB5 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_MB6_IS_FOR_RX)
+  {0x0, 0x0}, /* MB6 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_MB7_IS_FOR_RX)
+  {0x0, 0x0}, /* MB7 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_MB8_IS_FOR_RX)
+  {0x0, 0x0}, /* MB8 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_MB9_IS_FOR_RX)
+  {0x0, 0x0}, /* MB9 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_MB10_IS_FOR_RX)
+  {0x0, 0x0}, /* MB10 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_MB11_IS_FOR_RX)
+  {0x0, 0x0}, /* MB11 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_MB12_IS_FOR_RX)
+  {0x0, 0x0}, /* MB12 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_MB13_IS_FOR_RX)
+  {0x0, 0x0}, /* MB13 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_MB14_IS_FOR_RX)
+  {0x0, 0x0}, /* MB14 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_MB15_IS_FOR_RX)
+  {0x0, 0x0}, /* MB15 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_MB16_IS_FOR_RX)
+  {0x0, 0x0}, /* MB16 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_MB17_IS_FOR_RX)
+  {0x0, 0x0}, /* MB17 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_MB18_IS_FOR_RX)
+  {0x0, 0x0}, /* MB18 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_MB19_IS_FOR_RX)
+  {0x0, 0x0}, /* MB19 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_MB20_IS_FOR_RX)
+  {0x0, 0x0}, /* MB20 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_MB21_IS_FOR_RX)
+  {0x0, 0x0}, /* MB21 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_MB22_IS_FOR_RX)
+  {0x0, 0x0}, /* MB22 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_MB23_IS_FOR_RX)
+  {0x0, 0x0}, /* MB23 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_MB24_IS_FOR_RX)
+  {0x0, 0x0}, /* MB24 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_MB25_IS_FOR_RX)
+  {0x0, 0x0}, /* MB25 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_MB26_IS_FOR_RX)
+  {0x0, 0x0}, /* MB26 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_MB27_IS_FOR_RX)
+  {0x0, 0x0}, /* MB27 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_MB28_IS_FOR_RX)
+  {0x0, 0x0}, /* MB28 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_MB29_IS_FOR_RX)
+  {0x0, 0x0}, /* MB29 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_MB30_IS_FOR_RX)
+  {0x0, 0x0}, /* MB30 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_MB31_IS_FOR_RX)
+  {0x0, 0x0}, /* MB31 */
+#endif
+};
+
+#ifdef CONFIG_FC7300_FLEXCAN8_ENHANCED_RX_FIFO
+const struct can_erf_filter flexcan8_erf_filter[] =
+{
+#if defined(CONFIG_FC7300_FLEXCAN8_ERFEL0_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL0/1 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL0 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL1 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_ERFEL1_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN8_ERFEL1_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL2/3 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL2 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL3 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_ERFEL2_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN8_ERFEL2_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL4/5 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL4 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL5 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_ERFEL3_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN8_ERFEL3_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL6/7 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL6 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL7 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_ERFEL4_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN8_ERFEL4_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL8/9 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL8 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL9 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_ERFEL5_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN8_ERFEL5_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL10/11 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL10 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL11 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_ERFEL6_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN8_ERFEL6_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL12/13 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL12 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL13 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_ERFEL7_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN8_ERFEL7_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL14/15 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL14 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL15 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_ERFEL8_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN8_ERFEL8_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL16/17 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL16 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL17 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_ERFEL9_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN8_ERFEL9_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL18/19 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL18 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL19 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_ERFEL10_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN8_ERFEL10_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL20/21 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL20 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL21 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_ERFEL11_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN8_ERFEL11_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL22/23 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL22 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL23 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_ERFEL12_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN8_ERFEL12_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL24/25 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL24 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL25 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_ERFEL13_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN8_ERFEL13_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL26/27 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL26 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL27 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_ERFEL14_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN8_ERFEL14_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL28/29 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL28 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL29 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN8_ERFEL15_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN8_ERFEL15_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL30/31 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL30 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL31 */
+#endif
+#endif
+};
+#endif
+#endif
+
+#if defined(CONFIG_FC7300_FLEXCAN9)
+const struct can_filter flexcan9_rxmb_filter[] =
+{
+#if defined(CONFIG_FC7300_FLEXCAN9_MB0_IS_FOR_RX)
+  {0x0, 0x0}, /* MB0 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_MB1_IS_FOR_RX)
+  {0x0, 0x0}, /* MB1 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_MB2_IS_FOR_RX)
+  {0x0, 0x0}, /* MB2 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_MB3_IS_FOR_RX)
+  {0x0, 0x0}, /* MB3 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_MB4_IS_FOR_RX)
+  {0x0, 0x0}, /* MB4 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_MB5_IS_FOR_RX)
+  {0x0, 0x0}, /* MB5 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_MB6_IS_FOR_RX)
+  {0x0, 0x0}, /* MB6 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_MB7_IS_FOR_RX)
+  {0x0, 0x0}, /* MB7 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_MB8_IS_FOR_RX)
+  {0x0, 0x0}, /* MB8 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_MB9_IS_FOR_RX)
+  {0x0, 0x0}, /* MB9 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_MB10_IS_FOR_RX)
+  {0x0, 0x0}, /* MB10 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_MB11_IS_FOR_RX)
+  {0x0, 0x0}, /* MB11 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_MB12_IS_FOR_RX)
+  {0x0, 0x0}, /* MB12 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_MB13_IS_FOR_RX)
+  {0x0, 0x0}, /* MB13 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_MB14_IS_FOR_RX)
+  {0x0, 0x0}, /* MB14 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_MB15_IS_FOR_RX)
+  {0x0, 0x0}, /* MB15 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_MB16_IS_FOR_RX)
+  {0x0, 0x0}, /* MB16 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_MB17_IS_FOR_RX)
+  {0x0, 0x0}, /* MB17 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_MB18_IS_FOR_RX)
+  {0x0, 0x0}, /* MB18 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_MB19_IS_FOR_RX)
+  {0x0, 0x0}, /* MB19 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_MB20_IS_FOR_RX)
+  {0x0, 0x0}, /* MB20 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_MB21_IS_FOR_RX)
+  {0x0, 0x0}, /* MB21 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_MB22_IS_FOR_RX)
+  {0x0, 0x0}, /* MB22 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_MB23_IS_FOR_RX)
+  {0x0, 0x0}, /* MB23 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_MB24_IS_FOR_RX)
+  {0x0, 0x0}, /* MB24 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_MB25_IS_FOR_RX)
+  {0x0, 0x0}, /* MB25 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_MB26_IS_FOR_RX)
+  {0x0, 0x0}, /* MB26 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_MB27_IS_FOR_RX)
+  {0x0, 0x0}, /* MB27 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_MB28_IS_FOR_RX)
+  {0x0, 0x0}, /* MB28 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_MB29_IS_FOR_RX)
+  {0x0, 0x0}, /* MB29 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_MB30_IS_FOR_RX)
+  {0x0, 0x0}, /* MB30 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_MB31_IS_FOR_RX)
+  {0x0, 0x0}, /* MB31 */
+#endif
+};
+
+#ifdef CONFIG_FC7300_FLEXCAN9_ENHANCED_RX_FIFO
+const struct can_erf_filter flexcan9_erf_filter[] =
+{
+#if defined(CONFIG_FC7300_FLEXCAN9_ERFEL0_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL0/1 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL0 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL1 */
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_ERFEL1_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN9_ERFEL1_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL2/3 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL2 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL3 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_ERFEL2_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN9_ERFEL2_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL4/5 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL4 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL5 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_ERFEL3_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN9_ERFEL3_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL6/7 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL6 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL7 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_ERFEL4_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN9_ERFEL4_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL8/9 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL8 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL9 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_ERFEL5_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN9_ERFEL5_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL10/11 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL10 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL11 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_ERFEL6_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN9_ERFEL6_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL12/13 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL12 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL13 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_ERFEL7_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN9_ERFEL7_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL14/15 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL14 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL15 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_ERFEL8_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN9_ERFEL8_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL16/17 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL16 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL17 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_ERFEL9_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN9_ERFEL9_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL18/19 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL18 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL19 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_ERFEL10_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN9_ERFEL10_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL20/21 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL20 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL21 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_ERFEL11_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN9_ERFEL11_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL22/23 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL22 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL23 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_ERFEL12_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN9_ERFEL12_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL24/25 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL24 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL25 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_ERFEL13_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN9_ERFEL13_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL26/27 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL26 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL27 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_ERFEL14_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN9_ERFEL14_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL28/29 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL28 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL29 */
+#endif
+#endif
+#if defined(CONFIG_FC7300_FLEXCAN9_ERFEL15_ENABLE)
+#if defined(CONFIG_FC7300_FLEXCAN9_ERFEL15_EXTID_ENABLE)
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL30/31 */
+#else
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL30 */
+  DECLARE_ERF_FILTER(ID_MASK_FORMAT, 0x0, 0x0), /* ERFEL31 */
+#endif
+#endif
+};
+#endif
+#endif
+
+/****************************************************************************
+ * Private Functions
+ ****************************************************************************/
+
+/****************************************************************************
+ * Public Functions
+ ****************************************************************************/

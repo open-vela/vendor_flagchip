@@ -1,0 +1,5 @@
+#
+# This file is created manualy for protected build.
+#
+#include "../bl/defconfig"
+CONFIG_KFLASH_A_BANK0_SIZE=1536

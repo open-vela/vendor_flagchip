@@ -1,0 +1,440 @@
+#
+# Copyright (C) 2025 Xiaomi Corporation
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more contributor
+# license agreements.  See the NOTICE file distributed with this work for
+# additional information regarding copyright ownership.  The ASF licenses this
+# file to you under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License.  You may obtain a copy of
+# the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+menu "FC7300 ERM Configuration"
+	depends on FC7300_ERM
+
+config FC7300_ERM_ISR_PRIORITY
+	int "ISR PRIORITY"
+	default 192
+
+choice
+	prompt "FC7300 PFlash0 ECC Mode Select"
+	default FC7300_ERM_PFLASH0_ECC_MODE_NONE
+
+config FC7300_ERM_PFLASH0_ECC_MODE_NONE
+	bool "None"
+
+config FC7300_ERM_PFLASH0_ECC_MODE_S
+	bool "Single-bit Correction"
+
+config FC7300_ERM_PFLASH0_ECC_MODE_M
+	bool "Non-correctable"
+
+config FC7300_ERM_PFLASH0_ECC_MODE_A
+	bool "All"
+endchoice
+
+choice
+	prompt "FC7300 PFlash1 ECC Mode Select"
+	default FC7300_ERM_PFLASH1_ECC_MODE_NONE
+
+config FC7300_ERM_PFLASH1_ECC_MODE_NONE
+	bool "None"
+
+config FC7300_ERM_PFLASH1_ECC_MODE_S
+	bool "Single-bit Correction"
+
+config FC7300_ERM_PFLASH1_ECC_MODE_M
+	bool "Non-correctable"
+
+config FC7300_ERM_PFLASH1_ECC_MODE_A
+	bool "All"
+endchoice
+
+choice
+	prompt "FC7300 DFlash ECC Mode Select"
+	default FC7300_ERM_DFLASH_ECC_MODE_NONE
+
+config FC7300_ERM_DFLASH_ECC_MODE_NONE
+	bool "None"
+
+config FC7300_ERM_DFLASH_ECC_MODE_S
+	bool "Single-bit Correction"
+
+config FC7300_ERM_DFLASH_ECC_MODE_M
+	bool "Non-correctable"
+
+config FC7300_ERM_DFLASH_ECC_MODE_A
+	bool "All"
+endchoice
+
+choice
+	prompt "FC7300 DMACFG0 ECC Mode Select"
+	default FC7300_ERM_DMACFG0_ECC_MODE_NONE
+
+config FC7300_ERM_DMACFG0_ECC_MODE_NONE
+	bool "None"
+
+config FC7300_ERM_DMACFG0_ECC_MODE_S
+	bool "Single-bit Correction"
+
+config FC7300_ERM_DMACFG0_ECC_MODE_M
+	bool "Non-correctable"
+
+config FC7300_ERM_DMACFG0_ECC_MODE_A
+	bool "All"
+endchoice
+
+choice
+	prompt "FC7300 DMACFG1 ECC Mode Select"
+	default FC7300_ERM_DMACFG1_ECC_MODE_NONE
+
+config FC7300_ERM_DMACFG1_ECC_MODE_NONE
+	bool "None"
+
+config FC7300_ERM_DMACFG1_ECC_MODE_S
+	bool "Single-bit Correction"
+
+config FC7300_ERM_DMACFG1_ECC_MODE_M
+	bool "Non-correctable"
+
+config FC7300_ERM_DMACFG1_ECC_MODE_A
+	bool "All"
+endchoice
+
+choice
+	prompt "FC7300 ROM ECC Mode Select"
+	default FC7300_ERM_ROM_ECC_MODE_NONE
+
+config FC7300_ERM_ROM_ECC_MODE_NONE
+	bool "None"
+
+config FC7300_ERM_ROM_ECC_MODE_S
+	bool "Single-bit Correction"
+
+config FC7300_ERM_ROM_ECC_MODE_M
+	bool "Non-correctable"
+
+config FC7300_ERM_ROM_ECC_MODE_A
+	bool "All"
+endchoice
+
+choice
+	prompt "FC7300 SYSRAM0 ECC Mode Select"
+	default FC7300_ERM_SYSRAM0_ECC_MODE_NONE
+
+config FC7300_ERM_SYSRAM0_ECC_MODE_NONE
+	bool "None"
+
+config FC7300_ERM_SYSRAM0_ECC_MODE_S
+	bool "Single-bit Correction"
+
+config FC7300_ERM_SYSRAM0_ECC_MODE_M
+	bool "Non-correctable"
+
+config FC7300_ERM_SYSRAM0_ECC_MODE_A
+	bool "All"
+endchoice
+
+choice
+	prompt "FC7300 SYSRAM1 ECC Mode Select"
+	default FC7300_ERM_SYSRAM1_ECC_MODE_NONE
+
+config FC7300_ERM_SYSRAM1_ECC_MODE_NONE
+	bool "None"
+
+config FC7300_ERM_SYSRAM1_ECC_MODE_S
+	bool "Single-bit Correction"
+
+config FC7300_ERM_SYSRAM1_ECC_MODE_M
+	bool "Non-correctable"
+
+config FC7300_ERM_SYSRAM1_ECC_MODE_A
+	bool "All"
+endchoice
+
+choice
+	prompt "FC7300 SYSRAM2 ECC Mode Select"
+	default FC7300_ERM_SYSRAM2_ECC_MODE_NONE
+
+config FC7300_ERM_SYSRAM2_ECC_MODE_NONE
+	bool "None"
+
+config FC7300_ERM_SYSRAM2_ECC_MODE_S
+	bool "Single-bit Correction"
+
+config FC7300_ERM_SYSRAM2_ECC_MODE_M
+	bool "Non-correctable"
+
+config FC7300_ERM_SYSRAM2_ECC_MODE_A
+	bool "All"
+endchoice
+
+choice
+	prompt "FC7300 CPU0 ITCM ECC Mode Select"
+	default FC7300_ERM_CPU0_ITCM_ECC_MODE_NONE
+
+config FC7300_ERM_CPU0_ITCM_ECC_MODE_NONE
+	bool "None"
+
+config FC7300_ERM_CPU0_ITCM_ECC_MODE_S
+	bool "Single-bit Correction"
+
+config FC7300_ERM_CPU0_ITCM_ECC_MODE_M
+	bool "Non-correctable"
+
+config FC7300_ERM_CPU0_ITCM_ECC_MODE_A
+	bool "All"
+endchoice
+
+choice
+	prompt "FC7300 CPU0 DTCM0 ECC Mode Select"
+	default FC7300_ERM_CPU0_DTCM0_ECC_MODE_NONE
+
+config FC7300_ERM_CPU0_DTCM0_ECC_MODE_NONE
+	bool "None"
+
+config FC7300_ERM_CPU0_DTCM0_ECC_MODE_S
+	bool "Single-bit Correction"
+
+config FC7300_ERM_CPU0_DTCM0_ECC_MODE_M
+	bool "Non-correctable"
+
+config FC7300_ERM_CPU0_DTCM0_ECC_MODE_A
+	bool "All"
+endchoice
+
+choice
+	prompt "FC7300 CPU0 DTCM1 ECC Mode Select"
+	default FC7300_ERM_CPU0_DTCM1_ECC_MODE_NONE
+
+config FC7300_ERM_CPU0_DTCM1_ECC_MODE_NONE
+	bool "None"
+
+config FC7300_ERM_CPU0_DTCM1_ECC_MODE_S
+	bool "Single-bit Correction"
+
+config FC7300_ERM_CPU0_DTCM1_ECC_MODE_M
+	bool "Non-correctable"
+
+config FC7300_ERM_CPU0_DTCM1_ECC_MODE_A
+	bool "All"
+endchoice
+
+choice
+	prompt "FC7300 CPU0 ICACHE ECC Mode Select"
+	default FC7300_ERM_CPU0_ICACHE_ECC_MODE_NONE
+
+config FC7300_ERM_CPU0_ICACHE_ECC_MODE_NONE
+	bool "None"
+
+config FC7300_ERM_CPU0_ICACHE_ECC_MODE_S
+	bool "Single-bit Correction"
+
+config FC7300_ERM_CPU0_ICACHE_ECC_MODE_M
+	bool "Non-correctable"
+
+config FC7300_ERM_CPU0_ICACHE_ECC_MODE_A
+	bool "All"
+endchoice
+
+choice
+	prompt "FC7300 CPU0 DCACHE ECC Mode Select"
+	default FC7300_ERM_CPU0_DCACHE_ECC_MODE_NONE
+
+config FC7300_ERM_CPU0_DCACHE_ECC_MODE_NONE
+	bool "None"
+
+config FC7300_ERM_CPU0_DCACHE_ECC_MODE_S
+	bool "Single-bit Correction"
+
+config FC7300_ERM_CPU0_DCACHE_ECC_MODE_M
+	bool "Non-correctable"
+
+config FC7300_ERM_CPU0_DCACHE_ECC_MODE_A
+	bool "All"
+endchoice
+
+choice
+	prompt "FC7300 CPU1 ITCM ECC Mode Select"
+	default FC7300_ERM_CPU1_ITCM_ECC_MODE_NONE
+
+config FC7300_ERM_CPU1_ITCM_ECC_MODE_NONE
+	bool "None"
+
+config FC7300_ERM_CPU1_ITCM_ECC_MODE_S
+	bool "Single-bit Correction"
+
+config FC7300_ERM_CPU1_ITCM_ECC_MODE_M
+	bool "Non-correctable"
+
+config FC7300_ERM_CPU1_ITCM_ECC_MODE_A
+	bool "All"
+endchoice
+
+choice
+	prompt "FC7300 CPU1 DTCM0 ECC Mode Select"
+	default FC7300_ERM_CPU1_DTCM0_ECC_MODE_NONE
+
+config FC7300_ERM_CPU1_DTCM0_ECC_MODE_NONE
+	bool "None"
+
+config FC7300_ERM_CPU1_DTCM0_ECC_MODE_S
+	bool "Single-bit Correction"
+
+config FC7300_ERM_CPU1_DTCM0_ECC_MODE_M
+	bool "Non-correctable"
+
+config FC7300_ERM_CPU1_DTCM0_ECC_MODE_A
+	bool "All"
+endchoice
+
+choice
+	prompt "FC7300 CPU1 DTCM1 ECC Mode Select"
+	default FC7300_ERM_CPU1_DTCM1_ECC_MODE_NONE
+
+config FC7300_ERM_CPU1_DTCM1_ECC_MODE_NONE
+	bool "None"
+
+config FC7300_ERM_CPU1_DTCM1_ECC_MODE_S
+	bool "Single-bit Correction"
+
+config FC7300_ERM_CPU1_DTCM1_ECC_MODE_M
+	bool "Non-correctable"
+
+config FC7300_ERM_CPU1_DTCM1_ECC_MODE_A
+	bool "All"
+endchoice
+
+choice
+	prompt "FC7300 CPU1 ICACHE ECC Mode Select"
+	default FC7300_ERM_CPU1_ICACHE_ECC_MODE_NONE
+
+config FC7300_ERM_CPU1_ICACHE_ECC_MODE_NONE
+	bool "None"
+
+config FC7300_ERM_CPU1_ICACHE_ECC_MODE_S
+	bool "Single-bit Correction"
+
+config FC7300_ERM_CPU1_ICACHE_ECC_MODE_M
+	bool "Non-correctable"
+
+config FC7300_ERM_CPU1_ICACHE_ECC_MODE_A
+	bool "All"
+endchoice
+
+choice
+	prompt "FC7300 CPU1 DCACHE ECC Mode Select"
+	default FC7300_ERM_CPU1_DCACHE_ECC_MODE_NONE
+
+config FC7300_ERM_CPU1_DCACHE_ECC_MODE_NONE
+	bool "None"
+
+config FC7300_ERM_CPU1_DCACHE_ECC_MODE_S
+	bool "Single-bit Correction"
+
+config FC7300_ERM_CPU1_DCACHE_ECC_MODE_M
+	bool "Non-correctable"
+
+config FC7300_ERM_CPU1_DCACHE_ECC_MODE_A
+	bool "All"
+endchoice
+
+choice
+	prompt "FC7300 CPU2 ITCM ECC Mode Select"
+	default FC7300_ERM_CPU2_ITCM_ECC_MODE_NONE
+
+config FC7300_ERM_CPU2_ITCM_ECC_MODE_NONE
+	bool "None"
+
+config FC7300_ERM_CPU2_ITCM_ECC_MODE_S
+	bool "Single-bit Correction"
+
+config FC7300_ERM_CPU2_ITCM_ECC_MODE_M
+	bool "Non-correctable"
+
+config FC7300_ERM_CPU2_ITCM_ECC_MODE_A
+	bool "All"
+endchoice
+
+choice
+	prompt "FC7300 CPU2 DTCM0 ECC Mode Select"
+	default FC7300_ERM_CPU2_DTCM0_ECC_MODE_NONE
+
+config FC7300_ERM_CPU2_DTCM0_ECC_MODE_NONE
+	bool "None"
+
+config FC7300_ERM_CPU2_DTCM0_ECC_MODE_S
+	bool "Single-bit Correction"
+
+config FC7300_ERM_CPU2_DTCM0_ECC_MODE_M
+	bool "Non-correctable"
+
+config FC7300_ERM_CPU2_DTCM0_ECC_MODE_A
+	bool "All"
+endchoice
+
+choice
+	prompt "FC7300 CPU2 DTCM1 ECC Mode Select"
+	default FC7300_ERM_CPU2_DTCM1_ECC_MODE_NONE
+
+config FC7300_ERM_CPU2_DTCM1_ECC_MODE_NONE
+	bool "None"
+
+config FC7300_ERM_CPU2_DTCM1_ECC_MODE_S
+	bool "Single-bit Correction"
+
+config FC7300_ERM_CPU2_DTCM1_ECC_MODE_M
+	bool "Non-correctable"
+
+config FC7300_ERM_CPU2_DTCM1_ECC_MODE_A
+	bool "All"
+endchoice
+
+choice
+	prompt "FC7300 CPU2 ICACHE ECC Mode Select"
+	default FC7300_ERM_CPU2_ICACHE_ECC_MODE_NONE
+
+config FC7300_ERM_CPU2_ICACHE_ECC_MODE_NONE
+	bool "None"
+
+config FC7300_ERM_CPU2_ICACHE_ECC_MODE_S
+	bool "Single-bit Correction"
+
+config FC7300_ERM_CPU2_ICACHE_ECC_MODE_M
+	bool "Non-correctable"
+
+config FC7300_ERM_CPU2_ICACHE_ECC_MODE_A
+	bool "All"
+endchoice
+
+choice
+	prompt "FC7300 CPU2 DCACHE ECC Mode Select"
+	default FC7300_ERM_CPU2_DCACHE_ECC_MODE_NONE
+
+config FC7300_ERM_CPU2_DCACHE_ECC_MODE_NONE
+	bool "None"
+
+config FC7300_ERM_CPU2_DCACHE_ECC_MODE_S
+	bool "Single-bit Correction"
+
+config FC7300_ERM_CPU2_DCACHE_ECC_MODE_M
+	bool "Non-correctable"
+
+config FC7300_ERM_CPU2_DCACHE_ECC_MODE_A
+	bool "All"
+endchoice
+
+endmenu # FC7300 ERM Configuration

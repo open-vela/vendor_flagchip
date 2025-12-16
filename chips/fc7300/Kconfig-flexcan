@@ -1,0 +1,4340 @@
+#
+# Copyright (C) 2025 Xiaomi Corporation
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more contributor
+# license agreements.  See the NOTICE file distributed with this work for
+# additional information regarding copyright ownership.  The ASF licenses this
+# file to you under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License.  You may obtain a copy of
+# the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+menu "FC7300 FLEXCAN Configuration"
+	depends on FC7300_FLEXCAN
+
+config FC7300_FLEXCAN_ENHANCED_RX_FIFO
+	bool
+	default y
+
+config FC7300_FLEXCAN_CANFD_BRS
+	bool
+	default n
+
+config FC7300_FLEXCAN_CANFD_SSP
+	bool
+	default n
+
+config FC7300_FLEXCAN_CAN_ERROR_INTERRUPT
+	bool "FLEXCAN Error Interrupt"
+	default n
+	select CAN_ERRORS
+	---help---
+		If y, it will enable BIT1ERR/BIT0ERR/ACKERR/CRCERR/FRMERR/STFERR interrupt request.
+		If n, BIT1ERR/BIT0ERR/ACKERR/CRCERR/FRMERR/STFERR can only be got by polling.
+
+config FC7300_FLEXCAN_ISR_THREAD
+	bool "FLEXCAN ISR THREAD"
+	default n
+	---help---
+		Select the flexcan interrupt function to execute in thread context.
+
+config FC7300_FLEXCAN_ISR_THREAD_PRIORITY
+	int "FLEXCAN ISR THREAD PRIORITY"
+	default 251
+	range 0 255
+	depends on FC7300_FLEXCAN_ISR_THREAD
+	---help---
+		The priority of isr thread.
+
+config FC7300_FLEXCAN_ISR_THREAD_STACKSIZE
+	int "FLEXCAN ISR THREAD STACK SIZE"
+	default 2048
+	range 0 4096
+	depends on FC7300_FLEXCAN_ISR_THREAD
+	---help---
+		The stack size of flexcan isr thread.
+
+menu "FC7300 FLEXCAN0 Configuration"
+	depends on FC7300_FLEXCAN0
+
+choice
+	prompt "Character driver or SocketCAN support"
+	default FC7300_FLEXCAN0_SOCKET
+
+config FC7300_FLEXCAN0_CHARDRIVER
+	bool "Character driver support"
+	select FC7300_FLEXCAN_CHARDRIVER
+
+config FC7300_FLEXCAN0_SOCKET
+	bool "SocketCAN support"
+	select FC7300_FLEXCAN_SOCKET
+
+endchoice # FLEXCAN0 character driver or SocketCAN support
+
+config FC7300_FLEXCAN0_CANFD
+	bool "Use CAN FD"
+	default y
+	select CAN_FD if FC7300_FLEXCAN0_CHARDRIVER
+	select NET_CAN_HAVE_CANFD if FC7300_FLEXCAN0_SOCKET
+
+config FC7300_FLEXCAN0_CANFD_BRS
+	bool "CAN FD Bit Rate Switch"
+	depends on FC7300_FLEXCAN0_CANFD
+	default y
+	select FC7300_FLEXCAN_CANFD_BRS
+
+config FC7300_FLEXCAN0_CANFD_DATA_PRESDIV
+	int "CAN FD Data Presdiv"
+	depends on FC7300_FLEXCAN0_CANFD_BRS
+	range 1 1024
+	default 3
+	---help---
+		Default 3 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN0_CANFD_DATA_PROPSEG
+	int "CAN FD Data Propseg"
+	depends on FC7300_FLEXCAN0_CANFD_BRS
+	default 10
+	---help---
+		The sum of Data Propseg plus Data Pseg1 must be less than 32.
+		Default 10 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN0_CANFD_DATA_PSEG1
+	int "CAN FD Data Pseg1"
+	depends on FC7300_FLEXCAN0_CANFD_BRS
+	default 9
+	---help---
+		The sum of Data Propseg plus Data Pseg1 must be less than 32.
+		Default 9 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN0_CANFD_DATA_PSEG2
+	int "CAN FD Data Pseg2"
+	depends on FC7300_FLEXCAN0_CANFD_BRS
+	range 1 16
+	default 5
+	---help---
+		Default 5 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN0_CANFD_DATA_SJW
+	int "CAN FD Data Sjw"
+	depends on FC7300_FLEXCAN0_CANFD_BRS
+	range 1 16
+	default 1
+
+config FC7300_FLEXCAN0_CANFD_SSP
+	bool "CAN FD Second Sample Point"
+	depends on FC7300_FLEXCAN0_CANFD
+	default n
+	select FC7300_FLEXCAN_CANFD_SSP
+
+config FC7300_FLEXCAN0_CANFD_SSP_OFFSET
+	int "CAN FD Second Sample Point Offset"
+	depends on FC7300_FLEXCAN0_CANFD_SSP
+	range 1 128
+	default 60
+
+choice
+	prompt "CAN FD Date Size"
+	depends on FC7300_FLEXCAN0_CANFD
+	default FC7300_FLEXCAN0_CANFD_DATA_SIZE_64
+
+config FC7300_FLEXCAN0_CANFD_DATA_SIZE_8
+	bool "8"
+
+config FC7300_FLEXCAN0_CANFD_DATA_SIZE_16
+	bool "16"
+
+config FC7300_FLEXCAN0_CANFD_DATA_SIZE_32
+	bool "32"
+
+config FC7300_FLEXCAN0_CANFD_DATA_SIZE_64
+	bool "64"
+
+endchoice
+
+config FC7300_FLEXCAN0_RXMB_COUNT
+	int "Rx MB Count"
+	range 0 32 if !FC7300_FLEXCAN0_CANFD
+	range 0 32 if FC7300_FLEXCAN0_CANFD && FC7300_FLEXCAN0_CANFD_DATA_SIZE_8
+	range 0 21 if FC7300_FLEXCAN0_CANFD && FC7300_FLEXCAN0_CANFD_DATA_SIZE_16
+	range 0 12 if FC7300_FLEXCAN0_CANFD && FC7300_FLEXCAN0_CANFD_DATA_SIZE_32
+	range 0 7  if FC7300_FLEXCAN0_CANFD && FC7300_FLEXCAN0_CANFD_DATA_SIZE_64
+	default 22 if !FC7300_FLEXCAN0_CANFD
+	default 22 if FC7300_FLEXCAN0_CANFD && FC7300_FLEXCAN0_CANFD_DATA_SIZE_8
+	default 14 if FC7300_FLEXCAN0_CANFD && FC7300_FLEXCAN0_CANFD_DATA_SIZE_16
+	default 8  if FC7300_FLEXCAN0_CANFD && FC7300_FLEXCAN0_CANFD_DATA_SIZE_32
+	default 5  if FC7300_FLEXCAN0_CANFD && FC7300_FLEXCAN0_CANFD_DATA_SIZE_64
+
+config FC7300_FLEXCAN0_MB0_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN0_RXMB_COUNT > 0
+
+config FC7300_FLEXCAN0_MB1_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN0_RXMB_COUNT > 1
+
+config FC7300_FLEXCAN0_MB2_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN0_RXMB_COUNT > 2
+
+config FC7300_FLEXCAN0_MB3_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN0_RXMB_COUNT > 3
+
+config FC7300_FLEXCAN0_MB4_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN0_RXMB_COUNT > 4
+
+config FC7300_FLEXCAN0_MB5_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN0_RXMB_COUNT > 5
+
+config FC7300_FLEXCAN0_MB6_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN0_RXMB_COUNT > 6
+
+config FC7300_FLEXCAN0_MB7_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN0_RXMB_COUNT > 7
+
+config FC7300_FLEXCAN0_MB8_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN0_RXMB_COUNT > 8
+
+config FC7300_FLEXCAN0_MB9_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN0_RXMB_COUNT > 9
+
+config FC7300_FLEXCAN0_MB10_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN0_RXMB_COUNT > 10
+
+config FC7300_FLEXCAN0_MB11_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN0_RXMB_COUNT > 11
+
+config FC7300_FLEXCAN0_MB12_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN0_RXMB_COUNT > 12
+
+config FC7300_FLEXCAN0_MB13_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN0_RXMB_COUNT > 13
+
+config FC7300_FLEXCAN0_MB14_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN0_RXMB_COUNT > 14
+
+config FC7300_FLEXCAN0_MB15_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN0_RXMB_COUNT > 15
+
+config FC7300_FLEXCAN0_MB16_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN0_RXMB_COUNT > 16
+
+config FC7300_FLEXCAN0_MB17_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN0_RXMB_COUNT > 17
+
+config FC7300_FLEXCAN0_MB18_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN0_RXMB_COUNT > 18
+
+config FC7300_FLEXCAN0_MB19_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN0_RXMB_COUNT > 19
+
+config FC7300_FLEXCAN0_MB20_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN0_RXMB_COUNT > 20
+
+config FC7300_FLEXCAN0_MB21_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN0_RXMB_COUNT > 21
+
+config FC7300_FLEXCAN0_MB22_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN0_RXMB_COUNT > 22
+
+config FC7300_FLEXCAN0_MB23_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN0_RXMB_COUNT > 23
+
+config FC7300_FLEXCAN0_MB24_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN0_RXMB_COUNT > 24
+
+config FC7300_FLEXCAN0_MB25_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN0_RXMB_COUNT > 25
+
+config FC7300_FLEXCAN0_MB26_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN0_RXMB_COUNT > 26
+
+config FC7300_FLEXCAN0_MB27_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN0_RXMB_COUNT > 27
+
+config FC7300_FLEXCAN0_MB28_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN0_RXMB_COUNT > 28
+
+config FC7300_FLEXCAN0_MB29_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN0_RXMB_COUNT > 29
+
+config FC7300_FLEXCAN0_MB30_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN0_RXMB_COUNT > 30
+
+config FC7300_FLEXCAN0_MB31_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN0_RXMB_COUNT > 31
+
+config FC7300_FLEXCAN0_ENHANCED_RX_FIFO
+	bool "Enchanced Rx FIFO"
+	default y
+	select FC7300_FLEXCAN_ENHANCED_RX_FIFO
+
+config FC7300_FLEXCAN0_ERFEL_TOTAL_COUNT
+	int "ERFEL Total Count"
+	depends on FC7300_FLEXCAN0_ENHANCED_RX_FIFO
+	range 1 16
+	default 1
+
+config FC7300_FLEXCAN0_ERFEL_EXTID_COUNT
+	int "ERFEL ExtID Count"
+	depends on FC7300_FLEXCAN0_ENHANCED_RX_FIFO && CAN_EXTID
+	range 0 FC7300_FLEXCAN0_ERFEL_TOTAL_COUNT
+	default 0
+
+config FC7300_FLEXCAN0_ERFEL1_ENABLE
+	bool
+	default y if FC7300_FLEXCAN0_ERFEL_TOTAL_COUNT > 1
+
+config FC7300_FLEXCAN0_ERFEL2_ENABLE
+	bool
+	default y if FC7300_FLEXCAN0_ERFEL_TOTAL_COUNT > 2
+
+config FC7300_FLEXCAN0_ERFEL3_ENABLE
+	bool
+	default y if FC7300_FLEXCAN0_ERFEL_TOTAL_COUNT > 3
+
+config FC7300_FLEXCAN0_ERFEL4_ENABLE
+	bool
+	default y if FC7300_FLEXCAN0_ERFEL_TOTAL_COUNT > 4
+
+config FC7300_FLEXCAN0_ERFEL5_ENABLE
+	bool
+	default y if FC7300_FLEXCAN0_ERFEL_TOTAL_COUNT > 5
+
+config FC7300_FLEXCAN0_ERFEL6_ENABLE
+	bool
+	default y if FC7300_FLEXCAN0_ERFEL_TOTAL_COUNT > 6
+
+config FC7300_FLEXCAN0_ERFEL7_ENABLE
+	bool
+	default y if FC7300_FLEXCAN0_ERFEL_TOTAL_COUNT > 7
+
+config FC7300_FLEXCAN0_ERFEL8_ENABLE
+	bool
+	default y if FC7300_FLEXCAN0_ERFEL_TOTAL_COUNT > 8
+
+config FC7300_FLEXCAN0_ERFEL9_ENABLE
+	bool
+	default y if FC7300_FLEXCAN0_ERFEL_TOTAL_COUNT > 9
+
+config FC7300_FLEXCAN0_ERFEL10_ENABLE
+	bool
+	default y if FC7300_FLEXCAN0_ERFEL_TOTAL_COUNT > 10
+
+config FC7300_FLEXCAN0_ERFEL11_ENABLE
+	bool
+	default y if FC7300_FLEXCAN0_ERFEL_TOTAL_COUNT > 11
+
+config FC7300_FLEXCAN0_ERFEL12_ENABLE
+	bool
+	default y if FC7300_FLEXCAN0_ERFEL_TOTAL_COUNT > 12
+
+config FC7300_FLEXCAN0_ERFEL13_ENABLE
+	bool
+	default y if FC7300_FLEXCAN0_ERFEL_TOTAL_COUNT > 13
+
+config FC7300_FLEXCAN0_ERFEL14_ENABLE
+	bool
+	default y if FC7300_FLEXCAN0_ERFEL_TOTAL_COUNT > 14
+
+config FC7300_FLEXCAN0_ERFEL15_ENABLE
+	bool
+	default y if FC7300_FLEXCAN0_ERFEL_TOTAL_COUNT > 15
+
+config FC7300_FLEXCAN0_ERFEL0_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN0_ERFEL_EXTID_COUNT > 0
+
+config FC7300_FLEXCAN0_ERFEL1_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN0_ERFEL_EXTID_COUNT > 1
+
+config FC7300_FLEXCAN0_ERFEL2_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN0_ERFEL_EXTID_COUNT > 2
+
+config FC7300_FLEXCAN0_ERFEL3_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN0_ERFEL_EXTID_COUNT > 3
+
+config FC7300_FLEXCAN0_ERFEL4_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN0_ERFEL_EXTID_COUNT > 4
+
+config FC7300_FLEXCAN0_ERFEL5_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN0_ERFEL_EXTID_COUNT > 5
+
+config FC7300_FLEXCAN0_ERFEL6_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN0_ERFEL_EXTID_COUNT > 6
+
+config FC7300_FLEXCAN0_ERFEL7_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN0_ERFEL_EXTID_COUNT > 7
+
+config FC7300_FLEXCAN0_ERFEL8_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN0_ERFEL_EXTID_COUNT > 8
+
+config FC7300_FLEXCAN0_ERFEL9_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN0_ERFEL_EXTID_COUNT > 9
+
+config FC7300_FLEXCAN0_ERFEL10_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN0_ERFEL_EXTID_COUNT > 10
+
+config FC7300_FLEXCAN0_ERFEL11_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN0_ERFEL_EXTID_COUNT > 11
+
+config FC7300_FLEXCAN0_ERFEL12_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN0_ERFEL_EXTID_COUNT > 12
+
+config FC7300_FLEXCAN0_ERFEL13_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN0_ERFEL_EXTID_COUNT > 13
+
+config FC7300_FLEXCAN0_ERFEL14_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN0_ERFEL_EXTID_COUNT > 14
+
+config FC7300_FLEXCAN0_ERFEL15_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN0_ERFEL_EXTID_COUNT > 15
+
+config FC7300_FLEXCAN0_PRESDIV
+	int "CAN Presdiv"
+	range 1 1024
+	default 3
+	---help---
+		Default 3 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN baudrate is 500K, sample point is 80%.
+
+config FC7300_FLEXCAN0_PROPSEG
+	int "CAN Propseg"
+	default 40
+	---help---
+		The sum of Propseg plus Pseg1 must be less than 256.
+		Default 40 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 500K, sample point is 80%.
+
+config FC7300_FLEXCAN0_PSEG1
+	int "CAN Pseg1"
+	default 39
+	---help---
+		The sum of Propseg plus Pseg1 must be less than 256.
+		Default 39 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 500K, sample point is 80%.
+
+config FC7300_FLEXCAN0_PSEG2
+	int "CAN Pseg2"
+	range 1 128
+	default 20
+	---help---
+		Default 20 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN0_SJW
+	int "CAN Sjw"
+	range 1 128
+	default 1
+
+config FC7300_FLEXCAN0_ISR_PRIORITY
+	int "FLEXCAN0 ISR PRIORITY"
+	default 192
+
+endmenu # FC7300 FLEXCAN0 Configuration
+
+menu "FC7300 FLEXCAN1 Configuration"
+	depends on FC7300_FLEXCAN1
+
+choice
+	prompt "Character driver or SocketCAN support"
+	default FC7300_FLEXCAN1_SOCKET
+
+config FC7300_FLEXCAN1_CHARDRIVER
+	bool "Character driver support"
+	select FC7300_FLEXCAN_CHARDRIVER
+
+config FC7300_FLEXCAN1_SOCKET
+	bool "SocketCAN support"
+	select FC7300_FLEXCAN_SOCKET
+
+endchoice # FLEXCAN1 character driver or SocketCAN support
+
+config FC7300_FLEXCAN1_CANFD
+	bool "Use CAN FD"
+	default y
+	select CAN_FD if FC7300_FLEXCAN1_CHARDRIVER
+	select NET_CAN_HAVE_CANFD if FC7300_FLEXCAN1_SOCKET
+
+config FC7300_FLEXCAN1_CANFD_BRS
+	bool "CAN FD Bit Rate Switch"
+	depends on FC7300_FLEXCAN1_CANFD
+	default y
+	select FC7300_FLEXCAN_CANFD_BRS
+
+config FC7300_FLEXCAN1_CANFD_DATA_PRESDIV
+	int "CAN FD Data Presdiv"
+	depends on FC7300_FLEXCAN1_CANFD_BRS
+	range 1 1024
+	default 3
+	---help---
+		Default 3 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN1_CANFD_DATA_PROPSEG
+	int "CAN FD Data Propseg"
+	depends on FC7300_FLEXCAN1_CANFD_BRS
+	default 10
+	---help---
+		The sum of Data Propseg plus Data Pseg1 must be less than 32.
+		Default 10 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN1_CANFD_DATA_PSEG1
+	int "CAN FD Data Pseg1"
+	depends on FC7300_FLEXCAN1_CANFD_BRS
+	default 9
+	---help---
+		The sum of Data Propseg plus Data Pseg1 must be less than 32.
+		Default 9 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN1_CANFD_DATA_PSEG2
+	int "CAN FD Data Pseg2"
+	depends on FC7300_FLEXCAN1_CANFD_BRS
+	range 1 16
+	default 5
+	---help---
+		Default 5 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN1_CANFD_DATA_SJW
+	int "CAN FD Data Sjw"
+	depends on FC7300_FLEXCAN1_CANFD_BRS
+	range 1 16
+	default 1
+
+config FC7300_FLEXCAN1_CANFD_SSP
+	bool "CAN FD Second Sample Point"
+	depends on FC7300_FLEXCAN1_CANFD
+	default n
+	select FC7300_FLEXCAN_CANFD_SSP
+
+config FC7300_FLEXCAN1_CANFD_SSP_OFFSET
+	int "CAN FD Second Sample Point Offset"
+	depends on FC7300_FLEXCAN1_CANFD_SSP
+	range 1 128
+	default 60
+
+choice
+	prompt "CAN FD Date Size"
+	depends on FC7300_FLEXCAN1_CANFD
+	default FC7300_FLEXCAN1_CANFD_DATA_SIZE_64
+
+config FC7300_FLEXCAN1_CANFD_DATA_SIZE_8
+	bool "8"
+
+config FC7300_FLEXCAN1_CANFD_DATA_SIZE_16
+	bool "16"
+
+config FC7300_FLEXCAN1_CANFD_DATA_SIZE_32
+	bool "32"
+
+config FC7300_FLEXCAN1_CANFD_DATA_SIZE_64
+	bool "64"
+
+endchoice
+
+config FC7300_FLEXCAN1_RXMB_COUNT
+	int "Rx MB Count"
+	range 0 32 if !FC7300_FLEXCAN1_CANFD
+	range 0 32 if FC7300_FLEXCAN1_CANFD && FC7300_FLEXCAN1_CANFD_DATA_SIZE_8
+	range 0 21 if FC7300_FLEXCAN1_CANFD && FC7300_FLEXCAN1_CANFD_DATA_SIZE_16
+	range 0 12 if FC7300_FLEXCAN1_CANFD && FC7300_FLEXCAN1_CANFD_DATA_SIZE_32
+	range 0 7  if FC7300_FLEXCAN1_CANFD && FC7300_FLEXCAN1_CANFD_DATA_SIZE_64
+	default 22 if !FC7300_FLEXCAN1_CANFD
+	default 22 if FC7300_FLEXCAN1_CANFD && FC7300_FLEXCAN1_CANFD_DATA_SIZE_8
+	default 14 if FC7300_FLEXCAN1_CANFD && FC7300_FLEXCAN1_CANFD_DATA_SIZE_16
+	default 8  if FC7300_FLEXCAN1_CANFD && FC7300_FLEXCAN1_CANFD_DATA_SIZE_32
+	default 5  if FC7300_FLEXCAN1_CANFD && FC7300_FLEXCAN1_CANFD_DATA_SIZE_64
+
+config FC7300_FLEXCAN1_MB0_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN1_RXMB_COUNT > 0
+
+config FC7300_FLEXCAN1_MB1_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN1_RXMB_COUNT > 1
+
+config FC7300_FLEXCAN1_MB2_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN1_RXMB_COUNT > 2
+
+config FC7300_FLEXCAN1_MB3_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN1_RXMB_COUNT > 3
+
+config FC7300_FLEXCAN1_MB4_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN1_RXMB_COUNT > 4
+
+config FC7300_FLEXCAN1_MB5_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN1_RXMB_COUNT > 5
+
+config FC7300_FLEXCAN1_MB6_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN1_RXMB_COUNT > 6
+
+config FC7300_FLEXCAN1_MB7_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN1_RXMB_COUNT > 7
+
+config FC7300_FLEXCAN1_MB8_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN1_RXMB_COUNT > 8
+
+config FC7300_FLEXCAN1_MB9_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN1_RXMB_COUNT > 9
+
+config FC7300_FLEXCAN1_MB10_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN1_RXMB_COUNT > 10
+
+config FC7300_FLEXCAN1_MB11_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN1_RXMB_COUNT > 11
+
+config FC7300_FLEXCAN1_MB12_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN1_RXMB_COUNT > 12
+
+config FC7300_FLEXCAN1_MB13_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN1_RXMB_COUNT > 13
+
+config FC7300_FLEXCAN1_MB14_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN1_RXMB_COUNT > 14
+
+config FC7300_FLEXCAN1_MB15_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN1_RXMB_COUNT > 15
+
+config FC7300_FLEXCAN1_MB16_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN1_RXMB_COUNT > 16
+
+config FC7300_FLEXCAN1_MB17_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN1_RXMB_COUNT > 17
+
+config FC7300_FLEXCAN1_MB18_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN1_RXMB_COUNT > 18
+
+config FC7300_FLEXCAN1_MB19_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN1_RXMB_COUNT > 19
+
+config FC7300_FLEXCAN1_MB20_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN1_RXMB_COUNT > 20
+
+config FC7300_FLEXCAN1_MB21_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN1_RXMB_COUNT > 21
+
+config FC7300_FLEXCAN1_MB22_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN1_RXMB_COUNT > 22
+
+config FC7300_FLEXCAN1_MB23_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN1_RXMB_COUNT > 23
+
+config FC7300_FLEXCAN1_MB24_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN1_RXMB_COUNT > 24
+
+config FC7300_FLEXCAN1_MB25_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN1_RXMB_COUNT > 25
+
+config FC7300_FLEXCAN1_MB26_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN1_RXMB_COUNT > 26
+
+config FC7300_FLEXCAN1_MB27_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN1_RXMB_COUNT > 27
+
+config FC7300_FLEXCAN1_MB28_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN1_RXMB_COUNT > 28
+
+config FC7300_FLEXCAN1_MB29_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN1_RXMB_COUNT > 29
+
+config FC7300_FLEXCAN1_MB30_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN1_RXMB_COUNT > 30
+
+config FC7300_FLEXCAN1_MB31_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN1_RXMB_COUNT > 31
+
+config FC7300_FLEXCAN1_ENHANCED_RX_FIFO
+	bool "Enchanced Rx FIFO"
+	default y
+	select FC7300_FLEXCAN_ENHANCED_RX_FIFO
+
+config FC7300_FLEXCAN1_ERFEL_TOTAL_COUNT
+	int "ERFEL Total Count"
+	depends on FC7300_FLEXCAN1_ENHANCED_RX_FIFO
+	range 1 16
+	default 1
+
+config FC7300_FLEXCAN1_ERFEL_EXTID_COUNT
+	int "ERFEL ExtID Count"
+	depends on FC7300_FLEXCAN1_ENHANCED_RX_FIFO && CAN_EXTID
+	range 0 FC7300_FLEXCAN1_ERFEL_TOTAL_COUNT
+	default 0
+
+config FC7300_FLEXCAN1_ERFEL1_ENABLE
+	bool
+	default y if FC7300_FLEXCAN1_ERFEL_TOTAL_COUNT > 1
+
+config FC7300_FLEXCAN1_ERFEL2_ENABLE
+	bool
+	default y if FC7300_FLEXCAN1_ERFEL_TOTAL_COUNT > 2
+
+config FC7300_FLEXCAN1_ERFEL3_ENABLE
+	bool
+	default y if FC7300_FLEXCAN1_ERFEL_TOTAL_COUNT > 3
+
+config FC7300_FLEXCAN1_ERFEL4_ENABLE
+	bool
+	default y if FC7300_FLEXCAN1_ERFEL_TOTAL_COUNT > 4
+
+config FC7300_FLEXCAN1_ERFEL5_ENABLE
+	bool
+	default y if FC7300_FLEXCAN1_ERFEL_TOTAL_COUNT > 5
+
+config FC7300_FLEXCAN1_ERFEL6_ENABLE
+	bool
+	default y if FC7300_FLEXCAN1_ERFEL_TOTAL_COUNT > 6
+
+config FC7300_FLEXCAN1_ERFEL7_ENABLE
+	bool
+	default y if FC7300_FLEXCAN1_ERFEL_TOTAL_COUNT > 7
+
+config FC7300_FLEXCAN1_ERFEL8_ENABLE
+	bool
+	default y if FC7300_FLEXCAN1_ERFEL_TOTAL_COUNT > 8
+
+config FC7300_FLEXCAN1_ERFEL9_ENABLE
+	bool
+	default y if FC7300_FLEXCAN1_ERFEL_TOTAL_COUNT > 9
+
+config FC7300_FLEXCAN1_ERFEL10_ENABLE
+	bool
+	default y if FC7300_FLEXCAN1_ERFEL_TOTAL_COUNT > 10
+
+config FC7300_FLEXCAN1_ERFEL11_ENABLE
+	bool
+	default y if FC7300_FLEXCAN1_ERFEL_TOTAL_COUNT > 11
+
+config FC7300_FLEXCAN1_ERFEL12_ENABLE
+	bool
+	default y if FC7300_FLEXCAN1_ERFEL_TOTAL_COUNT > 12
+
+config FC7300_FLEXCAN1_ERFEL13_ENABLE
+	bool
+	default y if FC7300_FLEXCAN1_ERFEL_TOTAL_COUNT > 13
+
+config FC7300_FLEXCAN1_ERFEL14_ENABLE
+	bool
+	default y if FC7300_FLEXCAN1_ERFEL_TOTAL_COUNT > 14
+
+config FC7300_FLEXCAN1_ERFEL15_ENABLE
+	bool
+	default y if FC7300_FLEXCAN1_ERFEL_TOTAL_COUNT > 15
+
+config FC7300_FLEXCAN1_ERFEL0_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN1_ERFEL_EXTID_COUNT > 0
+
+config FC7300_FLEXCAN1_ERFEL1_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN1_ERFEL_EXTID_COUNT > 1
+
+config FC7300_FLEXCAN1_ERFEL2_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN1_ERFEL_EXTID_COUNT > 2
+
+config FC7300_FLEXCAN1_ERFEL3_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN1_ERFEL_EXTID_COUNT > 3
+
+config FC7300_FLEXCAN1_ERFEL4_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN1_ERFEL_EXTID_COUNT > 4
+
+config FC7300_FLEXCAN1_ERFEL5_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN1_ERFEL_EXTID_COUNT > 5
+
+config FC7300_FLEXCAN1_ERFEL6_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN1_ERFEL_EXTID_COUNT > 6
+
+config FC7300_FLEXCAN1_ERFEL7_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN1_ERFEL_EXTID_COUNT > 7
+
+config FC7300_FLEXCAN1_ERFEL8_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN1_ERFEL_EXTID_COUNT > 8
+
+config FC7300_FLEXCAN1_ERFEL9_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN1_ERFEL_EXTID_COUNT > 9
+
+config FC7300_FLEXCAN1_ERFEL10_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN1_ERFEL_EXTID_COUNT > 10
+
+config FC7300_FLEXCAN1_ERFEL11_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN1_ERFEL_EXTID_COUNT > 11
+
+config FC7300_FLEXCAN1_ERFEL12_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN1_ERFEL_EXTID_COUNT > 12
+
+config FC7300_FLEXCAN1_ERFEL13_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN1_ERFEL_EXTID_COUNT > 13
+
+config FC7300_FLEXCAN1_ERFEL14_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN1_ERFEL_EXTID_COUNT > 14
+
+config FC7300_FLEXCAN1_ERFEL15_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN1_ERFEL_EXTID_COUNT > 15
+
+config FC7300_FLEXCAN1_PRESDIV
+	int "CAN Presdiv"
+	range 1 1024
+	default 3
+	---help---
+		Default 3 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN baudrate is 500K, sample point is 80%.
+
+config FC7300_FLEXCAN1_PROPSEG
+	int "CAN Propseg"
+	default 40
+	---help---
+		The sum of Propseg plus Pseg1 must be less than 256.
+		Default 40 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 500K, sample point is 80%.
+
+config FC7300_FLEXCAN1_PSEG1
+	int "CAN Pseg1"
+	default 39
+	---help---
+		The sum of Propseg plus Pseg1 must be less than 256.
+		Default 39 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 500K, sample point is 80%.
+
+config FC7300_FLEXCAN1_PSEG2
+	int "CAN Pseg2"
+	range 1 128
+	default 20
+	---help---
+		Default 20 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN1_SJW
+	int "CAN Sjw"
+	range 1 128
+	default 1
+
+config FC7300_FLEXCAN1_ISR_PRIORITY
+	int "FLEXCAN1 ISR PRIORITY"
+	default 192
+
+endmenu # FC7300 FC7300_FLEXCAN1
+
+menu "FC7300 FLEXCAN2 Configuration"
+	depends on FC7300_FLEXCAN2
+
+choice
+	prompt "Character driver or SocketCAN support"
+	default FC7300_FLEXCAN2_SOCKET
+
+config FC7300_FLEXCAN2_CHARDRIVER
+	bool "Character driver support"
+	select FC7300_FLEXCAN_CHARDRIVER
+
+config FC7300_FLEXCAN2_SOCKET
+	bool "SocketCAN support"
+	select FC7300_FLEXCAN_SOCKET
+
+endchoice # FLEXCAN2 character driver or SocketCAN support
+
+config FC7300_FLEXCAN2_CANFD
+	bool "Use CAN FD"
+	default y
+	select CAN_FD if FC7300_FLEXCAN2_CHARDRIVER
+	select NET_CAN_HAVE_CANFD if FC7300_FLEXCAN2_SOCKET
+
+config FC7300_FLEXCAN2_CANFD_BRS
+	bool "CAN FD Bit Rate Switch"
+	depends on FC7300_FLEXCAN2_CANFD
+	default y
+	select FC7300_FLEXCAN_CANFD_BRS
+
+config FC7300_FLEXCAN2_CANFD_DATA_PRESDIV
+	int "CAN FD Data Presdiv"
+	depends on FC7300_FLEXCAN2_CANFD_BRS
+	range 1 1024
+	default 3
+	---help---
+		Default 3 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN2_CANFD_DATA_PROPSEG
+	int "CAN FD Data Propseg"
+	depends on FC7300_FLEXCAN2_CANFD_BRS
+	default 10
+	---help---
+		The sum of Data Propseg plus Data Pseg1 must be less than 32.
+		Default 10 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN2_CANFD_DATA_PSEG1
+	int "CAN FD Data Pseg1"
+	depends on FC7300_FLEXCAN2_CANFD_BRS
+	default 9
+	---help---
+		The sum of Data Propseg plus Data Pseg1 must be less than 32.
+		Default 9 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN2_CANFD_DATA_PSEG2
+	int "CAN FD Data Pseg2"
+	depends on FC7300_FLEXCAN2_CANFD_BRS
+	range 1 16
+	default 5
+	---help---
+		Default 5 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN2_CANFD_DATA_SJW
+	int "CAN FD Data Sjw"
+	depends on FC7300_FLEXCAN2_CANFD_BRS
+	range 1 16
+	default 1
+
+config FC7300_FLEXCAN2_CANFD_SSP
+	bool "CAN FD Second Sample Point"
+	depends on FC7300_FLEXCAN2_CANFD
+	default n
+	select FC7300_FLEXCAN_CANFD_SSP
+
+config FC7300_FLEXCAN2_CANFD_SSP_OFFSET
+	int "CAN FD Second Sample Point Offset"
+	depends on FC7300_FLEXCAN2_CANFD_SSP
+	range 1 128
+	default 60
+
+choice
+	prompt "CAN FD Date Size"
+	depends on FC7300_FLEXCAN2_CANFD
+	default FC7300_FLEXCAN2_CANFD_DATA_SIZE_64
+
+config FC7300_FLEXCAN2_CANFD_DATA_SIZE_8
+	bool "8"
+
+config FC7300_FLEXCAN2_CANFD_DATA_SIZE_16
+	bool "16"
+
+config FC7300_FLEXCAN2_CANFD_DATA_SIZE_32
+	bool "32"
+
+config FC7300_FLEXCAN2_CANFD_DATA_SIZE_64
+	bool "64"
+
+endchoice
+
+config FC7300_FLEXCAN2_RXMB_COUNT
+	int "Rx MB Count"
+	range 0 32 if !FC7300_FLEXCAN2_CANFD
+	range 0 32 if FC7300_FLEXCAN2_CANFD && FC7300_FLEXCAN2_CANFD_DATA_SIZE_8
+	range 0 21 if FC7300_FLEXCAN2_CANFD && FC7300_FLEXCAN2_CANFD_DATA_SIZE_16
+	range 0 12 if FC7300_FLEXCAN2_CANFD && FC7300_FLEXCAN2_CANFD_DATA_SIZE_32
+	range 0 7  if FC7300_FLEXCAN2_CANFD && FC7300_FLEXCAN2_CANFD_DATA_SIZE_64
+	default 22 if !FC7300_FLEXCAN2_CANFD
+	default 22 if FC7300_FLEXCAN2_CANFD && FC7300_FLEXCAN2_CANFD_DATA_SIZE_8
+	default 14 if FC7300_FLEXCAN2_CANFD && FC7300_FLEXCAN2_CANFD_DATA_SIZE_16
+	default 8  if FC7300_FLEXCAN2_CANFD && FC7300_FLEXCAN2_CANFD_DATA_SIZE_32
+	default 5  if FC7300_FLEXCAN2_CANFD && FC7300_FLEXCAN2_CANFD_DATA_SIZE_64
+
+config FC7300_FLEXCAN2_MB0_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN2_RXMB_COUNT > 0
+
+config FC7300_FLEXCAN2_MB1_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN2_RXMB_COUNT > 1
+
+config FC7300_FLEXCAN2_MB2_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN2_RXMB_COUNT > 2
+
+config FC7300_FLEXCAN2_MB3_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN2_RXMB_COUNT > 3
+
+config FC7300_FLEXCAN2_MB4_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN2_RXMB_COUNT > 4
+
+config FC7300_FLEXCAN2_MB5_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN2_RXMB_COUNT > 5
+
+config FC7300_FLEXCAN2_MB6_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN2_RXMB_COUNT > 6
+
+config FC7300_FLEXCAN2_MB7_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN2_RXMB_COUNT > 7
+
+config FC7300_FLEXCAN2_MB8_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN2_RXMB_COUNT > 8
+
+config FC7300_FLEXCAN2_MB9_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN2_RXMB_COUNT > 9
+
+config FC7300_FLEXCAN2_MB10_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN2_RXMB_COUNT > 10
+
+config FC7300_FLEXCAN2_MB11_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN2_RXMB_COUNT > 11
+
+config FC7300_FLEXCAN2_MB12_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN2_RXMB_COUNT > 12
+
+config FC7300_FLEXCAN2_MB13_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN2_RXMB_COUNT > 13
+
+config FC7300_FLEXCAN2_MB14_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN2_RXMB_COUNT > 14
+
+config FC7300_FLEXCAN2_MB15_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN2_RXMB_COUNT > 15
+
+config FC7300_FLEXCAN2_MB16_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN2_RXMB_COUNT > 16
+
+config FC7300_FLEXCAN2_MB17_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN2_RXMB_COUNT > 17
+
+config FC7300_FLEXCAN2_MB18_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN2_RXMB_COUNT > 18
+
+config FC7300_FLEXCAN2_MB19_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN2_RXMB_COUNT > 19
+
+config FC7300_FLEXCAN2_MB20_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN2_RXMB_COUNT > 20
+
+config FC7300_FLEXCAN2_MB21_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN2_RXMB_COUNT > 21
+
+config FC7300_FLEXCAN2_MB22_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN2_RXMB_COUNT > 22
+
+config FC7300_FLEXCAN2_MB23_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN2_RXMB_COUNT > 23
+
+config FC7300_FLEXCAN2_MB24_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN2_RXMB_COUNT > 24
+
+config FC7300_FLEXCAN2_MB25_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN2_RXMB_COUNT > 25
+
+config FC7300_FLEXCAN2_MB26_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN2_RXMB_COUNT > 26
+
+config FC7300_FLEXCAN2_MB27_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN2_RXMB_COUNT > 27
+
+config FC7300_FLEXCAN2_MB28_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN2_RXMB_COUNT > 28
+
+config FC7300_FLEXCAN2_MB29_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN2_RXMB_COUNT > 29
+
+config FC7300_FLEXCAN2_MB30_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN2_RXMB_COUNT > 30
+
+config FC7300_FLEXCAN2_MB31_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN2_RXMB_COUNT > 31
+
+config FC7300_FLEXCAN2_ENHANCED_RX_FIFO
+	bool "Enchanced Rx FIFO"
+	default y
+	select FC7300_FLEXCAN_ENHANCED_RX_FIFO
+
+config FC7300_FLEXCAN2_ERFEL_TOTAL_COUNT
+	int "ERFEL Total Count"
+	depends on FC7300_FLEXCAN2_ENHANCED_RX_FIFO
+	range 1 16
+	default 1
+
+config FC7300_FLEXCAN2_ERFEL_EXTID_COUNT
+	int "ERFEL ExtID Count"
+	depends on FC7300_FLEXCAN2_ENHANCED_RX_FIFO && CAN_EXTID
+	range 0 FC7300_FLEXCAN2_ERFEL_TOTAL_COUNT
+	default 0
+
+config FC7300_FLEXCAN2_ERFEL1_ENABLE
+	bool
+	default y if FC7300_FLEXCAN2_ERFEL_TOTAL_COUNT > 1
+
+config FC7300_FLEXCAN2_ERFEL2_ENABLE
+	bool
+	default y if FC7300_FLEXCAN2_ERFEL_TOTAL_COUNT > 2
+
+config FC7300_FLEXCAN2_ERFEL3_ENABLE
+	bool
+	default y if FC7300_FLEXCAN2_ERFEL_TOTAL_COUNT > 3
+
+config FC7300_FLEXCAN2_ERFEL4_ENABLE
+	bool
+	default y if FC7300_FLEXCAN2_ERFEL_TOTAL_COUNT > 4
+
+config FC7300_FLEXCAN2_ERFEL5_ENABLE
+	bool
+	default y if FC7300_FLEXCAN2_ERFEL_TOTAL_COUNT > 5
+
+config FC7300_FLEXCAN2_ERFEL6_ENABLE
+	bool
+	default y if FC7300_FLEXCAN2_ERFEL_TOTAL_COUNT > 6
+
+config FC7300_FLEXCAN2_ERFEL7_ENABLE
+	bool
+	default y if FC7300_FLEXCAN2_ERFEL_TOTAL_COUNT > 7
+
+config FC7300_FLEXCAN2_ERFEL8_ENABLE
+	bool
+	default y if FC7300_FLEXCAN2_ERFEL_TOTAL_COUNT > 8
+
+config FC7300_FLEXCAN2_ERFEL9_ENABLE
+	bool
+	default y if FC7300_FLEXCAN2_ERFEL_TOTAL_COUNT > 9
+
+config FC7300_FLEXCAN2_ERFEL10_ENABLE
+	bool
+	default y if FC7300_FLEXCAN2_ERFEL_TOTAL_COUNT > 10
+
+config FC7300_FLEXCAN2_ERFEL11_ENABLE
+	bool
+	default y if FC7300_FLEXCAN2_ERFEL_TOTAL_COUNT > 11
+
+config FC7300_FLEXCAN2_ERFEL12_ENABLE
+	bool
+	default y if FC7300_FLEXCAN2_ERFEL_TOTAL_COUNT > 12
+
+config FC7300_FLEXCAN2_ERFEL13_ENABLE
+	bool
+	default y if FC7300_FLEXCAN2_ERFEL_TOTAL_COUNT > 13
+
+config FC7300_FLEXCAN2_ERFEL14_ENABLE
+	bool
+	default y if FC7300_FLEXCAN2_ERFEL_TOTAL_COUNT > 14
+
+config FC7300_FLEXCAN2_ERFEL15_ENABLE
+	bool
+	default y if FC7300_FLEXCAN2_ERFEL_TOTAL_COUNT > 15
+
+config FC7300_FLEXCAN2_ERFEL0_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN2_ERFEL_EXTID_COUNT > 0
+
+config FC7300_FLEXCAN2_ERFEL1_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN2_ERFEL_EXTID_COUNT > 1
+
+config FC7300_FLEXCAN2_ERFEL2_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN2_ERFEL_EXTID_COUNT > 2
+
+config FC7300_FLEXCAN2_ERFEL3_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN2_ERFEL_EXTID_COUNT > 3
+
+config FC7300_FLEXCAN2_ERFEL4_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN2_ERFEL_EXTID_COUNT > 4
+
+config FC7300_FLEXCAN2_ERFEL5_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN2_ERFEL_EXTID_COUNT > 5
+
+config FC7300_FLEXCAN2_ERFEL6_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN2_ERFEL_EXTID_COUNT > 6
+
+config FC7300_FLEXCAN2_ERFEL7_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN2_ERFEL_EXTID_COUNT > 7
+
+config FC7300_FLEXCAN2_ERFEL8_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN2_ERFEL_EXTID_COUNT > 8
+
+config FC7300_FLEXCAN2_ERFEL9_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN2_ERFEL_EXTID_COUNT > 9
+
+config FC7300_FLEXCAN2_ERFEL10_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN2_ERFEL_EXTID_COUNT > 10
+
+config FC7300_FLEXCAN2_ERFEL11_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN2_ERFEL_EXTID_COUNT > 11
+
+config FC7300_FLEXCAN2_ERFEL12_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN2_ERFEL_EXTID_COUNT > 12
+
+config FC7300_FLEXCAN2_ERFEL13_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN2_ERFEL_EXTID_COUNT > 13
+
+config FC7300_FLEXCAN2_ERFEL14_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN2_ERFEL_EXTID_COUNT > 14
+
+config FC7300_FLEXCAN2_ERFEL15_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN2_ERFEL_EXTID_COUNT > 15
+
+config FC7300_FLEXCAN2_PRESDIV
+	int "CAN Presdiv"
+	range 1 1024
+	default 3
+	---help---
+		Default 3 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN baudrate is 500K, sample point is 80%.
+
+config FC7300_FLEXCAN2_PROPSEG
+	int "CAN Propseg"
+	default 40
+	---help---
+		The sum of Propseg plus Pseg1 must be less than 256.
+		Default 40 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 500K, sample point is 80%.
+
+config FC7300_FLEXCAN2_PSEG1
+	int "CAN Pseg1"
+	default 39
+	---help---
+		The sum of Propseg plus Pseg1 must be less than 256.
+		Default 39 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 500K, sample point is 80%.
+
+config FC7300_FLEXCAN2_PSEG2
+	int "CAN Pseg2"
+	range 1 128
+	default 20
+	---help---
+		Default 20 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN2_SJW
+	int "CAN Sjw"
+	range 1 128
+	default 1
+
+config FC7300_FLEXCAN2_ISR_PRIORITY
+	int "FLEXCAN2 ISR PRIORITY"
+	default 192
+
+endmenu # FC7300 FLEXCAN2 Configuration
+
+menu "FC7300 FLEXCAN3 Configuration"
+	depends on FC7300_FLEXCAN3
+
+choice
+	prompt "Character driver or SocketCAN support"
+	default FC7300_FLEXCAN3_SOCKET
+
+config FC7300_FLEXCAN3_CHARDRIVER
+	bool "Character driver support"
+	select FC7300_FLEXCAN_CHARDRIVER
+
+config FC7300_FLEXCAN3_SOCKET
+	bool "SocketCAN support"
+	select FC7300_FLEXCAN_SOCKET
+
+endchoice # FLEXCAN3 character driver or SocketCAN support
+
+config FC7300_FLEXCAN3_CANFD
+	bool "Use CAN FD"
+	default y
+	select CAN_FD if FC7300_FLEXCAN3_CHARDRIVER
+	select NET_CAN_HAVE_CANFD if FC7300_FLEXCAN3_SOCKET
+
+config FC7300_FLEXCAN3_CANFD_BRS
+	bool "CAN FD Bit Rate Switch"
+	depends on FC7300_FLEXCAN3_CANFD
+	default y
+	select FC7300_FLEXCAN_CANFD_BRS
+
+config FC7300_FLEXCAN3_CANFD_DATA_PRESDIV
+	int "CAN FD Data Presdiv"
+	depends on FC7300_FLEXCAN3_CANFD_BRS
+	range 1 1024
+	default 3
+	---help---
+		Default 3 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN3_CANFD_DATA_PROPSEG
+	int "CAN FD Data Propseg"
+	depends on FC7300_FLEXCAN3_CANFD_BRS
+	default 10
+	---help---
+		The sum of Data Propseg plus Data Pseg1 must be less than 32.
+		Default 10 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN3_CANFD_DATA_PSEG1
+	int "CAN FD Data Pseg1"
+	depends on FC7300_FLEXCAN3_CANFD_BRS
+	default 9
+	---help---
+		The sum of Data Propseg plus Data Pseg1 must be less than 32.
+		Default 9 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN3_CANFD_DATA_PSEG2
+	int "CAN FD Data Pseg2"
+	depends on FC7300_FLEXCAN3_CANFD_BRS
+	range 1 16
+	default 5
+	---help---
+		Default 5 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN3_CANFD_DATA_SJW
+	int "CAN FD Data Sjw"
+	depends on FC7300_FLEXCAN3_CANFD_BRS
+	range 1 16
+	default 1
+
+config FC7300_FLEXCAN3_CANFD_SSP
+	bool "CAN FD Second Sample Point"
+	depends on FC7300_FLEXCAN3_CANFD
+	default n
+	select FC7300_FLEXCAN_CANFD_SSP
+
+config FC7300_FLEXCAN3_CANFD_SSP_OFFSET
+	int "CAN FD Second Sample Point Offset"
+	depends on FC7300_FLEXCAN3_CANFD_SSP
+	range 1 128
+	default 60
+
+choice
+	prompt "CAN FD Date Size"
+	depends on FC7300_FLEXCAN3_CANFD
+	default FC7300_FLEXCAN3_CANFD_DATA_SIZE_64
+
+config FC7300_FLEXCAN3_CANFD_DATA_SIZE_8
+	bool "8"
+
+config FC7300_FLEXCAN3_CANFD_DATA_SIZE_16
+	bool "16"
+
+config FC7300_FLEXCAN3_CANFD_DATA_SIZE_32
+	bool "32"
+
+config FC7300_FLEXCAN3_CANFD_DATA_SIZE_64
+	bool "64"
+
+endchoice
+
+config FC7300_FLEXCAN3_RXMB_COUNT
+	int "Rx MB Count"
+	range 0 32 if !FC7300_FLEXCAN3_CANFD
+	range 0 32 if FC7300_FLEXCAN3_CANFD && FC7300_FLEXCAN3_CANFD_DATA_SIZE_8
+	range 0 21 if FC7300_FLEXCAN3_CANFD && FC7300_FLEXCAN3_CANFD_DATA_SIZE_16
+	range 0 12 if FC7300_FLEXCAN3_CANFD && FC7300_FLEXCAN3_CANFD_DATA_SIZE_32
+	range 0 7  if FC7300_FLEXCAN3_CANFD && FC7300_FLEXCAN3_CANFD_DATA_SIZE_64
+	default 22 if !FC7300_FLEXCAN3_CANFD
+	default 22 if FC7300_FLEXCAN3_CANFD && FC7300_FLEXCAN3_CANFD_DATA_SIZE_8
+	default 14 if FC7300_FLEXCAN3_CANFD && FC7300_FLEXCAN3_CANFD_DATA_SIZE_16
+	default 8  if FC7300_FLEXCAN3_CANFD && FC7300_FLEXCAN3_CANFD_DATA_SIZE_32
+	default 5  if FC7300_FLEXCAN3_CANFD && FC7300_FLEXCAN3_CANFD_DATA_SIZE_64
+
+config FC7300_FLEXCAN3_MB0_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN3_RXMB_COUNT > 0
+
+config FC7300_FLEXCAN3_MB1_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN3_RXMB_COUNT > 1
+
+config FC7300_FLEXCAN3_MB2_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN3_RXMB_COUNT > 2
+
+config FC7300_FLEXCAN3_MB3_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN3_RXMB_COUNT > 3
+
+config FC7300_FLEXCAN3_MB4_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN3_RXMB_COUNT > 4
+
+config FC7300_FLEXCAN3_MB5_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN3_RXMB_COUNT > 5
+
+config FC7300_FLEXCAN3_MB6_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN3_RXMB_COUNT > 6
+
+config FC7300_FLEXCAN3_MB7_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN3_RXMB_COUNT > 7
+
+config FC7300_FLEXCAN3_MB8_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN3_RXMB_COUNT > 8
+
+config FC7300_FLEXCAN3_MB9_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN3_RXMB_COUNT > 9
+
+config FC7300_FLEXCAN3_MB10_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN3_RXMB_COUNT > 10
+
+config FC7300_FLEXCAN3_MB11_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN3_RXMB_COUNT > 11
+
+config FC7300_FLEXCAN3_MB12_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN3_RXMB_COUNT > 12
+
+config FC7300_FLEXCAN3_MB13_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN3_RXMB_COUNT > 13
+
+config FC7300_FLEXCAN3_MB14_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN3_RXMB_COUNT > 14
+
+config FC7300_FLEXCAN3_MB15_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN3_RXMB_COUNT > 15
+
+config FC7300_FLEXCAN3_MB16_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN3_RXMB_COUNT > 16
+
+config FC7300_FLEXCAN3_MB17_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN3_RXMB_COUNT > 17
+
+config FC7300_FLEXCAN3_MB18_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN3_RXMB_COUNT > 18
+
+config FC7300_FLEXCAN3_MB19_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN3_RXMB_COUNT > 19
+
+config FC7300_FLEXCAN3_MB20_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN3_RXMB_COUNT > 20
+
+config FC7300_FLEXCAN3_MB21_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN3_RXMB_COUNT > 21
+
+config FC7300_FLEXCAN3_MB22_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN3_RXMB_COUNT > 22
+
+config FC7300_FLEXCAN3_MB23_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN3_RXMB_COUNT > 23
+
+config FC7300_FLEXCAN3_MB24_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN3_RXMB_COUNT > 24
+
+config FC7300_FLEXCAN3_MB25_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN3_RXMB_COUNT > 25
+
+config FC7300_FLEXCAN3_MB26_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN3_RXMB_COUNT > 26
+
+config FC7300_FLEXCAN3_MB27_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN3_RXMB_COUNT > 27
+
+config FC7300_FLEXCAN3_MB28_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN3_RXMB_COUNT > 28
+
+config FC7300_FLEXCAN3_MB29_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN3_RXMB_COUNT > 29
+
+config FC7300_FLEXCAN3_MB30_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN3_RXMB_COUNT > 30
+
+config FC7300_FLEXCAN3_MB31_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN3_RXMB_COUNT > 31
+
+config FC7300_FLEXCAN3_ENHANCED_RX_FIFO
+	bool "Enchanced Rx FIFO"
+	default y
+	select FC7300_FLEXCAN_ENHANCED_RX_FIFO
+
+config FC7300_FLEXCAN3_ERFEL_TOTAL_COUNT
+	int "ERFEL Total Count"
+	depends on FC7300_FLEXCAN3_ENHANCED_RX_FIFO
+	range 1 16
+	default 1
+
+config FC7300_FLEXCAN3_ERFEL_EXTID_COUNT
+	int "ERFEL ExtID Count"
+	depends on FC7300_FLEXCAN3_ENHANCED_RX_FIFO && CAN_EXTID
+	range 0 FC7300_FLEXCAN3_ERFEL_TOTAL_COUNT
+	default 0
+
+config FC7300_FLEXCAN3_ERFEL1_ENABLE
+	bool
+	default y if FC7300_FLEXCAN3_ERFEL_TOTAL_COUNT > 1
+
+config FC7300_FLEXCAN3_ERFEL2_ENABLE
+	bool
+	default y if FC7300_FLEXCAN3_ERFEL_TOTAL_COUNT > 2
+
+config FC7300_FLEXCAN3_ERFEL3_ENABLE
+	bool
+	default y if FC7300_FLEXCAN3_ERFEL_TOTAL_COUNT > 3
+
+config FC7300_FLEXCAN3_ERFEL4_ENABLE
+	bool
+	default y if FC7300_FLEXCAN3_ERFEL_TOTAL_COUNT > 4
+
+config FC7300_FLEXCAN3_ERFEL5_ENABLE
+	bool
+	default y if FC7300_FLEXCAN3_ERFEL_TOTAL_COUNT > 5
+
+config FC7300_FLEXCAN3_ERFEL6_ENABLE
+	bool
+	default y if FC7300_FLEXCAN3_ERFEL_TOTAL_COUNT > 6
+
+config FC7300_FLEXCAN3_ERFEL7_ENABLE
+	bool
+	default y if FC7300_FLEXCAN3_ERFEL_TOTAL_COUNT > 7
+
+config FC7300_FLEXCAN3_ERFEL8_ENABLE
+	bool
+	default y if FC7300_FLEXCAN3_ERFEL_TOTAL_COUNT > 8
+
+config FC7300_FLEXCAN3_ERFEL9_ENABLE
+	bool
+	default y if FC7300_FLEXCAN3_ERFEL_TOTAL_COUNT > 9
+
+config FC7300_FLEXCAN3_ERFEL10_ENABLE
+	bool
+	default y if FC7300_FLEXCAN3_ERFEL_TOTAL_COUNT > 10
+
+config FC7300_FLEXCAN3_ERFEL11_ENABLE
+	bool
+	default y if FC7300_FLEXCAN3_ERFEL_TOTAL_COUNT > 11
+
+config FC7300_FLEXCAN3_ERFEL12_ENABLE
+	bool
+	default y if FC7300_FLEXCAN3_ERFEL_TOTAL_COUNT > 12
+
+config FC7300_FLEXCAN3_ERFEL13_ENABLE
+	bool
+	default y if FC7300_FLEXCAN3_ERFEL_TOTAL_COUNT > 13
+
+config FC7300_FLEXCAN3_ERFEL14_ENABLE
+	bool
+	default y if FC7300_FLEXCAN3_ERFEL_TOTAL_COUNT > 14
+
+config FC7300_FLEXCAN3_ERFEL15_ENABLE
+	bool
+	default y if FC7300_FLEXCAN3_ERFEL_TOTAL_COUNT > 15
+
+config FC7300_FLEXCAN3_ERFEL0_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN3_ERFEL_EXTID_COUNT > 0
+
+config FC7300_FLEXCAN3_ERFEL1_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN3_ERFEL_EXTID_COUNT > 1
+
+config FC7300_FLEXCAN3_ERFEL2_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN3_ERFEL_EXTID_COUNT > 2
+
+config FC7300_FLEXCAN3_ERFEL3_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN3_ERFEL_EXTID_COUNT > 3
+
+config FC7300_FLEXCAN3_ERFEL4_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN3_ERFEL_EXTID_COUNT > 4
+
+config FC7300_FLEXCAN3_ERFEL5_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN3_ERFEL_EXTID_COUNT > 5
+
+config FC7300_FLEXCAN3_ERFEL6_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN3_ERFEL_EXTID_COUNT > 6
+
+config FC7300_FLEXCAN3_ERFEL7_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN3_ERFEL_EXTID_COUNT > 7
+
+config FC7300_FLEXCAN3_ERFEL8_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN3_ERFEL_EXTID_COUNT > 8
+
+config FC7300_FLEXCAN3_ERFEL9_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN3_ERFEL_EXTID_COUNT > 9
+
+config FC7300_FLEXCAN3_ERFEL10_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN3_ERFEL_EXTID_COUNT > 10
+
+config FC7300_FLEXCAN3_ERFEL11_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN3_ERFEL_EXTID_COUNT > 11
+
+config FC7300_FLEXCAN3_ERFEL12_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN3_ERFEL_EXTID_COUNT > 12
+
+config FC7300_FLEXCAN3_ERFEL13_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN3_ERFEL_EXTID_COUNT > 13
+
+config FC7300_FLEXCAN3_ERFEL14_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN3_ERFEL_EXTID_COUNT > 14
+
+config FC7300_FLEXCAN3_ERFEL15_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN3_ERFEL_EXTID_COUNT > 15
+
+config FC7300_FLEXCAN3_PRESDIV
+	int "CAN Presdiv"
+	range 1 1024
+	default 3
+	---help---
+		Default 3 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN baudrate is 500K, sample point is 80%.
+
+config FC7300_FLEXCAN3_PROPSEG
+	int "CAN Propseg"
+	default 40
+	---help---
+		The sum of Propseg plus Pseg1 must be less than 256.
+		Default 40 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 500K, sample point is 80%.
+
+config FC7300_FLEXCAN3_PSEG1
+	int "CAN Pseg1"
+	default 39
+	---help---
+		The sum of Propseg plus Pseg1 must be less than 256.
+		Default 39 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 500K, sample point is 80%.
+
+config FC7300_FLEXCAN3_PSEG2
+	int "CAN Pseg2"
+	range 1 128
+	default 20
+	---help---
+		Default 20 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN3_SJW
+	int "CAN Sjw"
+	range 1 128
+	default 1
+
+config FC7300_FLEXCAN3_ISR_PRIORITY
+	int "FLEXCAN3 ISR PRIORITY"
+	default 192
+
+endmenu # FC7300 FLEXCAN3 Configuration
+
+menu "FC7300 FLEXCAN4 Configuration"
+	depends on FC7300_FLEXCAN4
+
+choice
+	prompt "Character driver or SocketCAN support"
+	default FC7300_FLEXCAN4_SOCKET
+
+config FC7300_FLEXCAN4_CHARDRIVER
+	bool "Character driver support"
+	select FC7300_FLEXCAN_CHARDRIVER
+
+config FC7300_FLEXCAN4_SOCKET
+	bool "SocketCAN support"
+	select FC7300_FLEXCAN_SOCKET
+
+endchoice # FLEXCAN4 character driver or SocketCAN support
+
+config FC7300_FLEXCAN4_CANFD
+	bool "Use CAN FD"
+	default y
+	select CAN_FD if FC7300_FLEXCAN4_CHARDRIVER
+	select NET_CAN_HAVE_CANFD if FC7300_FLEXCAN4_SOCKET
+
+config FC7300_FLEXCAN4_CANFD_BRS
+	bool "CAN FD Bit Rate Switch"
+	depends on FC7300_FLEXCAN4_CANFD
+	default y
+	select FC7300_FLEXCAN_CANFD_BRS
+
+config FC7300_FLEXCAN4_CANFD_DATA_PRESDIV
+	int "CAN FD Data Presdiv"
+	depends on FC7300_FLEXCAN4_CANFD_BRS
+	range 1 1024
+	default 3
+	---help---
+		Default 3 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN4_CANFD_DATA_PROPSEG
+	int "CAN FD Data Propseg"
+	depends on FC7300_FLEXCAN4_CANFD_BRS
+	default 10
+	---help---
+		The sum of Data Propseg plus Data Pseg1 must be less than 32.
+		Default 10 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN4_CANFD_DATA_PSEG1
+	int "CAN FD Data Pseg1"
+	depends on FC7300_FLEXCAN4_CANFD_BRS
+	default 9
+	---help---
+		The sum of Data Propseg plus Data Pseg1 must be less than 32.
+		Default 9 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN4_CANFD_DATA_PSEG2
+	int "CAN FD Data Pseg2"
+	depends on FC7300_FLEXCAN4_CANFD_BRS
+	range 1 16
+	default 5
+	---help---
+		Default 5 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN4_CANFD_DATA_SJW
+	int "CAN FD Data Sjw"
+	depends on FC7300_FLEXCAN4_CANFD_BRS
+	range 1 16
+	default 1
+
+config FC7300_FLEXCAN4_CANFD_SSP
+	bool "CAN FD Second Sample Point"
+	depends on FC7300_FLEXCAN4_CANFD
+	default n
+	select FC7300_FLEXCAN_CANFD_SSP
+
+config FC7300_FLEXCAN4_CANFD_SSP_OFFSET
+	int "CAN FD Second Sample Point Offset"
+	depends on FC7300_FLEXCAN4_CANFD_SSP
+	range 1 128
+	default 60
+
+choice
+	prompt "CAN FD Date Size"
+	depends on FC7300_FLEXCAN4_CANFD
+	default FC7300_FLEXCAN4_CANFD_DATA_SIZE_64
+
+config FC7300_FLEXCAN4_CANFD_DATA_SIZE_8
+	bool "8"
+
+config FC7300_FLEXCAN4_CANFD_DATA_SIZE_16
+	bool "16"
+
+config FC7300_FLEXCAN4_CANFD_DATA_SIZE_32
+	bool "32"
+
+config FC7300_FLEXCAN4_CANFD_DATA_SIZE_64
+	bool "64"
+
+endchoice
+
+config FC7300_FLEXCAN4_RXMB_COUNT
+	int "Rx MB Count"
+	range 0 32 if !FC7300_FLEXCAN4_CANFD
+	range 0 32 if FC7300_FLEXCAN4_CANFD && FC7300_FLEXCAN4_CANFD_DATA_SIZE_8
+	range 0 21 if FC7300_FLEXCAN4_CANFD && FC7300_FLEXCAN4_CANFD_DATA_SIZE_16
+	range 0 12 if FC7300_FLEXCAN4_CANFD && FC7300_FLEXCAN4_CANFD_DATA_SIZE_32
+	range 0 7  if FC7300_FLEXCAN4_CANFD && FC7300_FLEXCAN4_CANFD_DATA_SIZE_64
+	default 22 if !FC7300_FLEXCAN4_CANFD
+	default 22 if FC7300_FLEXCAN4_CANFD && FC7300_FLEXCAN4_CANFD_DATA_SIZE_8
+	default 14 if FC7300_FLEXCAN4_CANFD && FC7300_FLEXCAN4_CANFD_DATA_SIZE_16
+	default 8  if FC7300_FLEXCAN4_CANFD && FC7300_FLEXCAN4_CANFD_DATA_SIZE_32
+	default 5  if FC7300_FLEXCAN4_CANFD && FC7300_FLEXCAN4_CANFD_DATA_SIZE_64
+
+config FC7300_FLEXCAN4_MB0_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN4_RXMB_COUNT > 0
+
+config FC7300_FLEXCAN4_MB1_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN4_RXMB_COUNT > 1
+
+config FC7300_FLEXCAN4_MB2_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN4_RXMB_COUNT > 2
+
+config FC7300_FLEXCAN4_MB3_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN4_RXMB_COUNT > 3
+
+config FC7300_FLEXCAN4_MB4_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN4_RXMB_COUNT > 4
+
+config FC7300_FLEXCAN4_MB5_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN4_RXMB_COUNT > 5
+
+config FC7300_FLEXCAN4_MB6_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN4_RXMB_COUNT > 6
+
+config FC7300_FLEXCAN4_MB7_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN4_RXMB_COUNT > 7
+
+config FC7300_FLEXCAN4_MB8_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN4_RXMB_COUNT > 8
+
+config FC7300_FLEXCAN4_MB9_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN4_RXMB_COUNT > 9
+
+config FC7300_FLEXCAN4_MB10_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN4_RXMB_COUNT > 10
+
+config FC7300_FLEXCAN4_MB11_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN4_RXMB_COUNT > 11
+
+config FC7300_FLEXCAN4_MB12_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN4_RXMB_COUNT > 12
+
+config FC7300_FLEXCAN4_MB13_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN4_RXMB_COUNT > 13
+
+config FC7300_FLEXCAN4_MB14_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN4_RXMB_COUNT > 14
+
+config FC7300_FLEXCAN4_MB15_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN4_RXMB_COUNT > 15
+
+config FC7300_FLEXCAN4_MB16_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN4_RXMB_COUNT > 16
+
+config FC7300_FLEXCAN4_MB17_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN4_RXMB_COUNT > 17
+
+config FC7300_FLEXCAN4_MB18_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN4_RXMB_COUNT > 18
+
+config FC7300_FLEXCAN4_MB19_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN4_RXMB_COUNT > 19
+
+config FC7300_FLEXCAN4_MB20_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN4_RXMB_COUNT > 20
+
+config FC7300_FLEXCAN4_MB21_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN4_RXMB_COUNT > 21
+
+config FC7300_FLEXCAN4_MB22_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN4_RXMB_COUNT > 22
+
+config FC7300_FLEXCAN4_MB23_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN4_RXMB_COUNT > 23
+
+config FC7300_FLEXCAN4_MB24_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN4_RXMB_COUNT > 24
+
+config FC7300_FLEXCAN4_MB25_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN4_RXMB_COUNT > 25
+
+config FC7300_FLEXCAN4_MB26_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN4_RXMB_COUNT > 26
+
+config FC7300_FLEXCAN4_MB27_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN4_RXMB_COUNT > 27
+
+config FC7300_FLEXCAN4_MB28_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN4_RXMB_COUNT > 28
+
+config FC7300_FLEXCAN4_MB29_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN4_RXMB_COUNT > 29
+
+config FC7300_FLEXCAN4_MB30_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN4_RXMB_COUNT > 30
+
+config FC7300_FLEXCAN4_MB31_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN4_RXMB_COUNT > 31
+
+config FC7300_FLEXCAN4_ENHANCED_RX_FIFO
+	bool "Enchanced Rx FIFO"
+	default y
+	select FC7300_FLEXCAN_ENHANCED_RX_FIFO
+
+config FC7300_FLEXCAN4_ERFEL_TOTAL_COUNT
+	int "ERFEL Total Count"
+	depends on FC7300_FLEXCAN4_ENHANCED_RX_FIFO
+	range 1 16
+	default 1
+
+config FC7300_FLEXCAN4_ERFEL_EXTID_COUNT
+	int "ERFEL ExtID Count"
+	depends on FC7300_FLEXCAN4_ENHANCED_RX_FIFO && CAN_EXTID
+	range 0 FC7300_FLEXCAN4_ERFEL_TOTAL_COUNT
+	default 0
+
+config FC7300_FLEXCAN4_ERFEL1_ENABLE
+	bool
+	default y if FC7300_FLEXCAN4_ERFEL_TOTAL_COUNT > 1
+
+config FC7300_FLEXCAN4_ERFEL2_ENABLE
+	bool
+	default y if FC7300_FLEXCAN4_ERFEL_TOTAL_COUNT > 2
+
+config FC7300_FLEXCAN4_ERFEL3_ENABLE
+	bool
+	default y if FC7300_FLEXCAN4_ERFEL_TOTAL_COUNT > 3
+
+config FC7300_FLEXCAN4_ERFEL4_ENABLE
+	bool
+	default y if FC7300_FLEXCAN4_ERFEL_TOTAL_COUNT > 4
+
+config FC7300_FLEXCAN4_ERFEL5_ENABLE
+	bool
+	default y if FC7300_FLEXCAN4_ERFEL_TOTAL_COUNT > 5
+
+config FC7300_FLEXCAN4_ERFEL6_ENABLE
+	bool
+	default y if FC7300_FLEXCAN4_ERFEL_TOTAL_COUNT > 6
+
+config FC7300_FLEXCAN4_ERFEL7_ENABLE
+	bool
+	default y if FC7300_FLEXCAN4_ERFEL_TOTAL_COUNT > 7
+
+config FC7300_FLEXCAN4_ERFEL8_ENABLE
+	bool
+	default y if FC7300_FLEXCAN4_ERFEL_TOTAL_COUNT > 8
+
+config FC7300_FLEXCAN4_ERFEL9_ENABLE
+	bool
+	default y if FC7300_FLEXCAN4_ERFEL_TOTAL_COUNT > 9
+
+config FC7300_FLEXCAN4_ERFEL10_ENABLE
+	bool
+	default y if FC7300_FLEXCAN4_ERFEL_TOTAL_COUNT > 10
+
+config FC7300_FLEXCAN4_ERFEL11_ENABLE
+	bool
+	default y if FC7300_FLEXCAN4_ERFEL_TOTAL_COUNT > 11
+
+config FC7300_FLEXCAN4_ERFEL12_ENABLE
+	bool
+	default y if FC7300_FLEXCAN4_ERFEL_TOTAL_COUNT > 12
+
+config FC7300_FLEXCAN4_ERFEL13_ENABLE
+	bool
+	default y if FC7300_FLEXCAN4_ERFEL_TOTAL_COUNT > 13
+
+config FC7300_FLEXCAN4_ERFEL14_ENABLE
+	bool
+	default y if FC7300_FLEXCAN4_ERFEL_TOTAL_COUNT > 14
+
+config FC7300_FLEXCAN4_ERFEL15_ENABLE
+	bool
+	default y if FC7300_FLEXCAN4_ERFEL_TOTAL_COUNT > 15
+
+config FC7300_FLEXCAN4_ERFEL0_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN4_ERFEL_EXTID_COUNT > 0
+
+config FC7300_FLEXCAN4_ERFEL1_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN4_ERFEL_EXTID_COUNT > 1
+
+config FC7300_FLEXCAN4_ERFEL2_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN4_ERFEL_EXTID_COUNT > 2
+
+config FC7300_FLEXCAN4_ERFEL3_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN4_ERFEL_EXTID_COUNT > 3
+
+config FC7300_FLEXCAN4_ERFEL4_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN4_ERFEL_EXTID_COUNT > 4
+
+config FC7300_FLEXCAN4_ERFEL5_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN4_ERFEL_EXTID_COUNT > 5
+
+config FC7300_FLEXCAN4_ERFEL6_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN4_ERFEL_EXTID_COUNT > 6
+
+config FC7300_FLEXCAN4_ERFEL7_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN4_ERFEL_EXTID_COUNT > 7
+
+config FC7300_FLEXCAN4_ERFEL8_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN4_ERFEL_EXTID_COUNT > 8
+
+config FC7300_FLEXCAN4_ERFEL9_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN4_ERFEL_EXTID_COUNT > 9
+
+config FC7300_FLEXCAN4_ERFEL10_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN4_ERFEL_EXTID_COUNT > 10
+
+config FC7300_FLEXCAN4_ERFEL11_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN4_ERFEL_EXTID_COUNT > 11
+
+config FC7300_FLEXCAN4_ERFEL12_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN4_ERFEL_EXTID_COUNT > 12
+
+config FC7300_FLEXCAN4_ERFEL13_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN4_ERFEL_EXTID_COUNT > 13
+
+config FC7300_FLEXCAN4_ERFEL14_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN4_ERFEL_EXTID_COUNT > 14
+
+config FC7300_FLEXCAN4_ERFEL15_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN4_ERFEL_EXTID_COUNT > 15
+
+config FC7300_FLEXCAN4_PRESDIV
+	int "CAN Presdiv"
+	range 1 1024
+	default 3
+	---help---
+		Default 3 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN baudrate is 500K, sample point is 80%.
+
+config FC7300_FLEXCAN4_PROPSEG
+	int "CAN Propseg"
+	default 40
+	---help---
+		The sum of Propseg plus Pseg1 must be less than 256.
+		Default 40 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 500K, sample point is 80%.
+
+config FC7300_FLEXCAN4_PSEG1
+	int "CAN Pseg1"
+	default 39
+	---help---
+		The sum of Propseg plus Pseg1 must be less than 256.
+		Default 39 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 500K, sample point is 80%.
+
+config FC7300_FLEXCAN4_PSEG2
+	int "CAN Pseg2"
+	range 1 128
+	default 20
+	---help---
+		Default 20 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN4_SJW
+	int "CAN Sjw"
+	range 1 128
+	default 1
+
+config FC7300_FLEXCAN4_ISR_PRIORITY
+	int "FLEXCAN4 ISR PRIORITY"
+	default 192
+
+endmenu # FC7300 FLEXCAN4 Configuration
+
+menu "FC7300 FLEXCAN5 Configuration"
+	depends on FC7300_FLEXCAN5
+
+choice
+	prompt "Character driver or SocketCAN support"
+	default FC7300_FLEXCAN5_SOCKET
+
+config FC7300_FLEXCAN5_CHARDRIVER
+	bool "Character driver support"
+	select FC7300_FLEXCAN_CHARDRIVER
+
+config FC7300_FLEXCAN5_SOCKET
+	bool "SocketCAN support"
+	select FC7300_FLEXCAN_SOCKET
+
+endchoice # FLEXCAN5 character driver or SocketCAN support
+
+config FC7300_FLEXCAN5_CANFD
+	bool "Use CAN FD"
+	default y
+	select CAN_FD if FC7300_FLEXCAN5_CHARDRIVER
+	select NET_CAN_HAVE_CANFD if FC7300_FLEXCAN5_SOCKET
+
+config FC7300_FLEXCAN5_CANFD_BRS
+	bool "CAN FD Bit Rate Switch"
+	depends on FC7300_FLEXCAN5_CANFD
+	default y
+	select FC7300_FLEXCAN_CANFD_BRS
+
+config FC7300_FLEXCAN5_CANFD_DATA_PRESDIV
+	int "CAN FD Data Presdiv"
+	depends on FC7300_FLEXCAN5_CANFD_BRS
+	range 1 1024
+	default 3
+	---help---
+		Default 3 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN5_CANFD_DATA_PROPSEG
+	int "CAN FD Data Propseg"
+	depends on FC7300_FLEXCAN5_CANFD_BRS
+	default 10
+	---help---
+		The sum of Data Propseg plus Data Pseg1 must be less than 32.
+		Default 10 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN5_CANFD_DATA_PSEG1
+	int "CAN FD Data Pseg1"
+	depends on FC7300_FLEXCAN5_CANFD_BRS
+	default 9
+	---help---
+		The sum of Data Propseg plus Data Pseg1 must be less than 32.
+		Default 9 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN5_CANFD_DATA_PSEG2
+	int "CAN FD Data Pseg2"
+	depends on FC7300_FLEXCAN5_CANFD_BRS
+	range 1 16
+	default 5
+	---help---
+		Default 5 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN5_CANFD_DATA_SJW
+	int "CAN FD Data Sjw"
+	depends on FC7300_FLEXCAN5_CANFD_BRS
+	range 1 16
+	default 1
+
+config FC7300_FLEXCAN5_CANFD_SSP
+	bool "CAN FD Second Sample Point"
+	depends on FC7300_FLEXCAN5_CANFD
+	default n
+	select FC7300_FLEXCAN_CANFD_SSP
+
+config FC7300_FLEXCAN5_CANFD_SSP_OFFSET
+	int "CAN FD Second Sample Point Offset"
+	depends on FC7300_FLEXCAN5_CANFD_SSP
+	range 1 128
+	default 60
+
+choice
+	prompt "CAN FD Date Size"
+	depends on FC7300_FLEXCAN5_CANFD
+	default FC7300_FLEXCAN5_CANFD_DATA_SIZE_64
+
+config FC7300_FLEXCAN5_CANFD_DATA_SIZE_8
+	bool "8"
+
+config FC7300_FLEXCAN5_CANFD_DATA_SIZE_16
+	bool "16"
+
+config FC7300_FLEXCAN5_CANFD_DATA_SIZE_32
+	bool "32"
+
+config FC7300_FLEXCAN5_CANFD_DATA_SIZE_64
+	bool "64"
+
+endchoice
+
+config FC7300_FLEXCAN5_RXMB_COUNT
+	int "Rx MB Count"
+	range 0 32 if !FC7300_FLEXCAN5_CANFD
+	range 0 32 if FC7300_FLEXCAN5_CANFD && FC7300_FLEXCAN5_CANFD_DATA_SIZE_8
+	range 0 21 if FC7300_FLEXCAN5_CANFD && FC7300_FLEXCAN5_CANFD_DATA_SIZE_16
+	range 0 12 if FC7300_FLEXCAN5_CANFD && FC7300_FLEXCAN5_CANFD_DATA_SIZE_32
+	range 0 7  if FC7300_FLEXCAN5_CANFD && FC7300_FLEXCAN5_CANFD_DATA_SIZE_64
+	default 22 if !FC7300_FLEXCAN5_CANFD
+	default 22 if FC7300_FLEXCAN5_CANFD && FC7300_FLEXCAN5_CANFD_DATA_SIZE_8
+	default 14 if FC7300_FLEXCAN5_CANFD && FC7300_FLEXCAN5_CANFD_DATA_SIZE_16
+	default 8  if FC7300_FLEXCAN5_CANFD && FC7300_FLEXCAN5_CANFD_DATA_SIZE_32
+	default 5  if FC7300_FLEXCAN5_CANFD && FC7300_FLEXCAN5_CANFD_DATA_SIZE_64
+
+config FC7300_FLEXCAN5_MB0_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN5_RXMB_COUNT > 0
+
+config FC7300_FLEXCAN5_MB1_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN5_RXMB_COUNT > 1
+
+config FC7300_FLEXCAN5_MB2_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN5_RXMB_COUNT > 2
+
+config FC7300_FLEXCAN5_MB3_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN5_RXMB_COUNT > 3
+
+config FC7300_FLEXCAN5_MB4_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN5_RXMB_COUNT > 4
+
+config FC7300_FLEXCAN5_MB5_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN5_RXMB_COUNT > 5
+
+config FC7300_FLEXCAN5_MB6_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN5_RXMB_COUNT > 6
+
+config FC7300_FLEXCAN5_MB7_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN5_RXMB_COUNT > 7
+
+config FC7300_FLEXCAN5_MB8_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN5_RXMB_COUNT > 8
+
+config FC7300_FLEXCAN5_MB9_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN5_RXMB_COUNT > 9
+
+config FC7300_FLEXCAN5_MB10_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN5_RXMB_COUNT > 10
+
+config FC7300_FLEXCAN5_MB11_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN5_RXMB_COUNT > 11
+
+config FC7300_FLEXCAN5_MB12_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN5_RXMB_COUNT > 12
+
+config FC7300_FLEXCAN5_MB13_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN5_RXMB_COUNT > 13
+
+config FC7300_FLEXCAN5_MB14_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN5_RXMB_COUNT > 14
+
+config FC7300_FLEXCAN5_MB15_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN5_RXMB_COUNT > 15
+
+config FC7300_FLEXCAN5_MB16_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN5_RXMB_COUNT > 16
+
+config FC7300_FLEXCAN5_MB17_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN5_RXMB_COUNT > 17
+
+config FC7300_FLEXCAN5_MB18_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN5_RXMB_COUNT > 18
+
+config FC7300_FLEXCAN5_MB19_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN5_RXMB_COUNT > 19
+
+config FC7300_FLEXCAN5_MB20_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN5_RXMB_COUNT > 20
+
+config FC7300_FLEXCAN5_MB21_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN5_RXMB_COUNT > 21
+
+config FC7300_FLEXCAN5_MB22_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN5_RXMB_COUNT > 22
+
+config FC7300_FLEXCAN5_MB23_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN5_RXMB_COUNT > 23
+
+config FC7300_FLEXCAN5_MB24_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN5_RXMB_COUNT > 24
+
+config FC7300_FLEXCAN5_MB25_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN5_RXMB_COUNT > 25
+
+config FC7300_FLEXCAN5_MB26_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN5_RXMB_COUNT > 26
+
+config FC7300_FLEXCAN5_MB27_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN5_RXMB_COUNT > 27
+
+config FC7300_FLEXCAN5_MB28_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN5_RXMB_COUNT > 28
+
+config FC7300_FLEXCAN5_MB29_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN5_RXMB_COUNT > 29
+
+config FC7300_FLEXCAN5_MB30_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN5_RXMB_COUNT > 30
+
+config FC7300_FLEXCAN5_MB31_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN5_RXMB_COUNT > 31
+
+config FC7300_FLEXCAN5_ENHANCED_RX_FIFO
+	bool "Enchanced Rx FIFO"
+	default y
+	select FC7300_FLEXCAN_ENHANCED_RX_FIFO
+
+config FC7300_FLEXCAN5_ERFEL_TOTAL_COUNT
+	int "ERFEL Total Count"
+	depends on FC7300_FLEXCAN5_ENHANCED_RX_FIFO
+	range 1 16
+	default 1
+
+config FC7300_FLEXCAN5_ERFEL_EXTID_COUNT
+	int "ERFEL ExtID Count"
+	depends on FC7300_FLEXCAN5_ENHANCED_RX_FIFO && CAN_EXTID
+	range 0 FC7300_FLEXCAN5_ERFEL_TOTAL_COUNT
+	default 0
+
+config FC7300_FLEXCAN5_ERFEL1_ENABLE
+	bool
+	default y if FC7300_FLEXCAN5_ERFEL_TOTAL_COUNT > 1
+
+config FC7300_FLEXCAN5_ERFEL2_ENABLE
+	bool
+	default y if FC7300_FLEXCAN5_ERFEL_TOTAL_COUNT > 2
+
+config FC7300_FLEXCAN5_ERFEL3_ENABLE
+	bool
+	default y if FC7300_FLEXCAN5_ERFEL_TOTAL_COUNT > 3
+
+config FC7300_FLEXCAN5_ERFEL4_ENABLE
+	bool
+	default y if FC7300_FLEXCAN5_ERFEL_TOTAL_COUNT > 4
+
+config FC7300_FLEXCAN5_ERFEL5_ENABLE
+	bool
+	default y if FC7300_FLEXCAN5_ERFEL_TOTAL_COUNT > 5
+
+config FC7300_FLEXCAN5_ERFEL6_ENABLE
+	bool
+	default y if FC7300_FLEXCAN5_ERFEL_TOTAL_COUNT > 6
+
+config FC7300_FLEXCAN5_ERFEL7_ENABLE
+	bool
+	default y if FC7300_FLEXCAN5_ERFEL_TOTAL_COUNT > 7
+
+config FC7300_FLEXCAN5_ERFEL8_ENABLE
+	bool
+	default y if FC7300_FLEXCAN5_ERFEL_TOTAL_COUNT > 8
+
+config FC7300_FLEXCAN5_ERFEL9_ENABLE
+	bool
+	default y if FC7300_FLEXCAN5_ERFEL_TOTAL_COUNT > 9
+
+config FC7300_FLEXCAN5_ERFEL10_ENABLE
+	bool
+	default y if FC7300_FLEXCAN5_ERFEL_TOTAL_COUNT > 10
+
+config FC7300_FLEXCAN5_ERFEL11_ENABLE
+	bool
+	default y if FC7300_FLEXCAN5_ERFEL_TOTAL_COUNT > 11
+
+config FC7300_FLEXCAN5_ERFEL12_ENABLE
+	bool
+	default y if FC7300_FLEXCAN5_ERFEL_TOTAL_COUNT > 12
+
+config FC7300_FLEXCAN5_ERFEL13_ENABLE
+	bool
+	default y if FC7300_FLEXCAN5_ERFEL_TOTAL_COUNT > 13
+
+config FC7300_FLEXCAN5_ERFEL14_ENABLE
+	bool
+	default y if FC7300_FLEXCAN5_ERFEL_TOTAL_COUNT > 14
+
+config FC7300_FLEXCAN5_ERFEL15_ENABLE
+	bool
+	default y if FC7300_FLEXCAN5_ERFEL_TOTAL_COUNT > 15
+
+config FC7300_FLEXCAN5_ERFEL0_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN5_ERFEL_EXTID_COUNT > 0
+
+config FC7300_FLEXCAN5_ERFEL1_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN5_ERFEL_EXTID_COUNT > 1
+
+config FC7300_FLEXCAN5_ERFEL2_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN5_ERFEL_EXTID_COUNT > 2
+
+config FC7300_FLEXCAN5_ERFEL3_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN5_ERFEL_EXTID_COUNT > 3
+
+config FC7300_FLEXCAN5_ERFEL4_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN5_ERFEL_EXTID_COUNT > 4
+
+config FC7300_FLEXCAN5_ERFEL5_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN5_ERFEL_EXTID_COUNT > 5
+
+config FC7300_FLEXCAN5_ERFEL6_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN5_ERFEL_EXTID_COUNT > 6
+
+config FC7300_FLEXCAN5_ERFEL7_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN5_ERFEL_EXTID_COUNT > 7
+
+config FC7300_FLEXCAN5_ERFEL8_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN5_ERFEL_EXTID_COUNT > 8
+
+config FC7300_FLEXCAN5_ERFEL9_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN5_ERFEL_EXTID_COUNT > 9
+
+config FC7300_FLEXCAN5_ERFEL10_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN5_ERFEL_EXTID_COUNT > 10
+
+config FC7300_FLEXCAN5_ERFEL11_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN5_ERFEL_EXTID_COUNT > 11
+
+config FC7300_FLEXCAN5_ERFEL12_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN5_ERFEL_EXTID_COUNT > 12
+
+config FC7300_FLEXCAN5_ERFEL13_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN5_ERFEL_EXTID_COUNT > 13
+
+config FC7300_FLEXCAN5_ERFEL14_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN5_ERFEL_EXTID_COUNT > 14
+
+config FC7300_FLEXCAN5_ERFEL15_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN5_ERFEL_EXTID_COUNT > 15
+
+config FC7300_FLEXCAN5_PRESDIV
+	int "CAN Presdiv"
+	range 1 1024
+	default 3
+	---help---
+		Default 3 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN baudrate is 500K, sample point is 80%.
+
+config FC7300_FLEXCAN5_PROPSEG
+	int "CAN Propseg"
+	default 40
+	---help---
+		The sum of Propseg plus Pseg1 must be less than 256.
+		Default 40 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 500K, sample point is 80%.
+
+config FC7300_FLEXCAN5_PSEG1
+	int "CAN Pseg1"
+	default 39
+	---help---
+		The sum of Propseg plus Pseg1 must be less than 256.
+		Default 39 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 500K, sample point is 80%.
+
+config FC7300_FLEXCAN5_PSEG2
+	int "CAN Pseg2"
+	range 1 128
+	default 20
+	---help---
+		Default 20 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN5_SJW
+	int "CAN Sjw"
+	range 1 128
+	default 1
+
+config FC7300_FLEXCAN5_ISR_PRIORITY
+	int "FLEXCAN5 ISR PRIORITY"
+	default 192
+
+endmenu # FC7300 FLEXCAN5 Configuration
+
+menu "FC7300 FLEXCAN6 Configuration"
+	depends on FC7300_FLEXCAN6
+
+choice
+	prompt "Character driver or SocketCAN support"
+	default FC7300_FLEXCAN6_SOCKET
+
+config FC7300_FLEXCAN6_CHARDRIVER
+	bool "Character driver support"
+	select FC7300_FLEXCAN_CHARDRIVER
+
+config FC7300_FLEXCAN6_SOCKET
+	bool "SocketCAN support"
+	select FC7300_FLEXCAN_SOCKET
+
+endchoice # FLEXCAN6 character driver or SocketCAN support
+
+config FC7300_FLEXCAN6_CANFD
+	bool "Use CAN FD"
+	default y
+	select CAN_FD if FC7300_FLEXCAN6_CHARDRIVER
+	select NET_CAN_HAVE_CANFD if FC7300_FLEXCAN6_SOCKET
+
+config FC7300_FLEXCAN6_CANFD_BRS
+	bool "CAN FD Bit Rate Switch"
+	depends on FC7300_FLEXCAN6_CANFD
+	default y
+	select FC7300_FLEXCAN_CANFD_BRS
+
+config FC7300_FLEXCAN6_CANFD_DATA_PRESDIV
+	int "CAN FD Data Presdiv"
+	depends on FC7300_FLEXCAN6_CANFD_BRS
+	range 1 1024
+	default 3
+	---help---
+		Default 3 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN6_CANFD_DATA_PROPSEG
+	int "CAN FD Data Propseg"
+	depends on FC7300_FLEXCAN6_CANFD_BRS
+	default 10
+	---help---
+		The sum of Data Propseg plus Data Pseg1 must be less than 32.
+		Default 10 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN6_CANFD_DATA_PSEG1
+	int "CAN FD Data Pseg1"
+	depends on FC7300_FLEXCAN6_CANFD_BRS
+	default 9
+	---help---
+		The sum of Data Propseg plus Data Pseg1 must be less than 32.
+		Default 9 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN6_CANFD_DATA_PSEG2
+	int "CAN FD Data Pseg2"
+	depends on FC7300_FLEXCAN6_CANFD_BRS
+	range 1 16
+	default 5
+	---help---
+		Default 5 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN6_CANFD_DATA_SJW
+	int "CAN FD Data Sjw"
+	depends on FC7300_FLEXCAN6_CANFD_BRS
+	range 1 16
+	default 1
+
+config FC7300_FLEXCAN6_CANFD_SSP
+	bool "CAN FD Second Sample Point"
+	depends on FC7300_FLEXCAN6_CANFD
+	default n
+	select FC7300_FLEXCAN_CANFD_SSP
+
+config FC7300_FLEXCAN6_CANFD_SSP_OFFSET
+	int "CAN FD Second Sample Point Offset"
+	depends on FC7300_FLEXCAN6_CANFD_SSP
+	range 1 128
+	default 60
+
+choice
+	prompt "CAN FD Date Size"
+	depends on FC7300_FLEXCAN6_CANFD
+	default FC7300_FLEXCAN6_CANFD_DATA_SIZE_64
+
+config FC7300_FLEXCAN6_CANFD_DATA_SIZE_8
+	bool "8"
+
+config FC7300_FLEXCAN6_CANFD_DATA_SIZE_16
+	bool "16"
+
+config FC7300_FLEXCAN6_CANFD_DATA_SIZE_32
+	bool "32"
+
+config FC7300_FLEXCAN6_CANFD_DATA_SIZE_64
+	bool "64"
+
+endchoice
+
+config FC7300_FLEXCAN6_RXMB_COUNT
+	int "Rx MB Count"
+	range 0 32 if !FC7300_FLEXCAN6_CANFD
+	range 0 32 if FC7300_FLEXCAN6_CANFD && FC7300_FLEXCAN6_CANFD_DATA_SIZE_8
+	range 0 21 if FC7300_FLEXCAN6_CANFD && FC7300_FLEXCAN6_CANFD_DATA_SIZE_16
+	range 0 12 if FC7300_FLEXCAN6_CANFD && FC7300_FLEXCAN6_CANFD_DATA_SIZE_32
+	range 0 7  if FC7300_FLEXCAN6_CANFD && FC7300_FLEXCAN6_CANFD_DATA_SIZE_64
+	default 22 if !FC7300_FLEXCAN6_CANFD
+	default 22 if FC7300_FLEXCAN6_CANFD && FC7300_FLEXCAN6_CANFD_DATA_SIZE_8
+	default 14 if FC7300_FLEXCAN6_CANFD && FC7300_FLEXCAN6_CANFD_DATA_SIZE_16
+	default 8  if FC7300_FLEXCAN6_CANFD && FC7300_FLEXCAN6_CANFD_DATA_SIZE_32
+	default 5  if FC7300_FLEXCAN6_CANFD && FC7300_FLEXCAN6_CANFD_DATA_SIZE_64
+
+config FC7300_FLEXCAN6_MB0_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN6_RXMB_COUNT > 0
+
+config FC7300_FLEXCAN6_MB1_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN6_RXMB_COUNT > 1
+
+config FC7300_FLEXCAN6_MB2_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN6_RXMB_COUNT > 2
+
+config FC7300_FLEXCAN6_MB3_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN6_RXMB_COUNT > 3
+
+config FC7300_FLEXCAN6_MB4_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN6_RXMB_COUNT > 4
+
+config FC7300_FLEXCAN6_MB5_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN6_RXMB_COUNT > 5
+
+config FC7300_FLEXCAN6_MB6_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN6_RXMB_COUNT > 6
+
+config FC7300_FLEXCAN6_MB7_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN6_RXMB_COUNT > 7
+
+config FC7300_FLEXCAN6_MB8_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN6_RXMB_COUNT > 8
+
+config FC7300_FLEXCAN6_MB9_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN6_RXMB_COUNT > 9
+
+config FC7300_FLEXCAN6_MB10_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN6_RXMB_COUNT > 10
+
+config FC7300_FLEXCAN6_MB11_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN6_RXMB_COUNT > 11
+
+config FC7300_FLEXCAN6_MB12_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN6_RXMB_COUNT > 12
+
+config FC7300_FLEXCAN6_MB13_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN6_RXMB_COUNT > 13
+
+config FC7300_FLEXCAN6_MB14_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN6_RXMB_COUNT > 14
+
+config FC7300_FLEXCAN6_MB15_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN6_RXMB_COUNT > 15
+
+config FC7300_FLEXCAN6_MB16_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN6_RXMB_COUNT > 16
+
+config FC7300_FLEXCAN6_MB17_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN6_RXMB_COUNT > 17
+
+config FC7300_FLEXCAN6_MB18_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN6_RXMB_COUNT > 18
+
+config FC7300_FLEXCAN6_MB19_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN6_RXMB_COUNT > 19
+
+config FC7300_FLEXCAN6_MB20_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN6_RXMB_COUNT > 20
+
+config FC7300_FLEXCAN6_MB21_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN6_RXMB_COUNT > 21
+
+config FC7300_FLEXCAN6_MB22_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN6_RXMB_COUNT > 22
+
+config FC7300_FLEXCAN6_MB23_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN6_RXMB_COUNT > 23
+
+config FC7300_FLEXCAN6_MB24_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN6_RXMB_COUNT > 24
+
+config FC7300_FLEXCAN6_MB25_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN6_RXMB_COUNT > 25
+
+config FC7300_FLEXCAN6_MB26_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN6_RXMB_COUNT > 26
+
+config FC7300_FLEXCAN6_MB27_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN6_RXMB_COUNT > 27
+
+config FC7300_FLEXCAN6_MB28_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN6_RXMB_COUNT > 28
+
+config FC7300_FLEXCAN6_MB29_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN6_RXMB_COUNT > 29
+
+config FC7300_FLEXCAN6_MB30_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN6_RXMB_COUNT > 30
+
+config FC7300_FLEXCAN6_MB31_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN6_RXMB_COUNT > 31
+
+config FC7300_FLEXCAN6_ENHANCED_RX_FIFO
+	bool "Enchanced Rx FIFO"
+	default y
+	select FC7300_FLEXCAN_ENHANCED_RX_FIFO
+
+config FC7300_FLEXCAN6_ERFEL_TOTAL_COUNT
+	int "ERFEL Total Count"
+	depends on FC7300_FLEXCAN6_ENHANCED_RX_FIFO
+	range 1 16
+	default 1
+
+config FC7300_FLEXCAN6_ERFEL_EXTID_COUNT
+	int "ERFEL ExtID Count"
+	depends on FC7300_FLEXCAN6_ENHANCED_RX_FIFO && CAN_EXTID
+	range 0 FC7300_FLEXCAN6_ERFEL_TOTAL_COUNT
+	default 0
+
+config FC7300_FLEXCAN6_ERFEL1_ENABLE
+	bool
+	default y if FC7300_FLEXCAN6_ERFEL_TOTAL_COUNT > 1
+
+config FC7300_FLEXCAN6_ERFEL2_ENABLE
+	bool
+	default y if FC7300_FLEXCAN6_ERFEL_TOTAL_COUNT > 2
+
+config FC7300_FLEXCAN6_ERFEL3_ENABLE
+	bool
+	default y if FC7300_FLEXCAN6_ERFEL_TOTAL_COUNT > 3
+
+config FC7300_FLEXCAN6_ERFEL4_ENABLE
+	bool
+	default y if FC7300_FLEXCAN6_ERFEL_TOTAL_COUNT > 4
+
+config FC7300_FLEXCAN6_ERFEL5_ENABLE
+	bool
+	default y if FC7300_FLEXCAN6_ERFEL_TOTAL_COUNT > 5
+
+config FC7300_FLEXCAN6_ERFEL6_ENABLE
+	bool
+	default y if FC7300_FLEXCAN6_ERFEL_TOTAL_COUNT > 6
+
+config FC7300_FLEXCAN6_ERFEL7_ENABLE
+	bool
+	default y if FC7300_FLEXCAN6_ERFEL_TOTAL_COUNT > 7
+
+config FC7300_FLEXCAN6_ERFEL8_ENABLE
+	bool
+	default y if FC7300_FLEXCAN6_ERFEL_TOTAL_COUNT > 8
+
+config FC7300_FLEXCAN6_ERFEL9_ENABLE
+	bool
+	default y if FC7300_FLEXCAN6_ERFEL_TOTAL_COUNT > 9
+
+config FC7300_FLEXCAN6_ERFEL10_ENABLE
+	bool
+	default y if FC7300_FLEXCAN6_ERFEL_TOTAL_COUNT > 10
+
+config FC7300_FLEXCAN6_ERFEL11_ENABLE
+	bool
+	default y if FC7300_FLEXCAN6_ERFEL_TOTAL_COUNT > 11
+
+config FC7300_FLEXCAN6_ERFEL12_ENABLE
+	bool
+	default y if FC7300_FLEXCAN6_ERFEL_TOTAL_COUNT > 12
+
+config FC7300_FLEXCAN6_ERFEL13_ENABLE
+	bool
+	default y if FC7300_FLEXCAN6_ERFEL_TOTAL_COUNT > 13
+
+config FC7300_FLEXCAN6_ERFEL14_ENABLE
+	bool
+	default y if FC7300_FLEXCAN6_ERFEL_TOTAL_COUNT > 14
+
+config FC7300_FLEXCAN6_ERFEL15_ENABLE
+	bool
+	default y if FC7300_FLEXCAN6_ERFEL_TOTAL_COUNT > 15
+
+config FC7300_FLEXCAN6_ERFEL0_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN6_ERFEL_EXTID_COUNT > 0
+
+config FC7300_FLEXCAN6_ERFEL1_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN6_ERFEL_EXTID_COUNT > 1
+
+config FC7300_FLEXCAN6_ERFEL2_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN6_ERFEL_EXTID_COUNT > 2
+
+config FC7300_FLEXCAN6_ERFEL3_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN6_ERFEL_EXTID_COUNT > 3
+
+config FC7300_FLEXCAN6_ERFEL4_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN6_ERFEL_EXTID_COUNT > 4
+
+config FC7300_FLEXCAN6_ERFEL5_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN6_ERFEL_EXTID_COUNT > 5
+
+config FC7300_FLEXCAN6_ERFEL6_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN6_ERFEL_EXTID_COUNT > 6
+
+config FC7300_FLEXCAN6_ERFEL7_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN6_ERFEL_EXTID_COUNT > 7
+
+config FC7300_FLEXCAN6_ERFEL8_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN6_ERFEL_EXTID_COUNT > 8
+
+config FC7300_FLEXCAN6_ERFEL9_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN6_ERFEL_EXTID_COUNT > 9
+
+config FC7300_FLEXCAN6_ERFEL10_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN6_ERFEL_EXTID_COUNT > 10
+
+config FC7300_FLEXCAN6_ERFEL11_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN6_ERFEL_EXTID_COUNT > 11
+
+config FC7300_FLEXCAN6_ERFEL12_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN6_ERFEL_EXTID_COUNT > 12
+
+config FC7300_FLEXCAN6_ERFEL13_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN6_ERFEL_EXTID_COUNT > 13
+
+config FC7300_FLEXCAN6_ERFEL14_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN6_ERFEL_EXTID_COUNT > 14
+
+config FC7300_FLEXCAN6_ERFEL15_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN6_ERFEL_EXTID_COUNT > 15
+
+config FC7300_FLEXCAN6_PRESDIV
+	int "CAN Presdiv"
+	range 1 1024
+	default 3
+	---help---
+		Default 3 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN baudrate is 500K, sample point is 80%.
+
+config FC7300_FLEXCAN6_PROPSEG
+	int "CAN Propseg"
+	default 40
+	---help---
+		The sum of Propseg plus Pseg1 must be less than 256.
+		Default 40 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 500K, sample point is 80%.
+
+config FC7300_FLEXCAN6_PSEG1
+	int "CAN Pseg1"
+	default 39
+	---help---
+		The sum of Propseg plus Pseg1 must be less than 256.
+		Default 39 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 500K, sample point is 80%.
+
+config FC7300_FLEXCAN6_PSEG2
+	int "CAN Pseg2"
+	range 1 128
+	default 20
+	---help---
+		Default 20 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN6_SJW
+	int "CAN Sjw"
+	range 1 128
+	default 1
+
+config FC7300_FLEXCAN6_ISR_PRIORITY
+	int "FLEXCAN6 ISR PRIORITY"
+	default 192
+
+endmenu # FC7300 FLEXCAN6 Configuration
+
+menu "FC7300 FLEXCAN7 Configuration"
+	depends on FC7300_FLEXCAN7
+
+choice
+	prompt "Character driver or SocketCAN support"
+	default FC7300_FLEXCAN7_SOCKET
+
+config FC7300_FLEXCAN7_CHARDRIVER
+	bool "Character driver support"
+	select FC7300_FLEXCAN_CHARDRIVER
+
+config FC7300_FLEXCAN7_SOCKET
+	bool "SocketCAN support"
+	select FC7300_FLEXCAN_SOCKET
+
+endchoice # FLEXCAN7 character driver or SocketCAN support
+
+config FC7300_FLEXCAN7_CANFD
+	bool "Use CAN FD"
+	default y
+	select CAN_FD if FC7300_FLEXCAN7_CHARDRIVER
+	select NET_CAN_HAVE_CANFD if FC7300_FLEXCAN7_SOCKET
+
+config FC7300_FLEXCAN7_CANFD_BRS
+	bool "CAN FD Bit Rate Switch"
+	depends on FC7300_FLEXCAN7_CANFD
+	default y
+	select FC7300_FLEXCAN_CANFD_BRS
+
+config FC7300_FLEXCAN7_CANFD_DATA_PRESDIV
+	int "CAN FD Data Presdiv"
+	depends on FC7300_FLEXCAN7_CANFD_BRS
+	range 1 1024
+	default 3
+	---help---
+		Default 3 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN7_CANFD_DATA_PROPSEG
+	int "CAN FD Data Propseg"
+	depends on FC7300_FLEXCAN7_CANFD_BRS
+	default 10
+	---help---
+		The sum of Data Propseg plus Data Pseg1 must be less than 32.
+		Default 10 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN7_CANFD_DATA_PSEG1
+	int "CAN FD Data Pseg1"
+	depends on FC7300_FLEXCAN7_CANFD_BRS
+	default 9
+	---help---
+		The sum of Data Propseg plus Data Pseg1 must be less than 32.
+		Default 9 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN7_CANFD_DATA_PSEG2
+	int "CAN FD Data Pseg2"
+	depends on FC7300_FLEXCAN7_CANFD_BRS
+	range 1 16
+	default 5
+	---help---
+		Default 5 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN7_CANFD_DATA_SJW
+	int "CAN FD Data Sjw"
+	depends on FC7300_FLEXCAN7_CANFD_BRS
+	range 1 16
+	default 1
+
+config FC7300_FLEXCAN7_CANFD_SSP
+	bool "CAN FD Second Sample Point"
+	depends on FC7300_FLEXCAN7_CANFD
+	default n
+	select FC7300_FLEXCAN_CANFD_SSP
+
+config FC7300_FLEXCAN7_CANFD_SSP_OFFSET
+	int "CAN FD Second Sample Point Offset"
+	depends on FC7300_FLEXCAN7_CANFD_SSP
+	range 1 128
+	default 60
+
+choice
+	prompt "CAN FD Date Size"
+	depends on FC7300_FLEXCAN7_CANFD
+	default FC7300_FLEXCAN7_CANFD_DATA_SIZE_64
+
+config FC7300_FLEXCAN7_CANFD_DATA_SIZE_8
+	bool "8"
+
+config FC7300_FLEXCAN7_CANFD_DATA_SIZE_16
+	bool "16"
+
+config FC7300_FLEXCAN7_CANFD_DATA_SIZE_32
+	bool "32"
+
+config FC7300_FLEXCAN7_CANFD_DATA_SIZE_64
+	bool "64"
+
+endchoice
+
+config FC7300_FLEXCAN7_RXMB_COUNT
+	int "Rx MB Count"
+	range 0 32 if !FC7300_FLEXCAN7_CANFD
+	range 0 32 if FC7300_FLEXCAN7_CANFD && FC7300_FLEXCAN7_CANFD_DATA_SIZE_8
+	range 0 21 if FC7300_FLEXCAN7_CANFD && FC7300_FLEXCAN7_CANFD_DATA_SIZE_16
+	range 0 12 if FC7300_FLEXCAN7_CANFD && FC7300_FLEXCAN7_CANFD_DATA_SIZE_32
+	range 0 7  if FC7300_FLEXCAN7_CANFD && FC7300_FLEXCAN7_CANFD_DATA_SIZE_64
+	default 22 if !FC7300_FLEXCAN7_CANFD
+	default 22 if FC7300_FLEXCAN7_CANFD && FC7300_FLEXCAN7_CANFD_DATA_SIZE_8
+	default 14 if FC7300_FLEXCAN7_CANFD && FC7300_FLEXCAN7_CANFD_DATA_SIZE_16
+	default 8  if FC7300_FLEXCAN7_CANFD && FC7300_FLEXCAN7_CANFD_DATA_SIZE_32
+	default 5  if FC7300_FLEXCAN7_CANFD && FC7300_FLEXCAN7_CANFD_DATA_SIZE_64
+
+config FC7300_FLEXCAN7_MB0_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN7_RXMB_COUNT > 0
+
+config FC7300_FLEXCAN7_MB1_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN7_RXMB_COUNT > 1
+
+config FC7300_FLEXCAN7_MB2_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN7_RXMB_COUNT > 2
+
+config FC7300_FLEXCAN7_MB3_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN7_RXMB_COUNT > 3
+
+config FC7300_FLEXCAN7_MB4_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN7_RXMB_COUNT > 4
+
+config FC7300_FLEXCAN7_MB5_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN7_RXMB_COUNT > 5
+
+config FC7300_FLEXCAN7_MB6_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN7_RXMB_COUNT > 6
+
+config FC7300_FLEXCAN7_MB7_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN7_RXMB_COUNT > 7
+
+config FC7300_FLEXCAN7_MB8_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN7_RXMB_COUNT > 8
+
+config FC7300_FLEXCAN7_MB9_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN7_RXMB_COUNT > 9
+
+config FC7300_FLEXCAN7_MB10_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN7_RXMB_COUNT > 10
+
+config FC7300_FLEXCAN7_MB11_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN7_RXMB_COUNT > 11
+
+config FC7300_FLEXCAN7_MB12_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN7_RXMB_COUNT > 12
+
+config FC7300_FLEXCAN7_MB13_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN7_RXMB_COUNT > 13
+
+config FC7300_FLEXCAN7_MB14_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN7_RXMB_COUNT > 14
+
+config FC7300_FLEXCAN7_MB15_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN7_RXMB_COUNT > 15
+
+config FC7300_FLEXCAN7_MB16_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN7_RXMB_COUNT > 16
+
+config FC7300_FLEXCAN7_MB17_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN7_RXMB_COUNT > 17
+
+config FC7300_FLEXCAN7_MB18_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN7_RXMB_COUNT > 18
+
+config FC7300_FLEXCAN7_MB19_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN7_RXMB_COUNT > 19
+
+config FC7300_FLEXCAN7_MB20_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN7_RXMB_COUNT > 20
+
+config FC7300_FLEXCAN7_MB21_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN7_RXMB_COUNT > 21
+
+config FC7300_FLEXCAN7_MB22_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN7_RXMB_COUNT > 22
+
+config FC7300_FLEXCAN7_MB23_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN7_RXMB_COUNT > 23
+
+config FC7300_FLEXCAN7_MB24_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN7_RXMB_COUNT > 24
+
+config FC7300_FLEXCAN7_MB25_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN7_RXMB_COUNT > 25
+
+config FC7300_FLEXCAN7_MB26_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN7_RXMB_COUNT > 26
+
+config FC7300_FLEXCAN7_MB27_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN7_RXMB_COUNT > 27
+
+config FC7300_FLEXCAN7_MB28_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN7_RXMB_COUNT > 28
+
+config FC7300_FLEXCAN7_MB29_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN7_RXMB_COUNT > 29
+
+config FC7300_FLEXCAN7_MB30_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN7_RXMB_COUNT > 30
+
+config FC7300_FLEXCAN7_MB31_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN7_RXMB_COUNT > 31
+
+config FC7300_FLEXCAN7_ENHANCED_RX_FIFO
+	bool "Enchanced Rx FIFO"
+	default y
+	select FC7300_FLEXCAN_ENHANCED_RX_FIFO
+
+config FC7300_FLEXCAN7_ERFEL_TOTAL_COUNT
+	int "ERFEL Total Count"
+	depends on FC7300_FLEXCAN7_ENHANCED_RX_FIFO
+	range 1 16
+	default 1
+
+config FC7300_FLEXCAN7_ERFEL_EXTID_COUNT
+	int "ERFEL ExtID Count"
+	depends on FC7300_FLEXCAN7_ENHANCED_RX_FIFO && CAN_EXTID
+	range 0 FC7300_FLEXCAN7_ERFEL_TOTAL_COUNT
+	default 0
+
+config FC7300_FLEXCAN7_ERFEL1_ENABLE
+	bool
+	default y if FC7300_FLEXCAN7_ERFEL_TOTAL_COUNT > 1
+
+config FC7300_FLEXCAN7_ERFEL2_ENABLE
+	bool
+	default y if FC7300_FLEXCAN7_ERFEL_TOTAL_COUNT > 2
+
+config FC7300_FLEXCAN7_ERFEL3_ENABLE
+	bool
+	default y if FC7300_FLEXCAN7_ERFEL_TOTAL_COUNT > 3
+
+config FC7300_FLEXCAN7_ERFEL4_ENABLE
+	bool
+	default y if FC7300_FLEXCAN7_ERFEL_TOTAL_COUNT > 4
+
+config FC7300_FLEXCAN7_ERFEL5_ENABLE
+	bool
+	default y if FC7300_FLEXCAN7_ERFEL_TOTAL_COUNT > 5
+
+config FC7300_FLEXCAN7_ERFEL6_ENABLE
+	bool
+	default y if FC7300_FLEXCAN7_ERFEL_TOTAL_COUNT > 6
+
+config FC7300_FLEXCAN7_ERFEL7_ENABLE
+	bool
+	default y if FC7300_FLEXCAN7_ERFEL_TOTAL_COUNT > 7
+
+config FC7300_FLEXCAN7_ERFEL8_ENABLE
+	bool
+	default y if FC7300_FLEXCAN7_ERFEL_TOTAL_COUNT > 8
+
+config FC7300_FLEXCAN7_ERFEL9_ENABLE
+	bool
+	default y if FC7300_FLEXCAN7_ERFEL_TOTAL_COUNT > 9
+
+config FC7300_FLEXCAN7_ERFEL10_ENABLE
+	bool
+	default y if FC7300_FLEXCAN7_ERFEL_TOTAL_COUNT > 10
+
+config FC7300_FLEXCAN7_ERFEL11_ENABLE
+	bool
+	default y if FC7300_FLEXCAN7_ERFEL_TOTAL_COUNT > 11
+
+config FC7300_FLEXCAN7_ERFEL12_ENABLE
+	bool
+	default y if FC7300_FLEXCAN7_ERFEL_TOTAL_COUNT > 12
+
+config FC7300_FLEXCAN7_ERFEL13_ENABLE
+	bool
+	default y if FC7300_FLEXCAN7_ERFEL_TOTAL_COUNT > 13
+
+config FC7300_FLEXCAN7_ERFEL14_ENABLE
+	bool
+	default y if FC7300_FLEXCAN7_ERFEL_TOTAL_COUNT > 14
+
+config FC7300_FLEXCAN7_ERFEL15_ENABLE
+	bool
+	default y if FC7300_FLEXCAN7_ERFEL_TOTAL_COUNT > 15
+
+config FC7300_FLEXCAN7_ERFEL0_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN7_ERFEL_EXTID_COUNT > 0
+
+config FC7300_FLEXCAN7_ERFEL1_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN7_ERFEL_EXTID_COUNT > 1
+
+config FC7300_FLEXCAN7_ERFEL2_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN7_ERFEL_EXTID_COUNT > 2
+
+config FC7300_FLEXCAN7_ERFEL3_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN7_ERFEL_EXTID_COUNT > 3
+
+config FC7300_FLEXCAN7_ERFEL4_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN7_ERFEL_EXTID_COUNT > 4
+
+config FC7300_FLEXCAN7_ERFEL5_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN7_ERFEL_EXTID_COUNT > 5
+
+config FC7300_FLEXCAN7_ERFEL6_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN7_ERFEL_EXTID_COUNT > 6
+
+config FC7300_FLEXCAN7_ERFEL7_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN7_ERFEL_EXTID_COUNT > 7
+
+config FC7300_FLEXCAN7_ERFEL8_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN7_ERFEL_EXTID_COUNT > 8
+
+config FC7300_FLEXCAN7_ERFEL9_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN7_ERFEL_EXTID_COUNT > 9
+
+config FC7300_FLEXCAN7_ERFEL10_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN7_ERFEL_EXTID_COUNT > 10
+
+config FC7300_FLEXCAN7_ERFEL11_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN7_ERFEL_EXTID_COUNT > 11
+
+config FC7300_FLEXCAN7_ERFEL12_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN7_ERFEL_EXTID_COUNT > 12
+
+config FC7300_FLEXCAN7_ERFEL13_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN7_ERFEL_EXTID_COUNT > 13
+
+config FC7300_FLEXCAN7_ERFEL14_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN7_ERFEL_EXTID_COUNT > 14
+
+config FC7300_FLEXCAN7_ERFEL15_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN7_ERFEL_EXTID_COUNT > 15
+
+config FC7300_FLEXCAN7_PRESDIV
+	int "CAN Presdiv"
+	range 1 1024
+	default 3
+	---help---
+		Default 3 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN baudrate is 500K, sample point is 80%.
+
+config FC7300_FLEXCAN7_PROPSEG
+	int "CAN Propseg"
+	default 40
+	---help---
+		The sum of Propseg plus Pseg1 must be less than 256.
+		Default 40 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 500K, sample point is 80%.
+
+config FC7300_FLEXCAN7_PSEG1
+	int "CAN Pseg1"
+	default 39
+	---help---
+		The sum of Propseg plus Pseg1 must be less than 256.
+		Default 39 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 500K, sample point is 80%.
+
+config FC7300_FLEXCAN7_PSEG2
+	int "CAN Pseg2"
+	range 1 128
+	default 20
+	---help---
+		Default 20 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN7_SJW
+	int "CAN Sjw"
+	range 1 128
+	default 1
+
+config FC7300_FLEXCAN7_ISR_PRIORITY
+	int "FLEXCAN7 ISR PRIORITY"
+	default 192
+
+endmenu # FC7300 FLEXCAN7 Configuration
+
+menu "FC7300 FLEXCAN8 Configuration"
+	depends on FC7300_FLEXCAN8
+
+choice
+	prompt "Character driver or SocketCAN support"
+	default FC7300_FLEXCAN8_SOCKET
+
+config FC7300_FLEXCAN8_CHARDRIVER
+	bool "Character driver support"
+	select FC7300_FLEXCAN_CHARDRIVER
+
+config FC7300_FLEXCAN8_SOCKET
+	bool "SocketCAN support"
+	select FC7300_FLEXCAN_SOCKET
+
+endchoice # FLEXCAN8 character driver or SocketCAN support
+
+config FC7300_FLEXCAN8_CANFD
+	bool "Use CAN FD"
+	default y
+	select CAN_FD if FC7300_FLEXCAN8_CHARDRIVER
+	select NET_CAN_HAVE_CANFD if FC7300_FLEXCAN8_SOCKET
+
+config FC7300_FLEXCAN8_CANFD_BRS
+	bool "CAN FD Bit Rate Switch"
+	depends on FC7300_FLEXCAN8_CANFD
+	default y
+	select FC7300_FLEXCAN_CANFD_BRS
+
+config FC7300_FLEXCAN8_CANFD_DATA_PRESDIV
+	int "CAN FD Data Presdiv"
+	depends on FC7300_FLEXCAN8_CANFD_BRS
+	range 1 1024
+	default 3
+	---help---
+		Default 3 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN8_CANFD_DATA_PROPSEG
+	int "CAN FD Data Propseg"
+	depends on FC7300_FLEXCAN8_CANFD_BRS
+	default 10
+	---help---
+		The sum of Data Propseg plus Data Pseg1 must be less than 32.
+		Default 10 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN8_CANFD_DATA_PSEG1
+	int "CAN FD Data Pseg1"
+	depends on FC7300_FLEXCAN8_CANFD_BRS
+	default 9
+	---help---
+		The sum of Data Propseg plus Data Pseg1 must be less than 32.
+		Default 9 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN8_CANFD_DATA_PSEG2
+	int "CAN FD Data Pseg2"
+	depends on FC7300_FLEXCAN8_CANFD_BRS
+	range 1 16
+	default 5
+	---help---
+		Default 5 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN8_CANFD_DATA_SJW
+	int "CAN FD Data Sjw"
+	depends on FC7300_FLEXCAN8_CANFD_BRS
+	range 1 16
+	default 1
+
+config FC7300_FLEXCAN8_CANFD_SSP
+	bool "CAN FD Second Sample Point"
+	depends on FC7300_FLEXCAN8_CANFD
+	default n
+	select FC7300_FLEXCAN_CANFD_SSP
+
+config FC7300_FLEXCAN8_CANFD_SSP_OFFSET
+	int "CAN FD Second Sample Point Offset"
+	depends on FC7300_FLEXCAN8_CANFD_SSP
+	range 1 128
+	default 60
+
+choice
+	prompt "CAN FD Date Size"
+	depends on FC7300_FLEXCAN8_CANFD
+	default FC7300_FLEXCAN8_CANFD_DATA_SIZE_64
+
+config FC7300_FLEXCAN8_CANFD_DATA_SIZE_8
+	bool "8"
+
+config FC7300_FLEXCAN8_CANFD_DATA_SIZE_16
+	bool "16"
+
+config FC7300_FLEXCAN8_CANFD_DATA_SIZE_32
+	bool "32"
+
+config FC7300_FLEXCAN8_CANFD_DATA_SIZE_64
+	bool "64"
+
+endchoice
+
+config FC7300_FLEXCAN8_RXMB_COUNT
+	int "Rx MB Count"
+	range 0 32 if !FC7300_FLEXCAN8_CANFD
+	range 0 32 if FC7300_FLEXCAN8_CANFD && FC7300_FLEXCAN8_CANFD_DATA_SIZE_8
+	range 0 21 if FC7300_FLEXCAN8_CANFD && FC7300_FLEXCAN8_CANFD_DATA_SIZE_16
+	range 0 12 if FC7300_FLEXCAN8_CANFD && FC7300_FLEXCAN8_CANFD_DATA_SIZE_32
+	range 0 7  if FC7300_FLEXCAN8_CANFD && FC7300_FLEXCAN8_CANFD_DATA_SIZE_64
+	default 22 if !FC7300_FLEXCAN8_CANFD
+	default 22 if FC7300_FLEXCAN8_CANFD && FC7300_FLEXCAN8_CANFD_DATA_SIZE_8
+	default 14 if FC7300_FLEXCAN8_CANFD && FC7300_FLEXCAN8_CANFD_DATA_SIZE_16
+	default 8  if FC7300_FLEXCAN8_CANFD && FC7300_FLEXCAN8_CANFD_DATA_SIZE_32
+	default 5  if FC7300_FLEXCAN8_CANFD && FC7300_FLEXCAN8_CANFD_DATA_SIZE_64
+
+config FC7300_FLEXCAN8_MB0_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN8_RXMB_COUNT > 0
+
+config FC7300_FLEXCAN8_MB1_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN8_RXMB_COUNT > 1
+
+config FC7300_FLEXCAN8_MB2_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN8_RXMB_COUNT > 2
+
+config FC7300_FLEXCAN8_MB3_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN8_RXMB_COUNT > 3
+
+config FC7300_FLEXCAN8_MB4_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN8_RXMB_COUNT > 4
+
+config FC7300_FLEXCAN8_MB5_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN8_RXMB_COUNT > 5
+
+config FC7300_FLEXCAN8_MB6_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN8_RXMB_COUNT > 6
+
+config FC7300_FLEXCAN8_MB7_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN8_RXMB_COUNT > 7
+
+config FC7300_FLEXCAN8_MB8_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN8_RXMB_COUNT > 8
+
+config FC7300_FLEXCAN8_MB9_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN8_RXMB_COUNT > 9
+
+config FC7300_FLEXCAN8_MB10_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN8_RXMB_COUNT > 10
+
+config FC7300_FLEXCAN8_MB11_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN8_RXMB_COUNT > 11
+
+config FC7300_FLEXCAN8_MB12_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN8_RXMB_COUNT > 12
+
+config FC7300_FLEXCAN8_MB13_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN8_RXMB_COUNT > 13
+
+config FC7300_FLEXCAN8_MB14_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN8_RXMB_COUNT > 14
+
+config FC7300_FLEXCAN8_MB15_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN8_RXMB_COUNT > 15
+
+config FC7300_FLEXCAN8_MB16_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN8_RXMB_COUNT > 16
+
+config FC7300_FLEXCAN8_MB17_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN8_RXMB_COUNT > 17
+
+config FC7300_FLEXCAN8_MB18_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN8_RXMB_COUNT > 18
+
+config FC7300_FLEXCAN8_MB19_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN8_RXMB_COUNT > 19
+
+config FC7300_FLEXCAN8_MB20_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN8_RXMB_COUNT > 20
+
+config FC7300_FLEXCAN8_MB21_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN8_RXMB_COUNT > 21
+
+config FC7300_FLEXCAN8_MB22_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN8_RXMB_COUNT > 22
+
+config FC7300_FLEXCAN8_MB23_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN8_RXMB_COUNT > 23
+
+config FC7300_FLEXCAN8_MB24_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN8_RXMB_COUNT > 24
+
+config FC7300_FLEXCAN8_MB25_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN8_RXMB_COUNT > 25
+
+config FC7300_FLEXCAN8_MB26_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN8_RXMB_COUNT > 26
+
+config FC7300_FLEXCAN8_MB27_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN8_RXMB_COUNT > 27
+
+config FC7300_FLEXCAN8_MB28_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN8_RXMB_COUNT > 28
+
+config FC7300_FLEXCAN8_MB29_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN8_RXMB_COUNT > 29
+
+config FC7300_FLEXCAN8_MB30_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN8_RXMB_COUNT > 30
+
+config FC7300_FLEXCAN8_MB31_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN8_RXMB_COUNT > 31
+
+config FC7300_FLEXCAN8_ENHANCED_RX_FIFO
+	bool "Enchanced Rx FIFO"
+	default y
+	select FC7300_FLEXCAN_ENHANCED_RX_FIFO
+
+config FC7300_FLEXCAN8_ERFEL_TOTAL_COUNT
+	int "ERFEL Total Count"
+	depends on FC7300_FLEXCAN8_ENHANCED_RX_FIFO
+	range 1 16
+	default 1
+
+config FC7300_FLEXCAN8_ERFEL_EXTID_COUNT
+	int "ERFEL ExtID Count"
+	depends on FC7300_FLEXCAN8_ENHANCED_RX_FIFO && CAN_EXTID
+	range 0 FC7300_FLEXCAN8_ERFEL_TOTAL_COUNT
+	default 0
+
+config FC7300_FLEXCAN8_ERFEL1_ENABLE
+	bool
+	default y if FC7300_FLEXCAN8_ERFEL_TOTAL_COUNT > 1
+
+config FC7300_FLEXCAN8_ERFEL2_ENABLE
+	bool
+	default y if FC7300_FLEXCAN8_ERFEL_TOTAL_COUNT > 2
+
+config FC7300_FLEXCAN8_ERFEL3_ENABLE
+	bool
+	default y if FC7300_FLEXCAN8_ERFEL_TOTAL_COUNT > 3
+
+config FC7300_FLEXCAN8_ERFEL4_ENABLE
+	bool
+	default y if FC7300_FLEXCAN8_ERFEL_TOTAL_COUNT > 4
+
+config FC7300_FLEXCAN8_ERFEL5_ENABLE
+	bool
+	default y if FC7300_FLEXCAN8_ERFEL_TOTAL_COUNT > 5
+
+config FC7300_FLEXCAN8_ERFEL6_ENABLE
+	bool
+	default y if FC7300_FLEXCAN8_ERFEL_TOTAL_COUNT > 6
+
+config FC7300_FLEXCAN8_ERFEL7_ENABLE
+	bool
+	default y if FC7300_FLEXCAN8_ERFEL_TOTAL_COUNT > 7
+
+config FC7300_FLEXCAN8_ERFEL8_ENABLE
+	bool
+	default y if FC7300_FLEXCAN8_ERFEL_TOTAL_COUNT > 8
+
+config FC7300_FLEXCAN8_ERFEL9_ENABLE
+	bool
+	default y if FC7300_FLEXCAN8_ERFEL_TOTAL_COUNT > 9
+
+config FC7300_FLEXCAN8_ERFEL10_ENABLE
+	bool
+	default y if FC7300_FLEXCAN8_ERFEL_TOTAL_COUNT > 10
+
+config FC7300_FLEXCAN8_ERFEL11_ENABLE
+	bool
+	default y if FC7300_FLEXCAN8_ERFEL_TOTAL_COUNT > 11
+
+config FC7300_FLEXCAN8_ERFEL12_ENABLE
+	bool
+	default y if FC7300_FLEXCAN8_ERFEL_TOTAL_COUNT > 12
+
+config FC7300_FLEXCAN8_ERFEL13_ENABLE
+	bool
+	default y if FC7300_FLEXCAN8_ERFEL_TOTAL_COUNT > 13
+
+config FC7300_FLEXCAN8_ERFEL14_ENABLE
+	bool
+	default y if FC7300_FLEXCAN8_ERFEL_TOTAL_COUNT > 14
+
+config FC7300_FLEXCAN8_ERFEL15_ENABLE
+	bool
+	default y if FC7300_FLEXCAN8_ERFEL_TOTAL_COUNT > 15
+
+config FC7300_FLEXCAN8_ERFEL0_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN8_ERFEL_EXTID_COUNT > 0
+
+config FC7300_FLEXCAN8_ERFEL1_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN8_ERFEL_EXTID_COUNT > 1
+
+config FC7300_FLEXCAN8_ERFEL2_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN8_ERFEL_EXTID_COUNT > 2
+
+config FC7300_FLEXCAN8_ERFEL3_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN8_ERFEL_EXTID_COUNT > 3
+
+config FC7300_FLEXCAN8_ERFEL4_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN8_ERFEL_EXTID_COUNT > 4
+
+config FC7300_FLEXCAN8_ERFEL5_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN8_ERFEL_EXTID_COUNT > 5
+
+config FC7300_FLEXCAN8_ERFEL6_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN8_ERFEL_EXTID_COUNT > 6
+
+config FC7300_FLEXCAN8_ERFEL7_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN8_ERFEL_EXTID_COUNT > 7
+
+config FC7300_FLEXCAN8_ERFEL8_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN8_ERFEL_EXTID_COUNT > 8
+
+config FC7300_FLEXCAN8_ERFEL9_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN8_ERFEL_EXTID_COUNT > 9
+
+config FC7300_FLEXCAN8_ERFEL10_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN8_ERFEL_EXTID_COUNT > 10
+
+config FC7300_FLEXCAN8_ERFEL11_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN8_ERFEL_EXTID_COUNT > 11
+
+config FC7300_FLEXCAN8_ERFEL12_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN8_ERFEL_EXTID_COUNT > 12
+
+config FC7300_FLEXCAN8_ERFEL13_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN8_ERFEL_EXTID_COUNT > 13
+
+config FC7300_FLEXCAN8_ERFEL14_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN8_ERFEL_EXTID_COUNT > 14
+
+config FC7300_FLEXCAN8_ERFEL15_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN8_ERFEL_EXTID_COUNT > 15
+
+config FC7300_FLEXCAN8_PRESDIV
+	int "CAN Presdiv"
+	range 1 1024
+	default 3
+	---help---
+		Default 3 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN baudrate is 500K, sample point is 80%.
+
+config FC7300_FLEXCAN8_PROPSEG
+	int "CAN Propseg"
+	default 40
+	---help---
+		The sum of Propseg plus Pseg1 must be less than 256.
+		Default 40 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 500K, sample point is 80%.
+
+config FC7300_FLEXCAN8_PSEG1
+	int "CAN Pseg1"
+	default 39
+	---help---
+		The sum of Propseg plus Pseg1 must be less than 256.
+		Default 39 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 500K, sample point is 80%.
+
+config FC7300_FLEXCAN8_PSEG2
+	int "CAN Pseg2"
+	range 1 128
+	default 20
+	---help---
+		Default 20 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN8_SJW
+	int "CAN Sjw"
+	range 1 128
+	default 1
+
+config FC7300_FLEXCAN8_ISR_PRIORITY
+	int "FLEXCAN8 ISR PRIORITY"
+	default 192
+
+endmenu # FC7300 FLEXCAN8 Configuration
+
+menu "FC7300 FLEXCAN9 Configuration"
+	depends on FC7300_FLEXCAN9
+
+choice
+	prompt "Character driver or SocketCAN support"
+	default FC7300_FLEXCAN9_SOCKET
+
+config FC7300_FLEXCAN9_CHARDRIVER
+	bool "Character driver support"
+	select FC7300_FLEXCAN_CHARDRIVER
+
+config FC7300_FLEXCAN9_SOCKET
+	bool "SocketCAN support"
+	select FC7300_FLEXCAN_SOCKET
+
+endchoice # FLEXCAN9 character driver or SocketCAN support
+
+config FC7300_FLEXCAN9_CANFD
+	bool "Use CAN FD"
+	default y
+	select CAN_FD if FC7300_FLEXCAN9_CHARDRIVER
+	select NET_CAN_HAVE_CANFD if FC7300_FLEXCAN9_SOCKET
+
+config FC7300_FLEXCAN9_CANFD_BRS
+	bool "CAN FD Bit Rate Switch"
+	depends on FC7300_FLEXCAN9_CANFD
+	default y
+	select FC7300_FLEXCAN_CANFD_BRS
+
+config FC7300_FLEXCAN9_CANFD_DATA_PRESDIV
+	int "CAN FD Data Presdiv"
+	depends on FC7300_FLEXCAN9_CANFD_BRS
+	range 1 1024
+	default 3
+	---help---
+		Default 3 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN9_CANFD_DATA_PROPSEG
+	int "CAN FD Data Propseg"
+	depends on FC7300_FLEXCAN9_CANFD_BRS
+	default 10
+	---help---
+		The sum of Data Propseg plus Data Pseg1 must be less than 32.
+		Default 10 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN9_CANFD_DATA_PSEG1
+	int "CAN FD Data Pseg1"
+	depends on FC7300_FLEXCAN9_CANFD_BRS
+	default 9
+	---help---
+		The sum of Data Propseg plus Data Pseg1 must be less than 32.
+		Default 9 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN9_CANFD_DATA_PSEG2
+	int "CAN FD Data Pseg2"
+	depends on FC7300_FLEXCAN9_CANFD_BRS
+	range 1 16
+	default 5
+	---help---
+		Default 5 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN9_CANFD_DATA_SJW
+	int "CAN FD Data Sjw"
+	depends on FC7300_FLEXCAN9_CANFD_BRS
+	range 1 16
+	default 1
+
+config FC7300_FLEXCAN9_CANFD_SSP
+	bool "CAN FD Second Sample Point"
+	depends on FC7300_FLEXCAN9_CANFD
+	default n
+	select FC7300_FLEXCAN_CANFD_SSP
+
+config FC7300_FLEXCAN9_CANFD_SSP_OFFSET
+	int "CAN FD Second Sample Point Offset"
+	depends on FC7300_FLEXCAN9_CANFD_SSP
+	range 1 128
+	default 60
+
+choice
+	prompt "CAN FD Date Size"
+	depends on FC7300_FLEXCAN9_CANFD
+	default FC7300_FLEXCAN9_CANFD_DATA_SIZE_64
+
+config FC7300_FLEXCAN9_CANFD_DATA_SIZE_8
+	bool "8"
+
+config FC7300_FLEXCAN9_CANFD_DATA_SIZE_16
+	bool "16"
+
+config FC7300_FLEXCAN9_CANFD_DATA_SIZE_32
+	bool "32"
+
+config FC7300_FLEXCAN9_CANFD_DATA_SIZE_64
+	bool "64"
+
+endchoice
+
+config FC7300_FLEXCAN9_RXMB_COUNT
+	int "Rx MB Count"
+	range 0 32 if !FC7300_FLEXCAN9_CANFD
+	range 0 32 if FC7300_FLEXCAN9_CANFD && FC7300_FLEXCAN9_CANFD_DATA_SIZE_8
+	range 0 21 if FC7300_FLEXCAN9_CANFD && FC7300_FLEXCAN9_CANFD_DATA_SIZE_16
+	range 0 12 if FC7300_FLEXCAN9_CANFD && FC7300_FLEXCAN9_CANFD_DATA_SIZE_32
+	range 0 7  if FC7300_FLEXCAN9_CANFD && FC7300_FLEXCAN9_CANFD_DATA_SIZE_64
+	default 22 if !FC7300_FLEXCAN9_CANFD
+	default 22 if FC7300_FLEXCAN9_CANFD && FC7300_FLEXCAN9_CANFD_DATA_SIZE_8
+	default 14 if FC7300_FLEXCAN9_CANFD && FC7300_FLEXCAN9_CANFD_DATA_SIZE_16
+	default 8  if FC7300_FLEXCAN9_CANFD && FC7300_FLEXCAN9_CANFD_DATA_SIZE_32
+	default 5  if FC7300_FLEXCAN9_CANFD && FC7300_FLEXCAN9_CANFD_DATA_SIZE_64
+
+config FC7300_FLEXCAN9_MB0_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN9_RXMB_COUNT > 0
+
+config FC7300_FLEXCAN9_MB1_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN9_RXMB_COUNT > 1
+
+config FC7300_FLEXCAN9_MB2_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN9_RXMB_COUNT > 2
+
+config FC7300_FLEXCAN9_MB3_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN9_RXMB_COUNT > 3
+
+config FC7300_FLEXCAN9_MB4_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN9_RXMB_COUNT > 4
+
+config FC7300_FLEXCAN9_MB5_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN9_RXMB_COUNT > 5
+
+config FC7300_FLEXCAN9_MB6_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN9_RXMB_COUNT > 6
+
+config FC7300_FLEXCAN9_MB7_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN9_RXMB_COUNT > 7
+
+config FC7300_FLEXCAN9_MB8_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN9_RXMB_COUNT > 8
+
+config FC7300_FLEXCAN9_MB9_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN9_RXMB_COUNT > 9
+
+config FC7300_FLEXCAN9_MB10_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN9_RXMB_COUNT > 10
+
+config FC7300_FLEXCAN9_MB11_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN9_RXMB_COUNT > 11
+
+config FC7300_FLEXCAN9_MB12_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN9_RXMB_COUNT > 12
+
+config FC7300_FLEXCAN9_MB13_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN9_RXMB_COUNT > 13
+
+config FC7300_FLEXCAN9_MB14_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN9_RXMB_COUNT > 14
+
+config FC7300_FLEXCAN9_MB15_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN9_RXMB_COUNT > 15
+
+config FC7300_FLEXCAN9_MB16_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN9_RXMB_COUNT > 16
+
+config FC7300_FLEXCAN9_MB17_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN9_RXMB_COUNT > 17
+
+config FC7300_FLEXCAN9_MB18_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN9_RXMB_COUNT > 18
+
+config FC7300_FLEXCAN9_MB19_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN9_RXMB_COUNT > 19
+
+config FC7300_FLEXCAN9_MB20_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN9_RXMB_COUNT > 20
+
+config FC7300_FLEXCAN9_MB21_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN9_RXMB_COUNT > 21
+
+config FC7300_FLEXCAN9_MB22_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN9_RXMB_COUNT > 22
+
+config FC7300_FLEXCAN9_MB23_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN9_RXMB_COUNT > 23
+
+config FC7300_FLEXCAN9_MB24_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN9_RXMB_COUNT > 24
+
+config FC7300_FLEXCAN9_MB25_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN9_RXMB_COUNT > 25
+
+config FC7300_FLEXCAN9_MB26_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN9_RXMB_COUNT > 26
+
+config FC7300_FLEXCAN9_MB27_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN9_RXMB_COUNT > 27
+
+config FC7300_FLEXCAN9_MB28_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN9_RXMB_COUNT > 28
+
+config FC7300_FLEXCAN9_MB29_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN9_RXMB_COUNT > 29
+
+config FC7300_FLEXCAN9_MB30_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN9_RXMB_COUNT > 30
+
+config FC7300_FLEXCAN9_MB31_IS_FOR_RX
+	bool
+	default y if FC7300_FLEXCAN9_RXMB_COUNT > 31
+
+config FC7300_FLEXCAN9_ENHANCED_RX_FIFO
+	bool "Enchanced Rx FIFO"
+	default y
+	select FC7300_FLEXCAN_ENHANCED_RX_FIFO
+
+config FC7300_FLEXCAN9_ERFEL_TOTAL_COUNT
+	int "ERFEL Total Count"
+	depends on FC7300_FLEXCAN9_ENHANCED_RX_FIFO
+	range 1 16
+	default 1
+
+config FC7300_FLEXCAN9_ERFEL_EXTID_COUNT
+	int "ERFEL ExtID Count"
+	depends on FC7300_FLEXCAN9_ENHANCED_RX_FIFO && CAN_EXTID
+	range 0 FC7300_FLEXCAN9_ERFEL_TOTAL_COUNT
+	default 0
+
+config FC7300_FLEXCAN9_ERFEL1_ENABLE
+	bool
+	default y if FC7300_FLEXCAN9_ERFEL_TOTAL_COUNT > 1
+
+config FC7300_FLEXCAN9_ERFEL2_ENABLE
+	bool
+	default y if FC7300_FLEXCAN9_ERFEL_TOTAL_COUNT > 2
+
+config FC7300_FLEXCAN9_ERFEL3_ENABLE
+	bool
+	default y if FC7300_FLEXCAN9_ERFEL_TOTAL_COUNT > 3
+
+config FC7300_FLEXCAN9_ERFEL4_ENABLE
+	bool
+	default y if FC7300_FLEXCAN9_ERFEL_TOTAL_COUNT > 4
+
+config FC7300_FLEXCAN9_ERFEL5_ENABLE
+	bool
+	default y if FC7300_FLEXCAN9_ERFEL_TOTAL_COUNT > 5
+
+config FC7300_FLEXCAN9_ERFEL6_ENABLE
+	bool
+	default y if FC7300_FLEXCAN9_ERFEL_TOTAL_COUNT > 6
+
+config FC7300_FLEXCAN9_ERFEL7_ENABLE
+	bool
+	default y if FC7300_FLEXCAN9_ERFEL_TOTAL_COUNT > 7
+
+config FC7300_FLEXCAN9_ERFEL8_ENABLE
+	bool
+	default y if FC7300_FLEXCAN9_ERFEL_TOTAL_COUNT > 8
+
+config FC7300_FLEXCAN9_ERFEL9_ENABLE
+	bool
+	default y if FC7300_FLEXCAN9_ERFEL_TOTAL_COUNT > 9
+
+config FC7300_FLEXCAN9_ERFEL10_ENABLE
+	bool
+	default y if FC7300_FLEXCAN9_ERFEL_TOTAL_COUNT > 10
+
+config FC7300_FLEXCAN9_ERFEL11_ENABLE
+	bool
+	default y if FC7300_FLEXCAN9_ERFEL_TOTAL_COUNT > 11
+
+config FC7300_FLEXCAN9_ERFEL12_ENABLE
+	bool
+	default y if FC7300_FLEXCAN9_ERFEL_TOTAL_COUNT > 12
+
+config FC7300_FLEXCAN9_ERFEL13_ENABLE
+	bool
+	default y if FC7300_FLEXCAN9_ERFEL_TOTAL_COUNT > 13
+
+config FC7300_FLEXCAN9_ERFEL14_ENABLE
+	bool
+	default y if FC7300_FLEXCAN9_ERFEL_TOTAL_COUNT > 14
+
+config FC7300_FLEXCAN9_ERFEL15_ENABLE
+	bool
+	default y if FC7300_FLEXCAN9_ERFEL_TOTAL_COUNT > 15
+
+config FC7300_FLEXCAN9_ERFEL0_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN9_ERFEL_EXTID_COUNT > 0
+
+config FC7300_FLEXCAN9_ERFEL1_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN9_ERFEL_EXTID_COUNT > 1
+
+config FC7300_FLEXCAN9_ERFEL2_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN9_ERFEL_EXTID_COUNT > 2
+
+config FC7300_FLEXCAN9_ERFEL3_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN9_ERFEL_EXTID_COUNT > 3
+
+config FC7300_FLEXCAN9_ERFEL4_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN9_ERFEL_EXTID_COUNT > 4
+
+config FC7300_FLEXCAN9_ERFEL5_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN9_ERFEL_EXTID_COUNT > 5
+
+config FC7300_FLEXCAN9_ERFEL6_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN9_ERFEL_EXTID_COUNT > 6
+
+config FC7300_FLEXCAN9_ERFEL7_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN9_ERFEL_EXTID_COUNT > 7
+
+config FC7300_FLEXCAN9_ERFEL8_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN9_ERFEL_EXTID_COUNT > 8
+
+config FC7300_FLEXCAN9_ERFEL9_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN9_ERFEL_EXTID_COUNT > 9
+
+config FC7300_FLEXCAN9_ERFEL10_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN9_ERFEL_EXTID_COUNT > 10
+
+config FC7300_FLEXCAN9_ERFEL11_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN9_ERFEL_EXTID_COUNT > 11
+
+config FC7300_FLEXCAN9_ERFEL12_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN9_ERFEL_EXTID_COUNT > 12
+
+config FC7300_FLEXCAN9_ERFEL13_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN9_ERFEL_EXTID_COUNT > 13
+
+config FC7300_FLEXCAN9_ERFEL14_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN9_ERFEL_EXTID_COUNT > 14
+
+config FC7300_FLEXCAN9_ERFEL15_EXTID_ENABLE
+	bool
+	default y if FC7300_FLEXCAN9_ERFEL_EXTID_COUNT > 15
+
+config FC7300_FLEXCAN9_PRESDIV
+	int "CAN Presdiv"
+	range 1 1024
+	default 3
+	---help---
+		Default 3 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN baudrate is 500K, sample point is 80%.
+
+config FC7300_FLEXCAN9_PROPSEG
+	int "CAN Propseg"
+	default 40
+	---help---
+		The sum of Propseg plus Pseg1 must be less than 256.
+		Default 40 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 500K, sample point is 80%.
+
+config FC7300_FLEXCAN9_PSEG1
+	int "CAN Pseg1"
+	default 39
+	---help---
+		The sum of Propseg plus Pseg1 must be less than 256.
+		Default 39 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 500K, sample point is 80%.
+
+config FC7300_FLEXCAN9_PSEG2
+	int "CAN Pseg2"
+	range 1 128
+	default 20
+	---help---
+		Default 20 condition : Select PLL0 clock src and clock divide is 1, Fcanclk = 150M.
+		Upon this condition, CAN FD baudrate is 2M, sample point is 80%.
+
+config FC7300_FLEXCAN9_SJW
+	int "CAN Sjw"
+	range 1 128
+	default 1
+
+config FC7300_FLEXCAN9_ISR_PRIORITY
+	int "FLEXCAN9 ISR PRIORITY"
+	default 192
+
+endmenu # FC7300 FLEXCAN9 Configuration
+
+endmenu # FC7300 FLEXCAN Configuration

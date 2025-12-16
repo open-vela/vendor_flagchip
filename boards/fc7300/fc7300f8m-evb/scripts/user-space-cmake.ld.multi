@@ -1,0 +1,179 @@
+/****************************************************************************
+ * Copyright (C) 2025 Xiaomi Corporation
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.  The
+ * ASF licenses this file to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the
+ * License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ ****************************************************************************/
+#include "memory_layout.h"
+
+MEMORY
+{
+  kflash            (rx)  : ORIGIN = KERNEL_PFLASH_START,   LENGTH = KERNEL_PFLASH_SIZE
+  uflash            (rx)  : ORIGIN = USER_PFLASH_START,     LENGTH = USER_PFLASH_SIZE
+  dflash            (rx)  : ORIGIN = DFLASH_START,          LENGTH = DFLASH_SIZE
+  vram              (rwx) : ORIGIN = VRAM_START,            LENGTH = VRAM_SIZE
+  itcm_func         (rwx) : ORIGIN = ITCM_FUNC_START,       LENGTH = ITCM_FUNC_SIZE
+  itcm_heap         (rwx) : ORIGIN = ITCM_HEAP_START,       LENGTH = ITCM_HEAP_SIZE
+  dtcm_stack        (rw)  : ORIGIN = DTCM_STACK_START,      LENGTH = DTCM_STACK_SIZE
+  dtcm_user         (rw)  : ORIGIN = DTCM_USER_START,       LENGTH = DTCM_USER_SIZE
+  dtcm_data         (rw)  : ORIGIN = DTCM_DATA_START,       LENGTH = DTCM_DATA_SIZE
+  standby_ram       (rw)  : ORIGIN = STANDBY_RAM_START,     LENGTH = STANDBY_RAM_SIZE
+  standby_ram_fix   (rw)  : ORIGIN = STANDBY_RAM_FIX_START, LENGTH = STANDBY_RAM_FIX_SIZE
+  ksram             (rwx) : ORIGIN = KERNEL_SRAM_START,     LENGTH = KERNEL_SRAM_SIZE
+  usram             (rwx) : ORIGIN = USER_SRAM_START,       LENGTH = USER_SRAM_SIZE
+  boot_share        (rwx) : ORIGIN = BOOT_SHARE_START,      LENGTH = BOOT_SHARE_SIZE
+  coredump          (rwx) : ORIGIN = COREDUMP_START,        LENGTH = COREDUMP_SIZE
+  kcalib            (rwx) : ORIGIN = CALIB_KERNEL_START,    LENGTH = CALIB_KERNEL_SIZE
+  ucalib            (rwx) : ORIGIN = CALIB_USER_START,      LENGTH = CALIB_USER_SIZE
+}
+
+OUTPUT_ARCH(arm)
+
+SECTIONS
+{
+  .userspace :  ALIGN(64)
+  {
+    _suserspace = ABSOLUTE(.);
+    KEEP(*(.userspace))
+    . = ALIGN(64); /* userspace align to 64 to keep the address continus for MBF */
+    _euserspace = ABSOLUTE(.);
+  } > uflash
+
+.text :  ALIGN(4)
+  {
+    _stext = ABSOLUTE(.);
+    *(.text .text.*)
+    *(.fixup)
+    *(.gnu.warning)
+    *(.rodata .rodata.*)
+    *(.gnu.linkonce.t.*)
+    *(.glue_7)
+    *(.glue_7t)
+    *(.got)
+    *(.gcc_except_table)
+    *(.gnu.linkonce.r.*)
+    . = ALIGN(4);
+    _etext = ABSOLUTE(.);
+  } > uflash
+
+  .init_section :  ALIGN(4)
+  {
+    _sinit = ABSOLUTE(.);
+    KEEP(*(SORT_BY_INIT_PRIORITY(.init_array.*) SORT_BY_INIT_PRIORITY(.ctors.*)))
+    KEEP(*(.init_array EXCLUDE_FILE(*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o) .ctors))
+    . = ALIGN(4);
+    _einit = ABSOLUTE(.);
+  } > uflash
+
+  .ARM.extab :  ALIGN(4)
+  {
+    *(.ARM.extab*)
+    . = ALIGN(4);
+  } > uflash
+
+  .ARM.exidx :  ALIGN(4)
+  {
+    __exidx_start = ABSOLUTE(.);
+    *(.ARM.exidx*)
+    . = ALIGN(4);
+    __exidx_end = ABSOLUTE(.);
+  } > uflash
+
+  .data :  ALIGN(4)
+  {
+    _sdata = ABSOLUTE(.);
+    *(.data .data.*)
+    *(.gnu.linkonce.d.*)
+    CONSTRUCTORS
+    . = ALIGN(8);
+    _edata = ABSOLUTE(.);
+  } > usram AT > uflash
+
+  _eronly = LOADADDR(.data);
+
+  .bss (NOLOAD) :  ALIGN(4)
+  {
+    _sbss = ABSOLUTE(.);
+    *(.bss .bss.*)
+    *(.gnu.linkonce.b.*)
+    *(COMMON)
+    . = ALIGN(4);
+    _ebss = ABSOLUTE(.);
+  } > usram
+
+  .standbyram (NOLOAD) :  ALIGN(4)
+  {
+    _sstandby_ram = ABSOLUTE(.);
+    *(.runtime_overflow .runtime_overflow.*)
+    *(.no_init)
+    . = ALIGN(4);
+    _estandby_ram = ABSOLUTE(.);
+  } > standby_ram
+
+  .standbyramfix (NOLOAD) :  ALIGN(4)
+  {
+    _sstandby_ram_fix = ABSOLUTE(.);
+    *(.standby_ramfix .standby_ramfix.*)
+    . = ALIGN(4);
+    _estandby_ram_fix = ABSOLUTE(.);
+  } > standby_ram_fix
+
+  .calibra :  ALIGN(4)
+  {
+    _scalibra = ABSOLUTE(.);
+    *(.calibra .calibra.*)
+    . = ALIGN(8);
+    _ecalibra = ABSOLUTE(.);
+  } > ucalib AT > uflash
+
+  _calib_pflash = LOADADDR(.calibra);
+
+  .dtcmstack (NOLOAD) :  ALIGN(4)
+  {
+    _sdtcm_stack = ABSOLUTE(.);
+    *(SORT(.dtcm_stack.*) SORT(.dtcm_stack))
+    . = ALIGN(4);
+    _edtcm_stack = ABSOLUTE(.);
+  } > dtcm_user
+
+  /* Stabs debugging sections. */
+
+  .stab 0 : { *(.stab) }
+  .stabstr 0 : { *(.stabstr) }
+  .stab.excl 0 : { *(.stab.excl) }
+  .stab.exclstr 0 : { *(.stab.exclstr) }
+  .stab.index 0 : { *(.stab.index) }
+  .stab.indexstr 0 : { *(.stab.indexstr) }
+  .comment 0 : { *(.comment) }
+  .debug_abbrev 0 : { *(.debug_abbrev) }
+  .debug_info 0 : { *(.debug_info) }
+  .debug_line 0 : { *(.debug_line) }
+  .debug_pubnames 0 : { *(.debug_pubnames) }
+  .debug_aranges 0 : { *(.debug_aranges) }
+
+  _pflash_start = PFLASH_START;
+  _pflash_end = PFLASH_START + 0x200000;
+  _uflash_start = ORIGIN(uflash);
+  _uflash_end = ORIGIN(uflash) + LENGTH(uflash);
+  _dflash_start = ORIGIN(dflash);
+  _dflash_end = ORIGIN(dflash) + LENGTH(dflash);
+  _usram_start = ORIGIN(usram);
+  _uram_end = ORIGIN(usram) + LENGTH(usram);
+  _standby_ram_start = ORIGIN(standby_ram);
+  _standby_ram_end = ORIGIN(standby_ram) + LENGTH(standby_ram);
+  _standby_ram_fix_start = ORIGIN(standby_ram_fix);
+  _standby_ram_fix_end = ORIGIN(standby_ram_fix) + LENGTH(standby_ram_fix);
+}

@@ -1,0 +1,354 @@
+#
+# Copyright (C) 2025 Xiaomi Corporation
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more contributor
+# license agreements.  See the NOTICE file distributed with this work for
+# additional information regarding copyright ownership.  The ASF licenses this
+# file to you under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License.  You may obtain a copy of
+# the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+menu "FC7300 EIM Configuration"
+	depends on FC7300_EIM
+
+config FC7300_EIM_MAM0_S0
+	bool "SCM Matrix Access Monitor Error Injection0 (MAM0_S0)"
+	default n
+
+config FC7300_EIM_MAM0_S1
+	bool "SCM Matrix Access Monitor Error Injection1 (MAM0_S1)"
+	default n
+
+config FC7300_EIM_MAM0_S2
+	bool "SCM Matrix Access Monitor Error Injection2 (MAM0_S2)"
+	default n
+
+config FC7300_EIM_MAM0_S3
+	bool "SCM Matrix Access Monitor Error Injection3 (MAM0_S3)"
+	default n
+
+config FC7300_EIM_MAM1_S0
+	bool "SCM Matrix Access Monitor Error Injection4 (MAM1_S0)"
+	default n
+
+config FC7300_EIM_MAM1_S1
+	bool "SCM Matrix Access Monitor Error Injection5 (MAM1_S1)"
+	default n
+
+config FC7300_EIM_MAM1_S2
+	bool "SCM Matrix Access Monitor Error Injection6 (MAM1_S2)"
+	default n
+
+config FC7300_EIM_MAM1_S3
+	bool "SCM Matrix Access Monitor Error Injection7 (MAM1_S3)"
+	default n
+
+config FC7300_EIM_MAM2_S0
+	bool "SCM Matrix Access Monitor Error Injection8 (MAM2_S0)"
+	default n
+
+config FC7300_EIM_MAM2_S1
+	bool "SCM Matrix Access Monitor Error Injection9 (MAM2_S1)"
+	default n
+
+config FC7300_EIM_MAM2_S2
+	bool "SCM Matrix Access Monitor Error Injection10 (MAM2_S2)"
+	default n
+
+config FC7300_EIM_CPU0_AHBM
+	bool "SCM Matrix Access Monitor Error Injection11 (CPU0_AHBM)"
+	default n
+
+config FC7300_EIM_CPU0_AHBP
+	bool "SCM Matrix Access Monitor Error Injection12 (CPU0_AHBP)"
+	default n
+
+config FC7300_EIM_CPU1_AHBM
+	bool "SCM Matrix Access Monitor Error Injection13 (CPU1_AHBM)"
+	default n
+
+config FC7300_EIM_CPU1_AHBP
+	bool "SCM Matrix Access Monitor Error Injection14 (CPU1_AHBP)"
+	default n
+
+config FC7300_EIM_CPU2_AHBM
+	bool "SCM Matrix Access Monitor Error Injection15 (CPU2_AHBM)"
+	default n
+
+config FC7300_EIM_CPU2_AHBP
+	bool "SCM Matrix Access Monitor Error Injection16 (CPU2_AHBP)"
+	default n
+
+config FC7300_EIM_ENET
+	bool "SCM Matrix Access Monitor Error Injection17 (EIM_ENET)"
+	default n
+
+config FC7300_EIM_HSM
+	bool "SCM Matrix Access Monitor Error Injection18 (EIM_HSM)"
+	default n
+
+config FC7300_EIM_DMA0
+	bool "SCM Matrix Access Monitor Error Injection19 (EIM_DMA0)"
+	default n
+
+config FC7300_EIM_DMA1
+	bool "SCM Matrix Access Monitor Error Injection20 (EIM_DMA1)"
+	default n
+
+config FC7300_EIM_CPU0_AHBS
+	bool "SCM Matrix Access Monitor Error Injection21 (EIM_CPU0_AHBS)"
+	default n
+
+config FC7300_EIM_CPU1_AHBS
+	bool "SCM Matrix Access Monitor Error Injection22 (EIM_CPU1_AHBS)"
+	default n
+
+config FC7300_EIM_CPU2_AHBS
+	bool "SCM Matrix Access Monitor Error Injection23 (EIM_CPU2_AHBS)"
+	default n
+
+config FC7300_EIM_CPU0_ITCM
+	bool "CPU0 ITCM"
+	default n
+
+config FC7300_EIM_CPU0_DTCM0
+	bool "CPU0 DTCM0"
+	default n
+
+config FC7300_EIM_CPU0_DTCM1
+	bool "CPU0 DTCM1"
+	default n
+
+config FC7300_EIM_CPU1_ITCM
+	bool "CPU1 ITCM"
+	default n
+
+config FC7300_EIM_CPU1_DTCM0
+	bool "CPU1 DTCM0"
+	default n
+
+config FC7300_EIM_CPU1_DTCM1
+	bool "CPU1 DTCM1"
+	default n
+
+config FC7300_EIM_CPU2_ITCM
+	bool "CPU2 ITCM"
+	default n
+
+config FC7300_EIM_CPU2_DTCM0
+	bool "CPU2 DTCM0"
+	default n
+
+config FC7300_EIM_CPU2_DTCM1
+	bool "CPU2 DTCM1"
+	default n
+
+config FC7300_EIM_SRAM0
+	bool "SRAM0 Injection"
+	default n
+
+config FC7300_EIM_SRAM1
+	bool "SRAM1 Injection"
+	default n
+
+config FC7300_EIM_SRAM2
+	bool "SRAM2 Injection"
+	default n
+
+config FC7300_EIM_CPU0DCACHE_DATA
+	bool "CPU0 DCACHE DATA Injection"
+	default n
+
+config FC7300_EIM_CPU0DCACHE_TAG
+	bool "CPU0 DCACHE TAG Injection"
+	default n
+
+config FC7300_EIM_CPU0ICACHE_DATA
+	bool "CPU0 ICACHE DATA Injection"
+	default n
+
+config FC7300_EIM_CPU0ICACHE_TAG
+	bool "CPU0 ICACHE TAG Injection"
+	default n
+
+config FC7300_EIM_CPU1DCACHE_DATA
+	bool "CPU1 DCACHE DATA Injection"
+	default n
+
+config FC7300_EIM_CPU1DCACHE_TAG
+	bool "CPU1 DCACHE TAG Injection"
+	default n
+
+config FC7300_EIM_CPU1ICACHE_DATA
+	bool "CPU1 ICACHE DATA Injection"
+	default n
+
+config FC7300_EIM_CPU1ICACHE_TAG
+	bool "CPU1 ICACHE TAG Injection"
+	default n
+
+config FC7300_EIM_CPU2DCACHE_DATA
+	bool "CPU2 DCACHE DATA Injection"
+	default n
+
+config FC7300_EIM_CPU2DCACHE_TAG
+	bool "CPU2 DCACHE TAG Injection"
+	default n
+
+config FC7300_EIM_CPU2ICACHE_DATA
+	bool "CPU2 ICACHE DATA Injection"
+	default n
+
+config FC7300_EIM_CPU2ICACHE_TAG
+	bool "CPU2 ICACHE TAG Injection"
+	default n
+
+config FC7300_EIM_MAM1_S3_SLAVEDOWNSIZE
+	bool "SCM MAM1_S3 Slave DownSize Error Injection"
+	default n
+
+config FC7300_EIM_MAM1_S3_MASTERDOWNSIZE
+	bool "SCM MAM1_S3 Master DownSize Error Injection"
+	default n
+
+config FC7300_EIM_DMA0_CFG
+	bool "DMA0 CFG ECC Injection"
+	default n
+
+config FC7300_EIM_DMA1_CFG
+	bool "DMA1 CFG ECC Injection"
+	default n
+
+config FC7300_EIM_ROM_ECC
+	bool "ROM ECC Injection"
+	default n
+
+config FC7300_EIM_MAM1_S3_MONITOR
+	bool "SCM MAM1_S3 Monitor Error Injection"
+	default n
+
+config FC7300_EIM_CPU0AHBM0_AHBM1_MONITOR
+	bool "SCM CPU0 AHBM0 and AHBM1 Monitor Error Injection"
+	default n
+
+config FC7300_EIM_CPU0AHBP_AHBS_MONITOR
+	bool "SCM CPU0 AHBP and AHBS Monitor Error Injection"
+	default n
+
+config FC7300_EIM_CPU1AHBM0_AHBM1_MONITOR
+	bool "SCM CPU1 AHBM0 and AHBM1 Monitor Error Injection"
+	default n
+
+config FC7300_EIM_CPU1AHBP_AHBS_MONITOR
+	bool "SCM CPU1 AHBP and AHBS Monitor Error Injection"
+	default n
+
+config FC7300_EIM_CPU2AHBM0_AHBM1_MONITOR
+	bool "SCM CPU2 AHBM0 and AHBM1 Monitor Error Injection"
+	default n
+
+config FC7300_EIM_CPU2AHBP_AHBS_MONITOR
+	bool "SCM CPU2 AHBP and AHBS Monitor Error Injection"
+	default n
+
+config FC7300_EIM_MAM2_S2_SLAVEDOWNSIZE
+	bool "SCM MAM2_S2 Slave DownSize Error Injection"
+	default n
+
+config FC7300_EIM_MAM2_S2_MASTERDOWNSIZE
+	bool "SCM MAM2_S2 Master DownSize Error Injection"
+	default n
+
+config FC7300_EIM_RAM_DECODER_MONITOR
+	bool "RAM Decoder Monitor Error Injection"
+	default n
+
+config FC7300_EIM_PFLASH0
+	bool "PFlash 0 Error Injection"
+	default n
+
+config FC7300_EIM_PFLASH1
+	bool "PFlash 1 Error Injection"
+	default n
+
+config FC7300_EIM_DFLASH
+	bool "DFlash Error Injection"
+	default n
+
+config FC7300_EIM_CPU0_LOCKSTEP
+	bool "CPU0 Lockstep Injection"
+	default n
+
+config FC7300_EIM_CPU1_LOCKSTEP
+	bool "CPU1 Lockstep Injection"
+	default n
+
+config FC7300_EIM_CMU0
+	bool "CMU0 Mis Error Injection"
+	default n
+	depends on FC7300_CMU0
+
+config FC7300_EIM_CMU1
+	bool "CMU1 Mis Error Injection"
+	default n
+	depends on FC7300_CMU1
+
+config FC7300_EIM_CMU2
+	bool "CMU2 Mis Error Injection"
+	default n
+	depends on FC7300_CMU2
+
+config FC7300_EIM_CMU3
+	bool "CMU3 Mis Error Injection"
+	default n
+	depends on FC7300_CMU3
+
+config FC7300_EIM_CMU4
+	bool "CMU4 Mis Error Injection"
+	default n
+	depends on FC7300_CMU4
+
+config FC7300_EIM_MPU
+	bool "MemManage Fault Injection"
+	default n
+	depends on ARCH_USE_MPU
+
+config FC7300_EIM_MPU_ADDRESS
+	hex "FC7300 MPU Injection Address"
+	default 0x21010000
+	depends on FC7300_EIM_MPU
+
+config FC7300_EIM_MAM0
+	bool "MAM0 Bus Fault Injection"
+	default n
+	depends on FC7300_MAM
+
+config FC7300_EIM_MAM1
+	bool "MAM1 Bus Fault Injection"
+	default n
+	depends on FC7300_MAM
+
+config FC7300_EIM_MAM2
+	bool "MAM2 Bus Fault Injection"
+	default n
+	depends on FC7300_MAM
+
+config FC7300_EIM_FMC
+	bool "FMC buffer Injection"
+	default n
+
+endmenu # FC7300 EIM Configuration

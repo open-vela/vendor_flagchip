@@ -1,0 +1,240 @@
+/****************************************************************************
+ * Copyright (C) 2025 Xiaomi Corporation
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.  The
+ * ASF licenses this file to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the
+ * License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ ****************************************************************************/
+#include "nuttx/config.h"
+
+/* Memory Layout of FC7300F8M
+ *   ITCM     0x00000000 - 0x0000FFFF 64KB
+ *   DTCM     0x20000000 - 0x2001FFFF 128KB
+ *   PFLASH_0 0x01000000 - 0x011FFFFF 2MB
+ *   PFLASH_1 0x01200000 - 0x013FFFFF 2MB
+ *   PFLASH_2 0x01400000 - 0x015FFFFF 2MB
+ *   PFLASH_3 0x01600000 - 0x017FFFFF 2MB
+ *   DFLASH   0x04000000 - 0x0403FFFF 256KB
+ *   SRAM_0   0x21000000 - 0x2101FFFF 128KB
+ *   SRAM_1   0x21020000 - 0x2103FFFF 128KB
+ *   SRAM_2   0x21040000 - 0x2107FFFF 256KB
+ */
+
+#if defined(CONFIG_CPU_COREID)
+#  if (CONFIG_CPU_COREID == 0)
+#    define PFLASH_START 0x01040000
+#    define PFLASH_SIZE  0x1BE000
+#  elif (CONFIG_CPU_COREID == 1)
+#    define PFLASH_START 0x01400000
+#    define PFLASH_SIZE  0x1B6000
+#  elif (CONFIG_CPU_COREID == -1)
+#    define PFLASH_START 0x01000000
+#    define PFLASH_SIZE  0x40000
+#  endif
+#endif
+
+MEMORY
+{
+  pflash   (rx)  : ORIGIN = PFLASH_START, LENGTH = PFLASH_SIZE
+  dflash   (rx)  : ORIGIN = 0x04000000, LENGTH = 256K
+  vram     (rwx) : ORIGIN = 0x00000000, LENGTH = 1K
+  itcm     (rwx) : ORIGIN = 0x00000400, LENGTH = 64K-1K
+  dtcm     (rwx) : ORIGIN = 0x20000000, LENGTH = 128K
+  sram_0   (rwx) : ORIGIN = CONFIG_RAM_START, LENGTH = CONFIG_RAM_SIZE
+  sram_1   (rwx) : ORIGIN = 0x21020000, LENGTH = 128K
+  sram_2   (rwx) : ORIGIN = 0x21040000, LENGTH = 96K
+  calib    (rwx) : ORIGIN = 0x21058000, LENGTH = 32K
+  sram_nc0 (rwx) : ORIGIN = 0x21060000, LENGTH = 32K
+  sram_nc1 (rwx) : ORIGIN = 0x21068000, LENGTH = 32K
+  sram_nc2 (rwx) : ORIGIN = 0x21070000, LENGTH = 32K
+  sram_shr (rwx) : ORIGIN = 0x21078000, LENGTH = 32K
+}
+
+OUTPUT_ARCH(arm)
+EXTERN(_vectors)
+ENTRY(_stext)
+
+SECTIONS
+{
+  .text : ALIGN(4)
+  {
+    . = ALIGN(1024); /* VTOR must be align to 1K */
+    _stext = ABSOLUTE(.);
+    *(.vectors)
+    . = ALIGN(4);
+    *(.text .text.*)
+    *(.fixup)
+    *(.gnu.warning)
+    *(.rodata .rodata.*)
+    *(.gnu.linkonce.t.*)
+    *(.glue_7)
+    *(.glue_7t)
+    *(.got)
+    *(.gcc_except_table)
+    *(.gnu.linkonce.r.*)
+    _etext = ABSOLUTE(.);
+  } > pflash
+
+  .init_section : ALIGN(4)
+  {
+    _sinit = ABSOLUTE(.);
+    KEEP(*(SORT_BY_INIT_PRIORITY(.init_array.*) SORT_BY_INIT_PRIORITY(.ctors.*)))
+    KEEP(*(.init_array EXCLUDE_FILE(*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o) .ctors))
+    _einit = ABSOLUTE(.);
+  } > pflash
+
+  .ARM.extab : ALIGN(4)
+  {
+    *(.ARM.extab*)
+  } > pflash
+
+  .ARM.exidx : ALIGN(4)
+  {
+    __exidx_start = ABSOLUTE(.);
+    *(.ARM.exidx*)
+    __exidx_end = ABSOLUTE(.);
+  } > pflash
+
+  /* The RAM vector table (if present) should be 1KB aligned */
+
+  .ram_vectors (NOLOAD):
+  {
+    . = ALIGN(1024);
+    *(.ram_vectors)
+  } > vram
+
+  .ramfunc : ALIGN(4)
+  {
+    _sramfuncs = ABSOLUTE(.);
+    *(.ramfunc  .ramfunc.*)
+    _eramfuncs = ABSOLUTE(.);
+  } > itcm AT > pflash
+
+  _framfuncs = LOADADDR(.ramfunc);
+
+  .data : ALIGN(4)
+  {
+    _sdata = ABSOLUTE(.);
+    *(.data .data.*)
+    *(.gnu.linkonce.d.*)
+    CONSTRUCTORS
+    . = ALIGN(4);
+    _edata = ABSOLUTE(.);
+  } > sram_0 AT > pflash
+
+  _eronly = LOADADDR(.data);
+
+  .calibra : ALIGN(4)
+  {
+    _scalibra = ABSOLUTE(.);
+    *(.calibra .calibra.*)
+    . = ALIGN(4);
+    _ecalibra = ABSOLUTE(.);
+  } > calib AT > pflash
+
+  _calib_pflash = LOADADDR(.calibra);
+
+  .ncdata : ALIGN(4)
+  {
+    _sncdata = ABSOLUTE(.);
+    *(.ncdata .ncdata.*)
+    . = ALIGN(4);
+    _encdata = ABSOLUTE(.);
+  } > sram_nc0 AT > pflash
+
+  _sncdata_rom = LOADADDR(.ncdata);
+
+  .bss (NOLOAD): ALIGN(4)
+  {
+    _sbss = ABSOLUTE(.);
+    *(.bss .bss.*)
+    *(.gnu.linkonce.b.*)
+    *(COMMON)
+    . = ALIGN(4);
+    _ebss = ABSOLUTE(.);
+  } > sram_0
+
+  .ncbss (NOLOAD): ALIGN(4)
+  {
+    _sncbss = ABSOLUTE(.);
+    *(.ncbss .ncbss.*)
+    . = ALIGN(4);
+    _encbss = ABSOLUTE(.);
+  } > sram_nc0
+
+ .dtcmstack (NOLOAD) :  ALIGN(4)
+  {
+    _sdtcm_stack = ABSOLUTE(.);
+    *(.dtcm_stack .dtcm_stack.*)
+    . = ALIGN(4);
+    _edtcm_stack = ABSOLUTE(.);
+  } > dtcm
+
+  .dtcmdata :  ALIGN(4)
+  {
+    _sdtcm_data = ABSOLUTE(.);
+    *(.dtcm_data .dtcm_data.*)
+    . = ALIGN(4);
+    _edtcm_data = ABSOLUTE(.);
+  } > dtcm AT > pflash
+  _sdtcmdata_rom = LOADADDR(.dtcmdata);
+
+  /* Stabs debugging sections. */
+
+  .stab 0 : { *(.stab) }
+  .stabstr 0 : { *(.stabstr) }
+  .stab.excl 0 : { *(.stab.excl) }
+  .stab.exclstr 0 : { *(.stab.exclstr) }
+  .stab.index 0 : { *(.stab.index) }
+  .stab.indexstr 0 : { *(.stab.indexstr) }
+  .comment 0 : { *(.comment) }
+  .debug_abbrev 0 : { *(.debug_abbrev) }
+  .debug_info 0 : { *(.debug_info) }
+  .debug_line 0 : { *(.debug_line) }
+  .debug_pubnames 0 : { *(.debug_pubnames) }
+  .debug_aranges 0 : { *(.debug_aranges) }
+
+  _pflash_start = ORIGIN(pflash);
+  _pflash_end = ORIGIN(pflash) + LENGTH(pflash);
+  _dflash_start = ORIGIN(dflash);
+  _dflash_end = ORIGIN(dflash) + LENGTH(dflash);
+  _itcm_start = ORIGIN(vram);
+  _itcm_end = ORIGIN(vram) + 0x10000;
+  _dtcm_start = ORIGIN(dtcm);
+  _dtcm_end   = ORIGIN(dtcm) + LENGTH(dtcm);
+  _dtcm_heap_start = _edtcm_data;
+  _dtcm_heap_size  = LENGTH(dtcm) - (_edtcm_data - _sdtcm_stack);
+  _sram_0_start = ORIGIN(sram_0);
+  _sram_0_end = ORIGIN(sram_0) + LENGTH(sram_0);
+  _sram_1_start = ORIGIN(sram_1);
+  _sram_1_end = ORIGIN(sram_1) + LENGTH(sram_1);
+  _sram_2_start = ORIGIN(sram_2);
+  _sram_2_end = ORIGIN(sram_2) + LENGTH(sram_2);
+  _sram_nc0_start = ORIGIN(sram_nc0);
+  _sram_nc0_end = ORIGIN(sram_nc0) + LENGTH(sram_nc0);
+  _sram_nc1_start = ORIGIN(sram_nc1);
+  _sram_nc1_end = ORIGIN(sram_nc1) + LENGTH(sram_nc1);
+  _sram_nc2_start = ORIGIN(sram_nc2);
+  _sram_nc2_end = ORIGIN(sram_nc2) + LENGTH(sram_nc2);
+  _sram_shr_start = ORIGIN(sram_shr);
+  _sram_shr_end = ORIGIN(sram_shr) + LENGTH(sram_shr);
+
+  /* Alias of sram_0 and sram_nc_0 for core 0 */
+
+  _sram_start = _sram_0_start;
+  _sram_end = _sram_0_end;
+  _sram_nc_start = _sram_nc0_start;
+  _sram_nc_end = _sram_nc0_end;
+}

@@ -1,0 +1,240 @@
+############################################################################
+# Copyright (C) 2025 Xiaomi Corporation
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.  The
+# ASF licenses this file to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance with the
+# License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+# License for the specific language governing permissions and limitations
+# under the License.
+#
+############################################################################
+
+include armv7-m/Make.defs
+
+# Specify our HEAD assembly file.  This will be linked as
+# the first object file, so it will appear at address 0
+
+#HEAD_ASRC = head.S
+
+#CHIP_ASRCS = vectors.S
+
+# Specify our C code within this directory to be included
+
+CHIP_CSRCS  = fc7300_start.c fc7300_clockconfig.c fc7300_periphclocks.c
+CHIP_CSRCS += fc7300_lowputc.c fc7300_irq.c fc7300_wdog.c fc7300_pin.c
+CHIP_CSRCS += fc7300_gpio.c fc7300_trgsel.c
+CHIP_CSRCS += fc7300_net.c
+CHIP_CSRCS += fc7300_timerisr.c
+CHIP_CSRCS += fc7300_uart.c
+
+ifneq ($(CONFIG_CRYPTO_CRYPTODEV_HARDWARE),)
+ifneq ($(CONFIG_FC7300_HSM)$(CONFIG_FC7300_CRC32),)
+CHIP_CSRCS += fc7300_crypto.c
+endif
+ifneq ($(CONFIG_FC7300_HSM),)
+CHIP_CSRCS += fc7300_crypto_hsm.c fc7300_crypto_interface.c
+CHIP_CSRCS += fc7300_crypto_level0_api.c fc7300_crypto_level1_api.c
+CHIP_CSRCS += fc7300_crypto_level2_api.c fc7300_crypto_levelN_api.c
+CHIP_CSRCS += fc7300_crypto_level3_api.c
+endif
+ifneq ($(CONFIG_FC7300_CRC32),)
+CHIP_CSRCS += fc7300_crc.c
+endif
+endif
+
+ifeq ($(CONFIG_FC7300_MB),y)
+CHIP_CSRCS += fc7300_mb.c
+endif
+
+ifeq ($(CONFIG_FC7300_HWSPINLOCK),y)
+CHIP_CSRCS += fc7300_hwspinlock.c
+endif
+
+ifeq ($(CONFIG_ARCH_USE_MPU),y)
+CHIP_CSRCS += fc7300_mpu.c
+endif
+
+ifeq ($(CONFIG_FC7300_ADC),y)
+CHIP_CSRCS += fc7300_adc.c
+endif
+
+ifeq ($(CONFIG_FC7300_PWM),y)
+CHIP_CSRCS += fc7300_pwm.c
+endif
+
+ifeq ($(CONFIG_FC7300_CAP),y)
+CHIP_CSRCS += fc7300_capture.c
+endif
+
+ifeq ($(CONFIG_FC7300_CAP),y)
+CHIP_CSRCS += fc7300_capture_lowerhalf.c
+endif
+
+ifeq ($(CONFIG_FC7300_GPIOIRQ),y)
+CHIP_CSRCS += fc7300_pinirq.c
+endif
+
+ifeq ($(CONFIG_FC7300_DMA),y)
+CHIP_CSRCS += fc7300_dma.c
+endif
+
+ifeq ($(CONFIG_DEBUG_GPIO_INFO),y)
+CHIP_CSRCS += fc7300_pindump.c
+endif
+
+ifeq ($(CONFIG_FC7300_FCIIC),y)
+CHIP_CSRCS += fc7300_fciic.c
+endif
+
+ifeq ($(CONFIG_FC7300_FCSPI),y)
+CHIP_CSRCS += fc7300_fcspi.c
+endif
+
+ifeq ($(CONFIG_FC7300_ENET),y)
+CHIP_CSRCS += fc7300_enet.c
+endif
+
+ifeq ($(CONFIG_FC7300_FLEXCAN),y)
+CHIP_CSRCS += fc7300_flexcan_common.c
+CHIP_CSRCS += fc7300_flexcan_config.c
+endif
+
+ifeq ($(CONFIG_FC7300_FLEXCAN_SOCKET),y)
+CHIP_CSRCS += fc7300_flexcan_socket.c
+endif
+
+ifeq ($(CONFIG_FC7300_FLEXCAN_CHARDRIVER),y)
+CHIP_CSRCS += fc7300_flexcan_chardriver.c
+endif
+
+ifeq ($(CONFIG_FC7300_LIN),y)
+CHIP_CSRCS += fc7300_lin.c
+endif
+
+ifeq ($(CONFIG_FC7300_RTC),y)
+CHIP_CSRCS += fc7300_rtc.c
+endif
+
+ifeq ($(CONFIG_FC7300_PROGMEM),y)
+CHIP_CSRCS += fc7300_progmem.c
+endif
+
+ifeq ($(CONFIG_FC7300_EEEPROM),y)
+CHIP_CSRCS += fc7300_eeeprom.c
+endif
+
+ifeq ($(CONFIG_FC7300_RESETCAUSE_PROCFS), y)
+CHIP_CSRCS += fc7300_resetcause_procfs.c
+endif
+
+ifeq ($(CONFIG_BOARDCTL_RESET_CAUSE),y)
+CHIP_CSRCS += fc7300_rgm.c
+endif
+
+ifeq ($(CONFIG_FC7300_TSTMP),y)
+CHIP_CSRCS += fc7300_tstmp.c
+endif
+
+ifeq ($(CONFIG_ONESHOT),y)
+CHIP_CSRCS += fc7300_oneshot_lowerhalf.c fc7300_oneshot.c
+endif
+
+ifeq ($(CONFIG_FC7300_NORFLASH_MTD),y)
+CHIP_CSRCS += fc7300_norflash_mtd.c
+CHIP_CSRCS += fc7300_partition.c
+endif
+
+ifeq ($(CONFIG_BOARDCTL_RESET),y)
+CHIP_CSRCS += fc7300_reset.c
+endif
+
+ifeq ($(CONFIG_BOARDCTL_POWEROFF),y)
+CHIP_CSRCS += fc7300_pm.c
+endif
+
+ifeq ($(CONFIG_FC7300_FCPIT),y)
+CHIP_CSRCS += fc7300_fcpit.c fc7300_fcpit_lowerhalf.c
+endif
+
+ifeq ($(CONFIG_FC7300_RPTUN),y)
+CHIP_CSRCS += fc7300_rptun.c
+endif
+
+ifeq ($(CONFIG_FC7300_RPMSG_VIRTIO),y)
+CHIP_CSRCS += fc7300_rpmsg_virtio.c
+endif
+
+ifeq ($(CONFIG_BUILD_PROTECTED),y)
+CHIP_CSRCS += fc7300_allocateheap.c
+CHIP_CSRCS += fc7300_userspace.c
+endif
+
+ifeq ($(CONFIG_FC7300_ERM),y)
+CHIP_CSRCS += fc7300_erm.c
+CHIP_CSRCS += fc7300_erm_user.c
+endif
+
+ifeq ($(CONFIG_FC7300_FCSMU),y)
+CHIP_CSRCS += fc7300_fcsmu.c
+CHIP_CSRCS += fc7300_fcsmu_user.c
+endif
+
+ifeq ($(CONFIG_FC7300_EIM),y)
+CHIP_CSRCS += fc7300_eim.c
+CHIP_ASRCS += fc7300_eim_asm.S
+endif
+
+ifeq ($(CONFIG_FC7300_CMU),y)
+CHIP_CSRCS += fc7300_cmu.c
+CHIP_CSRCS += fc7300_cmu_user.c
+endif
+
+ifeq ($(CONFIG_FC7300_PMC),y)
+CHIP_CSRCS += fc7300_pmc.c
+CHIP_CSRCS += fc7300_pmc_user.c
+endif
+
+ifeq ($(CONFIG_FC7300_STCU),y)
+CHIP_CSRCS += fc7300_stcu.c
+endif
+
+ifeq ($(CONFIG_FC7300_TMU),y)
+CHIP_CSRCS += fc7300_tmu.c
+CHIP_CSRCS += fc7300_tmu_user.c
+endif
+
+ifeq ($(CONFIG_FC7300_MAM),y)
+CHIP_CSRCS += fc7300_mam.c
+CHIP_CSRCS += fc7300_mam_user.c
+endif
+
+CHIP_CSRCS += fc7300_safety.c
+
+ifeq ($(CONFIG_FC7300_BOARD_PROFILING),y)
+CFLAGS += -I$(TOPDIR)/../vendor/flagchip/boards/fc7300/fc7300f8m-rzcu_a0/src
+endif
+
+ifeq ($(CONFIG_FC7300_RNG),y)
+CHIP_CSRCS += fc7300_rng.c
+endif
+
+ifeq ($(CONFIG_AUTOMID_TRAPINFO),y)
+CFLAGS += -I$(TOPDIR)/../vendor/xiaomi/micar/autoMid/trapInfo/inc
+endif
+
+ifeq ($(CONFIG_SYSTEM_GCOV),y)
+CFLAGS += -fprofile-arcs -ftest-coverage -fno-inline
+endif
+
+-include $(TOPDIR)/../vendor/xiaomi/micar/autoMid/cdd/Make_cdd.defs
+
+# Source files specific to the ARM CPU family and to the FC7300 chip family

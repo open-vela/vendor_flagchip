@@ -1,0 +1,1323 @@
+#
+# Copyright (C) 2025 Xiaomi Corporation
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more contributor
+# license agreements.  See the NOTICE file distributed with this work for
+# additional information regarding copyright ownership.  The ASF licenses this
+# file to you under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License.  You may obtain a copy of
+# the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+menu "FC7300 FCSMU Configuration"
+	depends on FC7300_FCSMU
+
+config FC7300_FCSMU_ISR_PRIORITY
+	int "ISR PRIORITY"
+	default 192
+
+choice
+	prompt "Configuration State Timeout Interval"
+	default FC7300_FCSMU_CFG_TIMEOUT_MODE5
+
+config FC7300_FCSMU_CFG_TIMEOUT_MODE0
+	bool "170us"
+
+config FC7300_FCSMU_CFG_TIMEOUT_MODE1
+	bool "341us"
+
+config FC7300_FCSMU_CFG_TIMEOUT_MODE2
+	bool "682us"
+
+config FC7300_FCSMU_CFG_TIMEOUT_MODE3
+	bool "1365us"
+
+config FC7300_FCSMU_CFG_TIMEOUT_MODE4
+	bool "2730us"
+
+config FC7300_FCSMU_CFG_TIMEOUT_MODE5
+	bool "5461us"
+
+config FC7300_FCSMU_CFG_TIMEOUT_MODE6
+	bool "10922us"
+
+config FC7300_FCSMU_CFG_TIMEOUT_MODE7
+	bool "21845us"
+
+endchoice
+
+config FC7300_FCSMU_CFG_TIMEOUT_INTERRUPT_ENABLE
+	bool "Configuration State Timeout Interrupt Enable"
+	default n
+
+config FC7300_FCSMU_WARNING_TIMEOUT
+	int "FCSMU WARNING TIMEOUT INTERVAL(us)"
+	default 10000
+	range 0 17000
+
+menuconfig FC7300_FCSMU_SOUT_PINS_ENABLE
+	bool "SOUT Pins Enable"
+	default n
+	---help---
+		Enable FCSMU SOUT Pins
+
+if FC7300_FCSMU_SOUT_PINS_ENABLE
+
+config FC7300_FCSMU_SOUT_DIVIDER_RATIO
+	int "SOUT Divider Ratio"
+	default 0
+	range 0 1023
+	---help---
+		SOUT Divider Ratio
+		SOUT_freq = CLKSAFE_freq/((SOUT_DIV+1)*2*256). SIRC12M clock is used
+		as the source of CLKSAFE(CLKSAFE freq=12M).
+		0: Divided by 512
+		1: Divided by 1024
+		2: Divided by 1536
+		...
+		1023: Divided by 524288
+
+choice
+	prompt "SOUT Potocol"
+	default FC7300_FCSMU_SOUT_PROTOCOL_MODE0
+
+config FC7300_FCSMU_SOUT_PROTOCOL_MODE0
+	bool "Dual-Rail"
+
+config FC7300_FCSMU_SOUT_PROTOCOL_MODE1
+	bool "Time-Switch"
+
+config FC7300_FCSMU_SOUT_PROTOCOL_MODE2
+	bool "Bistable"
+
+config FC7300_FCSMU_SOUT_PROTOCOL_MODE3
+	bool "Fault-Toggle"
+
+config FC7300_FCSMU_SOUT_PROTOCOL_MODE4
+	bool "Time-Dual-Rail"
+
+config FC7300_FCSMU_SOUT_PROTOCOL_MODE5
+	bool "DIAG0"
+
+config FC7300_FCSMU_SOUT_PROTOCOL_MODE6
+	bool "DIAG1"
+
+config FC7300_FCSMU_SOUT_PROTOCOL_MODE7
+	bool "DIAG2"
+
+endchoice
+
+config FC7300_FCSMU_SOUT_OUTPUT0
+	bool "Force SOUT0 high"
+	default n
+	depends on FC7300_FCSMU_SOUT_PROTOCOL_MODE6 || FC7300_FCSMU_SOUT_PROTOCOL_MODE7
+
+config FC7300_FCSMU_SOUT_OUTPUT1
+	bool "Force SOUT1 high"
+	default n
+	depends on FC7300_FCSMU_SOUT_PROTOCOL_MODE5 || FC7300_FCSMU_SOUT_PROTOCOL_MODE6
+
+config FC7300_FCSMU_SOUT_POLARITY_SWITCH
+	bool "SOUT Polarity Switch"
+	default n
+
+config FC7300_FCSMU_SOUT_FASTMODE_ENABLE
+	bool "SOUT Fast Mode Enable"
+	default n
+	---help---
+		Enable FCSMU SOUT Fast Mode.
+		Note: Fast mode only applies to Dual-Rail and Time-Switch modes.
+		SOUT will update immediately after FCSMU goes to the fault state.
+
+config FC7300_FCSMU_SOUT_SMRDT
+	int "SOUT Safe Mode Request Delay"
+	default 0
+	range 0 15
+	---help---
+		Safe Mode Request Delay Timer
+		Configure the safe mode request delay in cycles of safe clock.
+		0000b - 1 cycle
+		0001b - 2 cycles
+		0010b - 4 cycles
+		0011b - 8 cycles
+		…
+		1111b - 32,768 cycles
+
+choice
+	prompt "SOUT Control"
+	default FC7300_FCSMU_SOUT_CTRL_MODE0
+
+config FC7300_FCSMU_SOUT_CTRL_MODE0
+	bool "MODE0"
+	---help---
+		SOUT is controlled by the FSM.
+
+config FC7300_FCSMU_SOUT_CTRL_MODE1
+	bool "MODE1"
+	---help---
+		SOUT keeps low.
+
+config FC7300_FCSMU_SOUT_CTRL_MODE2
+	bool "MODE2"
+	---help---
+		SOUT is controlled by the FSM.
+
+config FC7300_FCSMU_SOUT_CTRL_MODE3
+	bool "MODE3"
+	---help---
+		SOUT keeps high until a fault occurs on a channel, then controlled
+		by FSM.
+endchoice
+
+config FC7300_FCSMU_MINI_TIME
+	int "MIN_TIME"
+	default 0
+	range 0 16383
+	---help---
+		This field controls the minimum amount of time that SOUT keeps stable
+		in Fault-Toggle mode.
+
+endif # FC7300_FCSMU_SOUT_PINS_ENABLE
+
+menu "Channel Configuration"
+
+config FC7300_FCSMU_CHANNEL_TEMP_ERROR
+	bool "Temperature sensor error"
+	default n
+
+config FC7300_FCSMU_CHANNEL_TEMP_ERROR_WARNING_ENABLE
+	bool "Warning Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_TEMP_ERROR
+
+config FC7300_FCSMU_CHANNEL_TEMP_ERROR_WARNING_INTERRUPT_ENABLE
+	bool "Warning Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_TEMP_ERROR_WARNING_ENABLE
+
+config FC7300_FCSMU_CHANNEL_TEMP_ERROR_FAULT_INTERRUPT_ENABLE
+	bool "Fault Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_TEMP_ERROR
+
+config FC7300_FCSMU_CHANNEL_TEMP_ERROR_SOUT_EN
+	bool "Sout Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_TEMP_ERROR
+
+config FC7300_FCSMU_CHANNEL_TEMP_ERROR_TRIGGER_RESET
+	bool "Chip Reset"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_TEMP_ERROR
+
+config FC7300_FCSMU_CHANNEL_TEMP_ERROR_AUTO_CLEAR
+	bool "Automatically clear flag when fault disappears"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_TEMP_ERROR
+
+config FC7300_FCSMU_CHANNEL_PMC_ERROR
+	bool "PMC module error"
+	default n
+
+config FC7300_FCSMU_CHANNEL_PMC_ERROR_WARNING_ENABLE
+	bool "Warning Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_PMC_ERROR
+
+config FC7300_FCSMU_CHANNEL_PMC_ERROR_WARNING_INTERRUPT_ENABLE
+	bool "Warning Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_PMC_ERROR_WARNING_ENABLE
+
+config FC7300_FCSMU_CHANNEL_PMC_ERROR_FAULT_INTERRUPT_ENABLE
+	bool "Fault Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_PMC_ERROR
+
+config FC7300_FCSMU_CHANNEL_PMC_ERROR_SOUT_EN
+	bool "Sout Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_PMC_ERROR
+
+config FC7300_FCSMU_CHANNEL_PMC_ERROR_TRIGGER_RESET
+	bool "Chip Reset"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_PMC_ERROR
+
+config FC7300_FCSMU_CHANNEL_PMC_ERROR_AUTO_CLEAR
+	bool "Automatically clear flag when fault disappears"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_PMC_ERROR
+
+config FC7300_FCSMU_CHANNEL_NVR_ERROR
+	bool "NVR load error"
+	default n
+
+config FC7300_FCSMU_CHANNEL_NVR_ERROR_WARNING_ENABLE
+	bool "Warning Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_NVR_ERROR
+
+config FC7300_FCSMU_CHANNEL_NVR_ERROR_WARNING_INTERRUPT_ENABLE
+	bool "Warning Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_NVR_ERROR_WARNING_ENABLE
+
+config FC7300_FCSMU_CHANNEL_NVR_ERROR_FAULT_INTERRUPT_ENABLE
+	bool "Fault Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_NVR_ERROR
+
+config FC7300_FCSMU_CHANNEL_NVR_ERROR_SOUT_EN
+	bool "Sout Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_NVR_ERROR
+
+config FC7300_FCSMU_CHANNEL_NVR_ERROR_TRIGGER_RESET
+	bool "Chip Reset"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_NVR_ERROR
+
+config FC7300_FCSMU_CHANNEL_NVR_ERROR_AUTO_CLEAR
+	bool "Automatically clear flag when fault disappears"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_NVR_ERROR
+
+config FC7300_FCSMU_CHANNEL_STCU_BIST_FAIL
+	bool "STCU MBIST or LBIST fail"
+	default n
+
+config FC7300_FCSMU_CHANNEL_STCU_BIST_FAIL_WARNING_ENABLE
+	bool "Warning Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_STCU_BIST_FAIL
+
+config FC7300_FCSMU_CHANNEL_STCU_BIST_FAIL_WARNING_INTERRUPT_ENABLE
+	bool "Warning Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_STCU_BIST_FAIL_WARNING_ENABLE
+
+config FC7300_FCSMU_CHANNEL_STCU_BIST_FAIL_FAULT_INTERRUPT_ENABLE
+	bool "Fault Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_STCU_BIST_FAIL
+
+config FC7300_FCSMU_CHANNEL_STCU_BIST_FAIL_SOUT_EN
+	bool "Sout Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_STCU_BIST_FAIL
+
+config FC7300_FCSMU_CHANNEL_STCU_BIST_FAIL_TRIGGER_RESET
+	bool "Chip Reset"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_STCU_BIST_FAIL
+
+config FC7300_FCSMU_CHANNEL_STCU_BIST_FAIL_AUTO_CLEAR
+	bool "Automatically clear flag when fault disappears"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_STCU_BIST_FAIL
+
+config FC7300_FCSMU_CHANNEL_LS0_ERR
+	bool "CPU0 lockstep compare fault"
+	default n
+
+config FC7300_FCSMU_CHANNEL_LS0_ERR_WARNING_ENABLE
+	bool "Warning Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_LS0_ERR
+
+config FC7300_FCSMU_CHANNEL_LS0_ERR_WARNING_INTERRUPT_ENABLE
+	bool "Warning Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_LS0_ERR_WARNING_ENABLE
+
+config FC7300_FCSMU_CHANNEL_LS0_ERR_FAULT_INTERRUPT_ENABLE
+	bool "Fault Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_LS0_ERR
+
+config FC7300_FCSMU_CHANNEL_LS0_ERR_SOUT_EN
+	bool "Sout Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_LS0_ERR
+
+config FC7300_FCSMU_CHANNEL_LS0_ERR_TRIGGER_RESET
+	bool "Chip Reset"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_LS0_ERR
+
+config FC7300_FCSMU_CHANNEL_LS0_ERR_AUTO_CLEAR
+	bool "Automatically clear flag when fault disappears"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_LS0_ERR
+
+config FC7300_FCSMU_CHANNEL_LS1_ERR
+	bool "CPU1 lockstep compare fault"
+	default n
+
+config FC7300_FCSMU_CHANNEL_LS1_ERR_WARNING_ENABLE
+	bool "Warning Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_LS1_ERR
+
+config FC7300_FCSMU_CHANNEL_LS1_ERR_WARNING_INTERRUPT_ENABLE
+	bool "Warning Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_LS1_ERR_WARNING_ENABLE
+
+config FC7300_FCSMU_CHANNEL_LS1_ERR_FAULT_INTERRUPT_ENABLE
+	bool "Fault Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_LS1_ERR
+
+config FC7300_FCSMU_CHANNEL_LS1_ERR_SOUT_EN
+	bool "Sout Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_LS1_ERR
+
+config FC7300_FCSMU_CHANNEL_LS1_ERR_TRIGGER_RESET
+	bool "Chip Reset"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_LS1_ERR
+
+config FC7300_FCSMU_CHANNEL_LS1_ERR_AUTO_CLEAR
+	bool "Automatically clear flag when fault disappears"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_LS1_ERR
+
+config FC7300_FCSMU_CHANNEL_SYSRAM_CPU0_ERR
+	bool "System RAM CPU0 access error"
+	default n
+
+config FC7300_FCSMU_CHANNEL_SYSRAM_CPU0_ERR_WARNING_ENABLE
+	bool "Warning Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SYSRAM_CPU0_ERR
+
+config FC7300_FCSMU_CHANNEL_SYSRAM_CPU0_ERR_WARNING_INTERRUPT_ENABLE
+	bool "Warning Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SYSRAM_CPU0_ERR_WARNING_ENABLE
+
+config FC7300_FCSMU_CHANNEL_SYSRAM_CPU0_ERR_FAULT_INTERRUPT_ENABLE
+	bool "Fault Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SYSRAM_CPU0_ERR
+
+config FC7300_FCSMU_CHANNEL_SYSRAM_CPU0_ERR_SOUT_EN
+	bool "Sout Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SYSRAM_CPU0_ERR
+
+config FC7300_FCSMU_CHANNEL_SYSRAM_CPU0_ERR_TRIGGER_RESET
+	bool "Chip Reset"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_SYSRAM_CPU0_ERR
+
+config FC7300_FCSMU_CHANNEL_SYSRAM_CPU0_ERR_AUTO_CLEAR
+	bool "Automatically clear flag when fault disappears"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_SYSRAM_CPU0_ERR
+
+config FC7300_FCSMU_CHANNEL_SYSRAM_CPU1_ERR
+	bool "System RAM CPU1 access error"
+	default n
+
+config FC7300_FCSMU_CHANNEL_SYSRAM_CPU1_ERR_WARNING_ENABLE
+	bool "Warning Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SYSRAM_CPU1_ERR
+
+config FC7300_FCSMU_CHANNEL_SYSRAM_CPU1_ERR_WARNING_INTERRUPT_ENABLE
+	bool "Warning Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SYSRAM_CPU1_ERR_WARNING_ENABLE
+
+config FC7300_FCSMU_CHANNEL_SYSRAM_CPU1_ERR_FAULT_INTERRUPT_ENABLE
+	bool "Fault Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SYSRAM_CPU1_ERR
+
+config FC7300_FCSMU_CHANNEL_SYSRAM_CPU1_ERR_SOUT_EN
+	bool "Sout Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SYSRAM_CPU1_ERR
+
+config FC7300_FCSMU_CHANNEL_SYSRAM_CPU1_ERR_TRIGGER_RESET
+	bool "Chip Reset"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_SYSRAM_CPU1_ERR
+
+config FC7300_FCSMU_CHANNEL_SYSRAM_CPU1_ERR_AUTO_CLEAR
+	bool "Automatically clear flag when fault disappears"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_SYSRAM_CPU1_ERR
+
+config FC7300_FCSMU_CHANNEL_SYSRAM_CPU2_ERR
+	bool "System RAM CPU2 access error"
+	default n
+
+config FC7300_FCSMU_CHANNEL_SYSRAM_CPU2_ERR_WARNING_ENABLE
+	bool "Warning Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SYSRAM_CPU2_ERR
+
+config FC7300_FCSMU_CHANNEL_SYSRAM_CPU2_ERR_WARNING_INTERRUPT_ENABLE
+	bool "Warning Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SYSRAM_CPU2_ERR_WARNING_ENABLE
+
+config FC7300_FCSMU_CHANNEL_SYSRAM_CPU2_ERR_FAULT_INTERRUPT_ENABLE
+	bool "Fault Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SYSRAM_CPU2_ERR
+
+config FC7300_FCSMU_CHANNEL_SYSRAM_CPU2_ERR_SOUT_EN
+	bool "Sout Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SYSRAM_CPU2_ERR
+
+config FC7300_FCSMU_CHANNEL_SYSRAM_CPU2_ERR_TRIGGER_RESET
+	bool "Chip Reset"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_SYSRAM_CPU2_ERR
+
+config FC7300_FCSMU_CHANNEL_SYSRAM_CPU2_ERR_AUTO_CLEAR
+	bool "Automatically clear flag when fault disappears"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_SYSRAM_CPU2_ERR
+
+config FC7300_FCSMU_CHANNEL_SYSRAM_NON_CPU_ERR
+	bool "System RAM None CPU access error"
+	default n
+
+config FC7300_FCSMU_CHANNEL_SYSRAM_NON_CPU_ERR_WARNING_ENABLE
+	bool "Warning Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SYSRAM_NON_CPU_ERR
+
+config FC7300_FCSMU_CHANNEL_SYSRAM_NON_CPU_ERR_WARNING_INTERRUPT_ENABLE
+	bool "Warning Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SYSRAM_NON_CPU_ERR_WARNING_ENABLE
+
+config FC7300_FCSMU_CHANNEL_SYSRAM_NON_CPU_ERR_FAULT_INTERRUPT_ENABLE
+	bool "Fault Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SYSRAM_NON_CPU_ERR
+
+config FC7300_FCSMU_CHANNEL_SYSRAM_NON_CPU_ERR_SOUT_EN
+	bool "Sout Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SYSRAM_NON_CPU_ERR
+
+config FC7300_FCSMU_CHANNEL_SYSRAM_NON_CPU_ERR_TRIGGER_RESET
+	bool "Chip Reset"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_SYSRAM_NON_CPU_ERR
+
+config FC7300_FCSMU_CHANNEL_SYSRAM_NON_CPU_ERR_AUTO_CLEAR
+	bool "Automatically clear flag when fault disappears"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_SYSRAM_NON_CPU_ERR
+
+config FC7300_FCSMU_CHANNEL_SCM_CPU0_ERR
+	bool "Matrix Access Monitor ECC check CPU0 error"
+	default n
+
+config FC7300_FCSMU_CHANNEL_SCM_CPU0_ERR_WARNING_ENABLE
+	bool "Warning Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SCM_CPU0_ERR
+
+config FC7300_FCSMU_CHANNEL_SCM_CPU0_ERR_WARNING_INTERRUPT_ENABLE
+	bool "Warning Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SCM_CPU0_ERR_WARNING_ENABLE
+
+config FC7300_FCSMU_CHANNEL_SCM_CPU0_ERR_FAULT_INTERRUPT_ENABLE
+	bool "Fault Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SCM_CPU0_ERR
+
+config FC7300_FCSMU_CHANNEL_SCM_CPU0_ERR_SOUT_EN
+	bool "Sout Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SCM_CPU0_ERR
+
+config FC7300_FCSMU_CHANNEL_SCM_CPU0_ERR_TRIGGER_RESET
+	bool "Chip Reset"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_SCM_CPU0_ERR
+
+config FC7300_FCSMU_CHANNEL_SCM_CPU0_ERR_AUTO_CLEAR
+	bool "Automatically clear flag when fault disappears"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_SCM_CPU0_ERR
+
+config FC7300_FCSMU_CHANNEL_SCM_CPU1_ERR
+	bool "Matrix Access Monitor ECC check CPU1 error"
+	default n
+
+config FC7300_FCSMU_CHANNEL_SCM_CPU1_ERR_WARNING_ENABLE
+	bool "Warning Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SCM_CPU1_ERR
+
+config FC7300_FCSMU_CHANNEL_SCM_CPU1_ERR_WARNING_INTERRUPT_ENABLE
+	bool "Warning Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SCM_CPU1_ERR_WARNING_ENABLE
+
+config FC7300_FCSMU_CHANNEL_SCM_CPU1_ERR_FAULT_INTERRUPT_ENABLE
+	bool "Fault Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SCM_CPU1_ERR
+
+config FC7300_FCSMU_CHANNEL_SCM_CPU1_ERR_SOUT_EN
+	bool "Sout Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SCM_CPU1_ERR
+
+config FC7300_FCSMU_CHANNEL_SCM_CPU1_ERR_TRIGGER_RESET
+	bool "Chip Reset"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_SCM_CPU1_ERR
+
+config FC7300_FCSMU_CHANNEL_SCM_CPU1_ERR_AUTO_CLEAR
+	bool "Automatically clear flag when fault disappears"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_SCM_CPU1_ERR
+
+config FC7300_FCSMU_CHANNEL_SCM_CPU2_ERR
+	bool "Matrix Access Monitor ECC check CPU2 error"
+	default n
+
+config FC7300_FCSMU_CHANNEL_SCM_CPU2_ERR_WARNING_ENABLE
+	bool "Warning Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SCM_CPU2_ERR
+
+config FC7300_FCSMU_CHANNEL_SCM_CPU2_ERR_WARNING_INTERRUPT_ENABLE
+	bool "Warning Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SCM_CPU2_ERR_WARNING_ENABLE
+
+config FC7300_FCSMU_CHANNEL_SCM_CPU2_ERR_FAULT_INTERRUPT_ENABLE
+	bool "Fault Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SCM_CPU2_ERR
+
+config FC7300_FCSMU_CHANNEL_SCM_CPU2_ERR_SOUT_EN
+	bool "Sout Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SCM_CPU2_ERR
+
+config FC7300_FCSMU_CHANNEL_SCM_CPU2_ERR_TRIGGER_RESET
+	bool "Chip Reset"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_SCM_CPU2_ERR
+
+config FC7300_FCSMU_CHANNEL_SCM_CPU2_ERR_AUTO_CLEAR
+	bool "Automatically clear flag when fault disappears"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_SCM_CPU2_ERR
+
+config FC7300_FCSMU_CHANNEL_SCM_NON_CPU_ERR
+	bool "Matrix Access Monitor ECC check non-CPU error"
+	default n
+
+config FC7300_FCSMU_CHANNEL_SCM_NON_CPU_ERR_WARNING_ENABLE
+	bool "Warning Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SCM_NON_CPU_ERR
+
+config FC7300_FCSMU_CHANNEL_SCM_NON_CPU_ERR_WARNING_INTERRUPT_ENABLE
+	bool "Warning Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SCM_NON_CPU_ERR_WARNING_ENABLE
+
+config FC7300_FCSMU_CHANNEL_SCM_NON_CPU_ERR_FAULT_INTERRUPT_ENABLE
+	bool "Fault Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SCM_NON_CPU_ERR
+
+config FC7300_FCSMU_CHANNEL_SCM_NON_CPU_ERR_SOUT_EN
+	bool "Sout Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SCM_NON_CPU_ERR
+
+config FC7300_FCSMU_CHANNEL_SCM_NON_CPU_ERR_TRIGGER_RESET
+	bool "Chip Reset"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_SCM_NON_CPU_ERR
+
+config FC7300_FCSMU_CHANNEL_SCM_NON_CPU_ERR_AUTO_CLEAR
+	bool "Automatically clear flag when fault disappears"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_SCM_NON_CPU_ERR
+
+config FC7300_FCSMU_CHANNEL_CPU0_ECC_ERR
+	bool "CPU0 ITCM/DTCM/ICACHE/DCACHE ECC error"
+	default n
+
+config FC7300_FCSMU_CHANNEL_CPU0_ECC_ERR_WARNING_ENABLE
+	bool "Warning Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_CPU0_ECC_ERR
+
+config FC7300_FCSMU_CHANNEL_CPU0_ECC_ERR_WARNING_INTERRUPT_ENABLE
+	bool "Warning Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_CPU0_ECC_ERR_WARNING_ENABLE
+
+config FC7300_FCSMU_CHANNEL_CPU0_ECC_ERR_FAULT_INTERRUPT_ENABLE
+	bool "Fault Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_CPU0_ECC_ERR
+
+config FC7300_FCSMU_CHANNEL_CPU0_ECC_ERR_SOUT_EN
+	bool "Sout Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_CPU0_ECC_ERR
+
+config FC7300_FCSMU_CHANNEL_CPU0_ECC_ERR_TRIGGER_RESET
+	bool "Chip Reset"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_CPU0_ECC_ERR
+
+config FC7300_FCSMU_CHANNEL_CPU0_ECC_ERR_AUTO_CLEAR
+	bool "Automatically clear flag when fault disappears"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_CPU0_ECC_ERR
+
+config FC7300_FCSMU_CHANNEL_CPU1_ECC_ERR
+	bool "CPU1 ITCM/DTCM/ICACHE/DCACHE ECC error"
+	default n
+
+config FC7300_FCSMU_CHANNEL_CPU1_ECC_ERR_WARNING_ENABLE
+	bool "Warning Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_CPU1_ECC_ERR
+
+config FC7300_FCSMU_CHANNEL_CPU1_ECC_ERR_WARNING_INTERRUPT_ENABLE
+	bool "Warning Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_CPU1_ECC_ERR_WARNING_ENABLE
+
+config FC7300_FCSMU_CHANNEL_CPU1_ECC_ERR_FAULT_INTERRUPT_ENABLE
+	bool "Fault Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_CPU1_ECC_ERR
+
+config FC7300_FCSMU_CHANNEL_CPU1_ECC_ERR_SOUT_EN
+	bool "Sout Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_CPU1_ECC_ERR
+
+config FC7300_FCSMU_CHANNEL_CPU1_ECC_ERR_TRIGGER_RESET
+	bool "Chip Reset"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_CPU1_ECC_ERR
+
+config FC7300_FCSMU_CHANNEL_CPU1_ECC_ERR_AUTO_CLEAR
+	bool "Automatically clear flag when fault disappears"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_CPU1_ECC_ERR
+
+config FC7300_FCSMU_CHANNEL_CPU2_ECC_ERR
+	bool "CPU2 ITCM/DTCM/ICACHE/DCACHE ECC error"
+	default n
+
+config FC7300_FCSMU_CHANNEL_CPU2_ECC_ERR_WARNING_ENABLE
+	bool "Warning Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_CPU2_ECC_ERR
+
+config FC7300_FCSMU_CHANNEL_CPU2_ECC_ERR_WARNING_INTERRUPT_ENABLE
+	bool "Warning Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_CPU2_ECC_ERR_WARNING_ENABLE
+
+config FC7300_FCSMU_CHANNEL_CPU2_ECC_ERR_FAULT_INTERRUPT_ENABLE
+	bool "Fault Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_CPU2_ECC_ERR
+
+config FC7300_FCSMU_CHANNEL_CPU2_ECC_ERR_SOUT_EN
+	bool "Sout Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_CPU2_ECC_ERR
+
+config FC7300_FCSMU_CHANNEL_CPU2_ECC_ERR_TRIGGER_RESET
+	bool "Chip Reset"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_CPU2_ECC_ERR
+
+config FC7300_FCSMU_CHANNEL_CPU2_ECC_ERR_AUTO_CLEAR
+	bool "Automatically clear flag when fault disappears"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_CPU2_ECC_ERR
+
+config FC7300_FCSMU_CHANNEL_SYSTEM_ABNORMAL_ALARM
+	bool "System abnormal alarm signals error"
+	default n
+
+config FC7300_FCSMU_CHANNEL_SYSTEM_ABNORMAL_ALARM_WARNING_ENABLE
+	bool "Warning Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SYSTEM_ABNORMAL_ALARM
+
+config FC7300_FCSMU_CHANNEL_SYSTEM_ABNORMAL_ALARM_WARNING_INTERRUPT_ENABLE
+	bool "Warning Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SYSTEM_ABNORMAL_ALARM_WARNING_ENABLE
+
+config FC7300_FCSMU_CHANNEL_SYSTEM_ABNORMAL_ALARM_FAULT_INTERRUPT_ENABLE
+	bool "Fault Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SYSTEM_ABNORMAL_ALARM
+
+config FC7300_FCSMU_CHANNEL_SYSTEM_ABNORMAL_ALARM_SOUT_EN
+	bool "Sout Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SYSTEM_ABNORMAL_ALARM
+
+config FC7300_FCSMU_CHANNEL_SYSTEM_ABNORMAL_ALARM_TRIGGER_RESET
+	bool "Chip Reset"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_SYSTEM_ABNORMAL_ALARM
+
+config FC7300_FCSMU_CHANNEL_SYSTEM_ABNORMAL_ALARM_AUTO_CLEAR
+	bool "Automatically clear flag when fault disappears"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_SYSTEM_ABNORMAL_ALARM
+
+config FC7300_FCSMU_CHANNEL_SOFTWARE
+	bool "Software trigger error"
+	default n
+
+config FC7300_FCSMU_CHANNEL_SOFTWARE_WARNING_ENABLE
+	bool "Warning Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SOFTWARE
+
+config FC7300_FCSMU_CHANNEL_SOFTWARE_WARNING_INTERRUPT_ENABLE
+	bool "Warning Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SOFTWARE_WARNING_ENABLE
+
+config FC7300_FCSMU_CHANNEL_SOFTWARE_FAULT_INTERRUPT_ENABLE
+	bool "Fault Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SOFTWARE
+
+config FC7300_FCSMU_CHANNEL_SOFTWARE_SOUT_EN
+	bool "Sout Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SOFTWARE
+
+config FC7300_FCSMU_CHANNEL_SOFTWARE_TRIGGER_RESET
+	bool "Chip Reset"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_SOFTWARE
+
+config FC7300_FCSMU_CHANNEL_SOFTWARE_AUTO_CLEAR
+	bool "Automatically clear flag when fault disappears"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_SOFTWARE
+
+config FC7300_FCSMU_CHANNEL_CMU4_FAIL
+	bool "CMU4 failure interrupt"
+	default n
+
+config FC7300_FCSMU_CHANNEL_CMU4_FAIL_WARNING_ENABLE
+	bool "Warning Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_CMU4_FAIL
+
+config FC7300_FCSMU_CHANNEL_CMU4_FAIL_WARNING_INTERRUPT_ENABLE
+	bool "Warning Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_CMU4_FAIL_WARNING_ENABLE
+
+config FC7300_FCSMU_CHANNEL_CMU4_FAIL_FAULT_INTERRUPT_ENABLE
+	bool "Fault Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_CMU4_FAIL
+
+config FC7300_FCSMU_CHANNEL_CMU4_FAIL_SOUT_EN
+	bool "Sout Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_CMU4_FAIL
+
+config FC7300_FCSMU_CHANNEL_CMU4_FAIL_TRIGGER_RESET
+	bool "Chip Reset"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_CMU4_FAIL
+
+config FC7300_FCSMU_CHANNEL_CMU4_FAIL_AUTO_CLEAR
+	bool "Automatically clear flag when fault disappears"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_CMU4_FAIL
+
+config FC7300_FCSMU_CHANNEL_CMU1_2_FAIL
+	bool "CMU1/2 failure interrupt"
+	default n
+
+config FC7300_FCSMU_CHANNEL_CMU1_2_FAIL_WARNING_ENABLE
+	bool "Warning Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_CMU1_2_FAIL
+
+config FC7300_FCSMU_CHANNEL_CMU1_2_FAIL_WARNING_INTERRUPT_ENABLE
+	bool "Warning Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_CMU1_2_FAIL_WARNING_ENABLE
+
+config FC7300_FCSMU_CHANNEL_CMU1_2_FAIL_FAULT_INTERRUPT_ENABLE
+	bool "Fault Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_CMU1_2_FAIL
+
+config FC7300_FCSMU_CHANNEL_CMU1_2_FAIL_SOUT_EN
+	bool "Sout Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_CMU1_2_FAIL
+
+config FC7300_FCSMU_CHANNEL_CMU1_2_FAIL_TRIGGER_RESET
+	bool "Chip Reset"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_CMU1_2_FAIL
+
+config FC7300_FCSMU_CHANNEL_CMU1_2_FAIL_AUTO_CLEAR
+	bool "Automatically clear flag when fault disappears"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_CMU1_2_FAIL
+
+config FC7300_FCSMU_CHANNEL_FLASH_ECC
+	bool "Flash ECC error"
+	default n
+
+config FC7300_FCSMU_CHANNEL_FLASH_ECC_WARNING_ENABLE
+	bool "Warning Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_FLASH_ECC
+
+config FC7300_FCSMU_CHANNEL_FLASH_ECC_WARNING_INTERRUPT_ENABLE
+	bool "Warning Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_FLASH_ECC_WARNING_ENABLE
+
+config FC7300_FCSMU_CHANNEL_FLASH_ECC_FAULT_INTERRUPT_ENABLE
+	bool "Fault Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_FLASH_ECC
+
+config FC7300_FCSMU_CHANNEL_FLASH_ECC_SOUT_EN
+	bool "Sout Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_FLASH_ECC
+
+config FC7300_FCSMU_CHANNEL_FLASH_ECC_TRIGGER_RESET
+	bool "Chip Reset"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_FLASH_ECC
+
+config FC7300_FCSMU_CHANNEL_FLASH_ECC_AUTO_CLEAR
+	bool "Automatically clear flag when fault disappears"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_FLASH_ECC
+
+config FC7300_FCSMU_CHANNEL_SCG_PLL_FOSC
+	bool "PLL/FOSC loss of clock"
+	default n
+
+config FC7300_FCSMU_CHANNEL_SCG_PLL_FOSC_WARNING_ENABLE
+	bool "Warning Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SCG_PLL_FOSC
+
+config FC7300_FCSMU_CHANNEL_SCG_PLL_FOSC_WARNING_INTERRUPT_ENABLE
+	bool "Warning Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SCG_PLL_FOSC_WARNING_ENABLE
+
+config FC7300_FCSMU_CHANNEL_SCG_PLL_FOSC_FAULT_INTERRUPT_ENABLE
+	bool "Fault Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SCG_PLL_FOSC
+
+config FC7300_FCSMU_CHANNEL_SCG_PLL_FOSC_SOUT_EN
+	bool "Sout Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SCG_PLL_FOSC
+
+config FC7300_FCSMU_CHANNEL_SCG_PLL_FOSC_TRIGGER_RESET
+	bool "Chip Reset"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_SCG_PLL_FOSC
+
+config FC7300_FCSMU_CHANNEL_SCG_PLL_FOSC_AUTO_CLEAR
+	bool "Automatically clear flag when fault disappears"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_SCG_PLL_FOSC
+
+config FC7300_FCSMU_CHANNEL_DMA0_ERR
+	bool "DMA0 Monitor Error"
+	default n
+
+config FC7300_FCSMU_CHANNEL_DMA0_ERR_WARNING_ENABLE
+	bool "Warning Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_DMA0_ERR
+
+config FC7300_FCSMU_CHANNEL_DMA0_ERR_WARNING_INTERRUPT_ENABLE
+	bool "Warning Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_DMA0_ERR_WARNING_ENABLE
+
+config FC7300_FCSMU_CHANNEL_DMA0_ERR_FAULT_INTERRUPT_ENABLE
+	bool "Fault Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_DMA0_ERR
+
+config FC7300_FCSMU_CHANNEL_DMA0_ERR_SOUT_EN
+	bool "Sout Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_DMA0_ERR
+
+config FC7300_FCSMU_CHANNEL_DMA0_ERR_TRIGGER_RESET
+	bool "Chip Reset"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_DMA0_ERR
+
+config FC7300_FCSMU_CHANNEL_DMA0_ERR_AUTO_CLEAR
+	bool "Automatically clear flag when fault disappears"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_DMA0_ERR
+
+config FC7300_FCSMU_CHANNEL_DMA1_ERR
+	bool "DMA1 Monitor Error"
+	default n
+
+config FC7300_FCSMU_CHANNEL_DMA1_ERR_WARNING_ENABLE
+	bool "Warning Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_DMA1_ERR
+
+config FC7300_FCSMU_CHANNEL_DMA1_ERR_WARNING_INTERRUPT_ENABLE
+	bool "Warning Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_DMA1_ERR_WARNING_ENABLE
+
+config FC7300_FCSMU_CHANNEL_DMA1_ERR_FAULT_INTERRUPT_ENABLE
+	bool "Fault Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_DMA1_ERR
+
+config FC7300_FCSMU_CHANNEL_DMA1_ERR_SOUT_EN
+	bool "Sout Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_DMA1_ERR
+
+config FC7300_FCSMU_CHANNEL_DMA1_ERR_TRIGGER_RESET
+	bool "Chip Reset"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_DMA1_ERR
+
+config FC7300_FCSMU_CHANNEL_DMA1_ERR_AUTO_CLEAR
+	bool "Automatically clear flag when fault disappears"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_DMA1_ERR
+
+config FC7300_FCSMU_CHANNEL_INTM0_ERR
+	bool "Interrupt Monitor0 error"
+	default n
+
+config FC7300_FCSMU_CHANNEL_INTM0_ERR_WARNING_ENABLE
+	bool "Warning Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_INTM0_ERR
+
+config FC7300_FCSMU_CHANNEL_INTM0_ERR_WARNING_INTERRUPT_ENABLE
+	bool "Warning Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_INTM0_ERR_WARNING_ENABLE
+
+config FC7300_FCSMU_CHANNEL_INTM0_ERR_FAULT_INTERRUPT_ENABLE
+	bool "Fault Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_INTM0_ERR
+
+config FC7300_FCSMU_CHANNEL_INTM0_ERR_SOUT_EN
+	bool "Sout Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_INTM0_ERR
+
+config FC7300_FCSMU_CHANNEL_INTM0_ERR_TRIGGER_RESET
+	bool "Chip Reset"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_INTM0_ERR
+
+config FC7300_FCSMU_CHANNEL_INTM0_ERR_AUTO_CLEAR
+	bool "Automatically clear flag when fault disappears"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_INTM0_ERR
+
+config FC7300_FCSMU_CHANNEL_INTM1_ERR
+	bool "Interrupt Monitor1 error"
+	default n
+
+config FC7300_FCSMU_CHANNEL_INTM1_ERR_WARNING_ENABLE
+	bool "Warning Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_INTM1_ERR
+
+config FC7300_FCSMU_CHANNEL_INTM1_ERR_WARNING_INTERRUPT_ENABLE
+	bool "Warning Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_INTM1_ERR_WARNING_ENABLE
+
+config FC7300_FCSMU_CHANNEL_INTM1_ERR_FAULT_INTERRUPT_ENABLE
+	bool "Fault Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_INTM1_ERR
+
+config FC7300_FCSMU_CHANNEL_INTM1_ERR_SOUT_EN
+	bool "Sout Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_INTM1_ERR
+
+config FC7300_FCSMU_CHANNEL_INTM1_ERR_TRIGGER_RESET
+	bool "Chip Reset"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_INTM1_ERR
+
+config FC7300_FCSMU_CHANNEL_INTM1_ERR_AUTO_CLEAR
+	bool "Automatically clear flag when fault disappears"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_INTM1_ERR
+
+config FC7300_FCSMU_CHANNEL_INTM2_ERR
+	bool "Interrupt Monitor2 error"
+	default n
+
+config FC7300_FCSMU_CHANNEL_INTM2_ERR_WARNING_ENABLE
+	bool "Warning Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_INTM2_ERR
+
+config FC7300_FCSMU_CHANNEL_INTM2_ERR_WARNING_INTERRUPT_ENABLE
+	bool "Warning Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_INTM2_ERR_WARNING_ENABLE
+
+config FC7300_FCSMU_CHANNEL_INTM2_ERR_FAULT_INTERRUPT_ENABLE
+	bool "Fault Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_INTM2_ERR
+
+config FC7300_FCSMU_CHANNEL_INTM2_ERR_SOUT_EN
+	bool "Sout Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_INTM2_ERR
+
+config FC7300_FCSMU_CHANNEL_INTM2_ERR_TRIGGER_RESET
+	bool "Chip Reset"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_INTM2_ERR
+
+config FC7300_FCSMU_CHANNEL_INTM2_ERR_AUTO_CLEAR
+	bool "Automatically clear flag when fault disappears"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_INTM2_ERR
+
+config FC7300_FCSMU_CHANNEL_FMC_ERR
+	bool "FMC ECC error"
+	default n
+
+config FC7300_FCSMU_CHANNEL_FMC_ERR_WARNING_ENABLE
+	bool "Warning Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_FMC_ERR
+
+config FC7300_FCSMU_CHANNEL_FMC_ERR_WARNING_INTERRUPT_ENABLE
+	bool "Warning Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_FMC_ERR_WARNING_ENABLE
+
+config FC7300_FCSMU_CHANNEL_FMC_ERR_FAULT_INTERRUPT_ENABLE
+	bool "Fault Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_FMC_ERR
+
+config FC7300_FCSMU_CHANNEL_FMC_ERR_SOUT_EN
+	bool "Sout Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_FMC_ERR
+
+config FC7300_FCSMU_CHANNEL_FMC_ERR_TRIGGER_RESET
+	bool "Chip Reset"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_FMC_ERR
+
+config FC7300_FCSMU_CHANNEL_FMC_ERR_AUTO_CLEAR
+	bool "Automatically clear flag when fault disappears"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_FMC_ERR
+
+config FC7300_FCSMU_CHANNEL_SCG_CRC
+	bool "SCG CRC check error"
+	default n
+
+config FC7300_FCSMU_CHANNEL_SCG_CRC_WARNING_ENABLE
+	bool "Warning Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SCG_CRC
+
+config FC7300_FCSMU_CHANNEL_SCG_CRC_WARNING_INTERRUPT_ENABLE
+	bool "Warning Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SCG_CRC_WARNING_ENABLE
+
+config FC7300_FCSMU_CHANNEL_SCG_CRC_FAULT_INTERRUPT_ENABLE
+	bool "Fault Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SCG_CRC
+
+config FC7300_FCSMU_CHANNEL_SCG_CRC_SOUT_EN
+	bool "Sout Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SCG_CRC
+
+config FC7300_FCSMU_CHANNEL_SCG_CRC_TRIGGER_RESET
+	bool "Chip Reset"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_SCG_CRC
+
+config FC7300_FCSMU_CHANNEL_SCG_CRC_AUTO_CLEAR
+	bool "Automatically clear flag when fault disappears"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_SCG_CRC
+
+config FC7300_FCSMU_CHANNEL_SCM_CRC
+	bool "SCM CRC check error"
+	default n
+
+config FC7300_FCSMU_CHANNEL_SCM_CRC_WARNING_ENABLE
+	bool "Warning Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SCM_CRC
+
+config FC7300_FCSMU_CHANNEL_SCM_CRC_WARNING_INTERRUPT_ENABLE
+	bool "Warning Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SCM_CRC_WARNING_ENABLE
+
+config FC7300_FCSMU_CHANNEL_SCM_CRC_FAULT_INTERRUPT_ENABLE
+	bool "Fault Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SCM_CRC
+
+config FC7300_FCSMU_CHANNEL_SCM_CRC_SOUT_EN
+	bool "Sout Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_SCM_CRC
+
+config FC7300_FCSMU_CHANNEL_SCM_CRC_TRIGGER_RESET
+	bool "Chip Reset"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_SCM_CRC
+
+config FC7300_FCSMU_CHANNEL_SCM_CRC_AUTO_CLEAR
+	bool "Automatically clear flag when fault disappears"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_SCM_CRC
+
+config FC7300_FCSMU_CHANNEL_MAM_WDOG_TIMEOUT
+	bool "MAM0/1/2 master access timeout error"
+	default n
+
+config FC7300_FCSMU_CHANNEL_MAM_WDOG_TIMEOUT_WARNING_ENABLE
+	bool "Warning Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_MAM_WDOG_TIMEOUT
+
+config FC7300_FCSMU_CHANNEL_MAM_WDOG_TIMEOUT_WARNING_INTERRUPT_ENABLE
+	bool "Warning Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_MAM_WDOG_TIMEOUT_WARNING_ENABLE
+
+config FC7300_FCSMU_CHANNEL_MAM_WDOG_TIMEOUT_FAULT_INTERRUPT_ENABLE
+	bool "Fault Interrupt Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_MAM_WDOG_TIMEOUT
+
+config FC7300_FCSMU_CHANNEL_MAM_WDOG_TIMEOUT_SOUT_EN
+	bool "Sout Enable"
+	default y
+	depends on FC7300_FCSMU_CHANNEL_MAM_WDOG_TIMEOUT
+
+config FC7300_FCSMU_CHANNEL_MAM_WDOG_TIMEOUT_TRIGGER_RESET
+	bool "Chip Reset"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_MAM_WDOG_TIMEOUT
+
+config FC7300_FCSMU_CHANNEL_MAM_WDOG_TIMEOUT_AUTO_CLEAR
+	bool "Automatically clear flag when fault disappears"
+	default n
+	depends on FC7300_FCSMU_CHANNEL_MAM_WDOG_TIMEOUT
+
+endmenu # FC7300 FCSMU Channel Configuration
+
+menu "FC7300 FCSMU CRC Configuration"
+
+config FC7300_FCSMU_CRC_ERROR_OUTPUT_ENABLE
+	bool "CRC Error Output Enable"
+	default y
+
+choice
+	prompt "CRC error handling method"
+	default FC7300_FCSMU_CRC_ERROR_INTERRUPT
+	depends on FC7300_FCSMU_CRC_ERROR_OUTPUT_ENABLE
+	---help---
+		Select FCSMU Crc Error handling method, this config
+		will write to CSC0_SMU_CTRL4[SCF_RST_EN/SCF_IRQ_EN]
+		bit.
+
+config FC7300_FCSMU_CRC_ERROR_INTERRUPT
+	bool "Interrupt"
+
+config FC7300_FCSMU_CRC_ERROR_RESET
+	bool "Reset"
+
+endchoice
+
+config FC7300_FCSMU_CRC_CHECKER_ENABLE
+	bool "CRC Checker Enable"
+	default y
+
+config FC7300_FCSMU_CRC_TRIGGER_ENABLE
+	bool "CRC Auto Trigger"
+	default n
+	---help---
+		For details on FCSMU CRC trigger clock frequency,
+		see AONCLK selection.
+
+endmenu # FC7300 FCSMU CRC Configuration
+
+endmenu # FC7300 FCSMU Configuration

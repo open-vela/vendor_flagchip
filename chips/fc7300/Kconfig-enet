@@ -1,0 +1,519 @@
+#
+# Copyright (C) 2025 Xiaomi Corporation
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more contributor
+# license agreements.  See the NOTICE file distributed with this work for
+# additional information regarding copyright ownership.  The ASF licenses this
+# file to you under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License.  You may obtain a copy of
+# the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+menu "FC7300 Ethernet Configuration"
+	depends on FC7300_ENET
+
+config FC7300_ENET_IRQ_ATTACH_THREAD
+	bool "FC7300 ENET ISR Attach Thread"
+	default n
+	---help---
+		Select the ENET interrupt function to execute in thread context.
+
+config FC7300_ENET_IRQ_THREAD_PRIORITY
+	int "FC7300 ENET IRQ Thread Priority"
+	default 250
+	range 0 255
+	depends on FC7300_ENET_IRQ_ATTACH_THREAD
+	---help---
+		The priority of isr thread.
+
+config FC7300_ENET_PHY_BOADINIT
+	bool "Board-specific PHY Initialization"
+	default n
+	depends on FC7300_ENET
+	---help---
+		When this configuration is selected, the function int fc7300_phy_boardinitialize(int)
+		must be provided by the board level. The etehenet driver will call this function
+		in initialization funtion.
+
+config FC7300_ENET_MULTIPLE_QUEUES
+	bool
+	default n
+
+config FC7300_ENET_PHY_YT8531S
+	bool
+	default n
+
+config FC7300_ENET_PHY_RTL8211F
+	bool
+	default n
+
+menu "FC7300 Ethernet0 Configuration"
+	depends on FC7300_ENET0
+
+choice
+	prompt "FC7300 ENET0 PHY Interface Selection"
+	default FC7300_ENET0_PHYIF_RGMII
+
+config FC7300_ENET0_PHYIF_MII
+	bool "ENET MII Interface"
+	depends on FC7300_ENET0
+	---help---
+		Select the MII interface.
+
+config FC7300_ENET0_PHYIF_RMII
+	bool "ENET RMII Interface"
+	depends on FC7300_ENET0
+	---help---
+		Select the RMII interface.
+
+config FC7300_ENET0_PHYIF_RGMII
+	bool "ENET RGMII Interface"
+	depends on FC7300_ENET0
+	---help---
+		Select the RGMII interface.
+
+endchoice # FC7300 ENET0 PHY Interface Selection
+
+menu "FC7300 ENET0 RGMII Configuration"
+	depends on FC7300_ENET0_PHYIF_RGMII
+
+config FC7300_ENET0_RGMII_TXDELAY
+	int "RGMII TX Clock Delay"
+	default 0
+	range 0 255
+	---help---
+		RGMII TX clock delay in 50 picoseconds per step.
+
+config FC7300_ENET0_RGMII_RXDELAY
+	int "RGMII RX Clock Delay"
+	default 0
+	range 0 255
+	---help---
+		RGMII RX clock delay in 50 picoseconds per step.
+
+choice
+	prompt "RGMII Clock Selection"
+	default FC7300_ENET0_RGMII_CLK_PLL1DIVH
+
+config FC7300_ENET0_RGMII_CLK_REFPIN
+	bool "RGMII Clock Source Reference Pin"
+	---help---
+		Select RGMII TX clock source from reference pin.
+
+config FC7300_ENET0_RGMII_CLK_PLL0DIVH
+	bool "RGMII Clock Source PLL0DIVH"
+	---help---
+		Select RGMII TX clock source from PLL0 DIVH.
+
+config FC7300_ENET0_RGMII_CLK_PLL1DIVH
+	bool "RGMII Clock Source PLL1DIVH"
+	---help---
+		Select RGMII TX clock source from PLL1 DIVH.
+
+endchoice # RGMII Clock Selection
+endmenu # FC7300 ENET0 RGMII Configuration
+
+choice
+	prompt "FC7300 ENET0 PHY Type Selection"
+	default FC7300_ENET0_PHY_YT8531S
+
+config FC7300_ENET0_PHY_YT8531S
+	bool "YT8531S PHY"
+	depends on FC7300_ENET0
+	select FC7300_ENET_PHY_YT8531S
+	---help---
+		Select YT8531S phy.
+
+config FC7300_ENET0_PHY_RTL8211F
+	bool "RTL8211F PHY"
+	depends on FC7300_ENET0
+	select FC7300_ENET_PHY_RTL8211F
+	---help---
+		Select RTL8211F phy.
+
+endchoice # FC7300 ENET0 PHY Type Selection
+
+menu "FC7300 ENET0 PHY Link Configuration"
+
+config FC7300_ENET0_PHY_ADDR
+	int "Phy Address"
+	default 0
+	range 0 31
+	depends on FC7300_ENET0
+	---help---
+		The phy address configured on the board.
+
+config FC7300_ENET0_PHY_PIN_CLKOUT
+	bool "PHY Clock Pin Output"
+	default y
+	depends on FC7300_ENET0
+	---help---
+		Enable PHY clock pin output.
+
+config FC7300_ENET0_AUTONEGO
+	bool "Auto Negotiation"
+	default y
+	depends on FC7300_ENET0
+	---help---
+		Enable auto-negotiation.
+
+choice
+	prompt "Link Speed Selection"
+	default FC7300_ENET0_SPEED_1000MBPS
+	depends on !FC7300_ENET0_AUTONEGO
+
+config FC7300_ENET0_SPEED_1000MBPS
+	bool "1000MBPS"
+	depends on FC7300_ENET0_PHYIF_RGMII
+	---help---
+		Select link speed 1000MBPS.
+
+config FC7300_ENET0_SPEED_100MBPS
+	bool "100MBPS"
+	---help---
+		Select link speed 100MBPS.
+
+config FC7300_ENET0_SPEED_10MBPS
+	bool "10MBPS"
+	---help---
+		Select link speed 10MBPS.
+
+endchoice # Link Speed Selection
+
+config FC7300_ENET0_FULLDUPLEX
+	bool "Full Duplex Mode"
+	default y
+	depends on FC7300_ENET0
+	depends on !FC7300_ENET0_AUTONEGO
+	---help---
+		Select the MAC link in full or half duplex mode, default full duplex mode.
+
+endmenu # FC7300 ENET0 PHY Link Configuration
+
+config FC7300_ENET0_MULTIPLE_QUEUES
+	bool "FC7300 ENET0 Enable Multiple Queues"
+	default n
+	depends on FC7300_ENET0
+  select FC7300_ENET_MULTIPLE_QUEUES
+	---help---
+		Enable multiple MTL queues and DMA channels, default only MTL queue 0 and
+		DMA channel 0 are enabled.
+
+config FC7300_ENET0_AV_MODE
+	bool "FC7300 ENET0 AV Mode"
+	default n
+	depends on FC7300_ENET0_MULTIPLE_QUEUES
+	---help---
+		Enable traffic shaper for audio video data.
+
+menu "FC7300 ENET0 Channel/Queue 0 Configuration"
+
+config FC7300_ENET0_NTX0DESC
+	int "Number DMA Transmit Descriptors"
+	default 4
+	range 2 64
+	depends on FC7300_ENET0
+	---help---
+		The number of Transmit DMA descriptors and buffers.
+
+config FC7300_ENET0_NRX0DESC
+	int "Number DMA Receive Descriptors"
+	default 8
+	range 2 64
+	depends on FC7300_ENET0
+	---help---
+		The number of Receive DMA descriptors and buffers.
+
+config FC7300_ENET0_TXBUFFER0_SIZE
+	int "Transmit Buffer Size in Bytes"
+	default 1520
+	range 64 1536
+	depends on FC7300_ENET0
+	---help---
+		The size (in bytes) of Transmit buffers.
+
+config FC7300_ENET0_RXBUFFER0_SIZE
+	int "Receive Buffer Size in Bytes"
+	default 1520
+	range 64 1536
+	depends on FC7300_ENET0
+	---help---
+		The size (in bytes) of Receive buffers.
+
+config FC7300_ENET0_TX0_ISR_PRIORITY
+	int "Transmit Interrupt Priority"
+	default 192
+	range 0 255
+	depends on FC7300_ENET0
+	---help---
+		Select the interrupt priority of Ethernet0 Tx Queue0.
+
+config FC7300_ENET0_RX0_ISR_PRIORITY
+	int "Receive Interrupt Priority"
+	default 192
+	range 0 255
+	depends on FC7300_ENET0
+	---help---
+		Select the interrupt priority of Ethernet0 Rx Queue0.
+
+config FC7300_ENET0_DMATXCH0_WEIGHT
+	int "DMA TX Channel Weight"
+	default 0
+	range 0 7
+	depends on FC7300_ENET0_MULTIPLE_QUEUES
+	---help---
+		Configure the transmit weights between multiple DMA channels.
+
+config FC7300_ENET0_MTLTXQ0_WEIGHT
+	int "MTL TX Queue Weight"
+	default 0
+	range 0 100
+	depends on FC7300_ENET0_MULTIPLE_QUEUES
+	---help---
+		Configure the transmit weights between multiple MTL queues.
+
+config FC7300_ENET0_MTLRXQ0_WEIGHT
+	int "MTL RX Queue Weight"
+	default 0
+	range 0 100
+	depends on FC7300_ENET0_MULTIPLE_QUEUES
+	---help---
+		Configure the receive weights between multiple MTL queues.
+
+endmenu # FC7300 ENET0 Channel/Queue 0 Configuration
+
+menu "FC7300 ENET0 Channel/Queue 1 Configuration"
+	depends on FC7300_ENET0_MULTIPLE_QUEUES
+
+config FC7300_ENET0_NTX1DESC
+	int "Number DMA Transmit Descriptors"
+	default 4
+	range 2 64
+	depends on FC7300_ENET0
+	---help---
+		The number of Transmit DMA descriptors and buffers.
+
+config FC7300_ENET0_NRX1DESC
+	int "Number DMA Receive Descriptors"
+	default 8
+	range 2 64
+	depends on FC7300_ENET0
+	---help---
+		The number of Receive DMA descriptors and buffers.
+
+config FC7300_ENET0_TXBUFFER1_SIZE
+	int "Transmit Buffer Size in Bytes"
+	default 1520
+	range 64 1536
+	depends on FC7300_ENET0
+	---help---
+		The size (in bytes) of Transmit buffers.
+
+config FC7300_ENET0_RXBUFFER1_SIZE
+	int "Receive Buffer Size in Bytes"
+	default 1520
+	range 64 1536
+	depends on FC7300_ENET0
+	---help---
+		The size (in bytes) of Receive buffers.
+
+config FC7300_ENET0_TX1_ISR_PRIORITY
+	int "Transmit Interrupt Priority"
+	default 192
+	range 0 255
+	depends on FC7300_ENET0
+	---help---
+		Select the interrupt priority of Ethernet0 Tx Queue1.
+
+config FC7300_ENET0_RX1_ISR_PRIORITY
+	int "Receive Interrupt Priority"
+	default 192
+	range 0 255
+	depends on FC7300_ENET0
+	---help---
+		Select the interrupt priority of Ethernet0 Rx Queue1.
+
+config FC7300_ENET0_DMATXCH1_WEIGHT
+	int "DMA TX Channel Weight"
+	default 0
+	range 0 7
+	depends on FC7300_ENET0_MULTIPLE_QUEUES
+	---help---
+		Configure the transmit weights between multiple DMA channels.
+
+config FC7300_ENET0_MTLTXQ1_WEIGHT
+	int "MTL TX Queue Weight"
+	default 0
+	range 0 100
+	depends on FC7300_ENET0_MULTIPLE_QUEUES
+	---help---
+		Configure the transmit weights between multiple MTL queues.
+
+config FC7300_ENET0_MTLRXQ1_WEIGHT
+	int "MTL RX Queue Weight"
+	default 0
+	range 0 100
+	depends on FC7300_ENET0_MULTIPLE_QUEUES
+	---help---
+		Configure the receive weights between multiple MTL queues.
+
+config FC7300_ENET0_TXQ1_IDLESLOPE
+	int "Transmit Queue Idle Slope Credit"
+	default 0
+	range 0 8192
+	depends on FC7300_ENET0_AV_MODE
+	---help---
+		When AV feature is enabled, this field contains the idleSlopeCredit
+		value required for the credit-based shaper.
+
+config FC7300_ENET0_TXQ1_SENDSLOPE
+	int "Transmit Queue Send Slope Credit"
+	default 0
+	range 0 8192
+	depends on FC7300_ENET0_AV_MODE
+	---help---
+		When AV feature is enabled, this field contains the sendSlopeCredit
+		value required for the credit-based shaper.
+
+config FC7300_ENET0_TXQ1_HICREDIT
+	int "Transmit Queue High Credit"
+	default 0
+	range 0 134217728
+	depends on FC7300_ENET0_AV_MODE
+	---help---
+		When AV feature is enabled, this field contains the high credit
+		value required for the credit-based shaper.
+
+config FC7300_ENET0_TXQ1_LOCREDIT
+	int "Transmit Queue Low Credit"
+	default 0
+	range 0 134217728
+	depends on FC7300_ENET0_AV_MODE
+	---help---
+		When AV feature is enabled, this field contains the low credit
+		value required for the credit-based shaper.
+
+endmenu # FC7300 ENET0 Channel/Queue 1 Configuration
+
+config FC7300_ENET0_PTP_ENABLE
+	bool "FC7300 ENET0 PTP Enable"
+	default y
+	depends on FC7300_ENET0
+	---help---
+		Enable IEEE 1588 precision time protocol.
+
+menu "FC7300 ENET0 PTP Configuration"
+	depends on FC7300_ENET0_PTP_ENABLE
+
+choice
+	prompt "PTP Clock Selection"
+	default FC7300_ENET0_PTP_CLKSEL_PCC
+
+config FC7300_ENET0_PTP_CLKSEL_PCC
+	bool "ENET PCC Clock"
+	---help---
+		Select ENET PCC clock as PTP clock source.
+
+config FC7300_ENET0_PTP_CLKSEL_TXCLK
+	bool "ENET TX Clock"
+	---help---
+		Select ENET TX clock as PTP clock source.
+
+config FC7300_ENET0_PTP_CLKSEL_REFPIN
+	bool "ENET Reference Pin Input Clock"
+	---help---
+		Select ENET reference pin (PTG8) input clock as PTP clock source.
+
+endchoice # PTP Clock Selection
+
+config FC7300_ENET0_PTP_REFPIN_FREQ
+	int "Reference Pin Input Clock Frequency"
+	default 125000000
+	depends on FC7300_ENET0_PTP_CLKSEL_REFPIN
+	---help---
+		If Reference Pin Input Clock is selected as the PTP source clock,
+		The Input Clock frequency must be specified.
+
+config FC7300_ENET0_PTP_INCREMENT_STEP
+	int "Increment Step in Nanoseconds"
+	default 20
+	range 7 255
+	---help---
+		The increment step in nanoseconds of the PTP system time. This value
+		must be greater than (1000000000 / ptpclock). For example, if the
+		ptpclock is 50Mhz, the minimum value is 20.
+
+config FC7300_ENET0_PTP_VERSION2
+	bool "PTP Version 2 Format"
+	default y
+	---help---
+		Enable PTP packet processing for version 2 format.
+
+config FC7300_ENET0_PTP_AV8021AS
+	bool "AV 802.1AS Mode"
+	default n
+	---help---
+		Enable AV 802.1AS Mode.
+
+config FC7300_ENET0_PTP_ALL_PACKETS
+	bool "Timestamp for All Packets"
+	default n
+	---help---
+		Timestamp snapshot is enabled for all packets received by the MAC.
+
+config FC7300_ENET0_PTP_SNAPSHOT_TYPE
+	int "Snapshot Type Select"
+	default 8
+	range 0 15
+	---help---
+		Snapshot packets type select. This value is the combination of
+		SNAPTYPSEL, TSMSTRENA, and TSEVNTENA defined in Timestamp Control
+		register bits[17:14].
+
+choice
+	prompt "PTP Processing Layer"
+	default FC7300_ENET0_PTP_OVER_IPV4UDP
+
+config FC7300_ENET0_PTP_OVER_IPV4UDP
+	bool "Timestamp Over IPV4 UDP"
+	---help---
+		 Processes the PTP packets encapsulated in IPv4-UDP packets.
+
+config FC7300_ENET0_PTP_OVER_IPV6UDP
+	bool "Timestamp Over IPV6 UDP"
+	---help---
+		 Processes the PTP packets encapsulated in IPv6-UDP packets.
+
+config FC7300_ENET0_PTP_OVER_ETHERNET
+	bool "Timestamp Over Ethernet"
+	---help---
+		 Processes the PTP packets encapsulated in ethernet packets.
+
+endchoice # PTP Processing Layer
+
+endmenu # FC7300 ENET0 PTP Configuration
+
+config FC7300_ENET0_SYS_ISR_PRIORITY
+	int "FC7300 ENET0 System Interrupt Priority"
+	default 192
+	range 0 255
+	depends on FC7300_ENET0
+	---help---
+		Select the interrupt priority of Ethernet0 System Interrupt.
+
+endmenu # FC7300 Ethernet0 Configuration
+
+endmenu # FC7300 Ethernet Configuration

@@ -1,0 +1,7306 @@
+#
+# Copyright (C) 2025 Xiaomi Corporation
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more contributor
+# license agreements.  See the NOTICE file distributed with this work for
+# additional information regarding copyright ownership.  The ASF licenses this
+# file to you under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License.  You may obtain a copy of
+# the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+if ARCH_CHIP_CUSTOM
+
+# Chip Selection
+
+choice
+	prompt "FC7300 Chip Selection"
+	default ARCH_CHIP_FC7300F8M_320PIN
+
+config ARCH_CHIP_FC7300F8M_320PIN
+	bool "FC7300F8M_320PIN"
+	select ARCH_CHIP_FC7300F8M
+	---help---
+		Cortex-M7F, 8Mb FLASH, 512Kb RAM incl.
+
+endchoice # FC7300 Chip Selection
+
+# Chip Family
+
+config ARCH_CHIP_FC7300F8M
+	bool
+	select ARCH_CHIP_FC7300XXX
+	select FC7300XXX_HAVE_ETHERNET
+
+config ARCH_CHIP_FC7300XXX
+	bool
+	select ARCH_CORTEXM7
+	select ARMV7M_HAVE_ICACHE
+	select ARMV7M_HAVE_DCACHE
+	select ARCH_HAVE_MPU
+	select ARM_HAVE_MPU_UNIFIED
+	select ARCH_HAVE_FPU
+	select ARCH_HAVE_RAMFUNCS
+	select ARCH_HAVE_I2CRESET
+	select ARCH_HAVE_TICKLESS
+	select ARCH_HAVE_SPI_BITORDER
+	select ARCH_HAVE_POWEROFF
+	select ARCH_HAVE_HEAP2
+	select ARCH_HAVE_ADDRENV
+	select ARCH_HAVE_MULTICPU
+	select ARCH_HAVE_CUSTOM_TESTSET
+
+# Chip Capabilities
+
+config CPU_COREID
+	int "FC7300 CPU CORE ID"
+	default -1
+	---help---
+		 Current cpu core id
+
+config CORE1_BOOTADDR
+	hex "FC7300 CORE1 BOOT ADDRESS"
+	default 0x01400000
+	---help---
+		 Current cpu core 1 boot addr
+
+config KFLASH_A_BANK0_SIZE
+	hex "FC7300 A BANK0 KFLASH SIZE"
+	default 1784
+	---help---
+		 Current a bank0 kflash size(KB)
+
+config FC7300XXX_HAVE_ETHERNET
+	bool
+	default n
+
+# Peripheral Group Selections
+
+config FC7300_WATCHDOG
+	bool
+	default n
+	select WATCHDOG
+
+config FC7300_DMA
+	bool
+	default n
+	select ARCH_DMA
+
+config FC7300_ADC
+	bool
+	default n
+	select ANALOG
+	select ADC
+
+config FC7300_BOARD_PROFILING
+	bool "boot profiling."
+	default n
+
+if FC7300_BOARD_PROFILING
+
+config PROFILINE_GPIOPIN
+	string "device node for profiling."
+	default "/dev/gpio31"
+
+endif # FC7300_BOARD_PROFILING
+
+config FC7300_FTU
+	bool
+	default n
+
+config FC7300_ISM
+	bool
+	default n
+
+config FC7300_FCUART
+	bool
+	default n
+
+config FC7300_FCPIT
+	bool
+	default n
+
+config FC7300_TSTMP
+	bool
+	default n
+
+config FC7300_FCSPI
+	bool
+	default n
+
+config FC7300_FLEXCAN
+	bool
+	default n
+
+config FC7300_FLEXCAN_CHARDRIVER
+	bool
+	select CAN
+	select ARCH_HAVE_CAN_ERRORS
+	default n
+
+config FC7300_FLEXCAN_SOCKET
+	bool
+	select NET
+	select NET_CAN
+	default n
+
+config FC7300_FCIIC
+	bool
+	select I2C
+	select I2C_DRIVER
+	default n
+
+config FC7300_LIN
+	bool
+	select NET
+	select NET_CAN
+	default n
+
+config FC7300_ENET
+	bool
+	select NET
+	select NETDEVICES
+	default n
+
+# Peripheral Selection
+
+menu "FC7300 Peripheral Selection"
+
+config FC7300_WATCHDOG0
+	bool "WATCHDOG0"
+	default n
+	select FC7300_WATCHDOG
+
+config FC7300_WATCHDOG1
+	bool "WATCHDOG1"
+	default n
+	select FC7300_WATCHDOG
+
+config FC7300_WATCHDOG2
+	bool "WATCHDOG2"
+	default n
+	select FC7300_WATCHDOG
+
+config FC7300_ADC0
+	bool "ADC0"
+	default n
+	select FC7300_ADC
+
+config FC7300_ADC1
+	bool "ADC1"
+	default n
+	select FC7300_ADC
+
+config FC7300_ADC2
+	bool "ADC2"
+	default n
+	select FC7300_ADC
+
+config FC7300_ADC3
+	bool "ADC3"
+	default n
+	select FC7300_ADC
+
+config FC7300_DMA0
+	bool "DMA0"
+	default n
+	select FC7300_DMA
+
+config FC7300_DMA1
+	bool "DMA1"
+	default n
+	select FC7300_DMA
+
+config FC7300_ENET0
+	bool "Ethernet0"
+	default n
+	depends on FC7300XXX_HAVE_ETHERNET
+	select FC7300_ENET
+
+config FC7300_FLEXCAN0
+	bool "FLEXCAN0"
+	select FC7300_FLEXCAN
+	default n
+
+config FC7300_FLEXCAN1
+	bool "FLEXCAN1"
+	select FC7300_FLEXCAN
+	default n
+
+config FC7300_FLEXCAN2
+	bool "FLEXCAN2"
+	select FC7300_FLEXCAN
+	default n
+
+config FC7300_FLEXCAN3
+	bool "FLEXCAN3"
+	select FC7300_FLEXCAN
+	default n
+
+config FC7300_FLEXCAN4
+	bool "FLEXCAN4"
+	select FC7300_FLEXCAN
+	default n
+
+config FC7300_FLEXCAN5
+	bool "FLEXCAN5"
+	select FC7300_FLEXCAN
+	default n
+
+config FC7300_FLEXCAN6
+	bool "FLEXCAN6"
+	select FC7300_FLEXCAN
+	default n
+
+config FC7300_FLEXCAN7
+	bool "FLEXCAN7"
+	select FC7300_FLEXCAN
+	default n
+
+config FC7300_FLEXCAN8
+	bool "FLEXCAN8"
+	select FC7300_FLEXCAN
+	default n
+
+config FC7300_FLEXCAN9
+	bool "FLEXCAN9"
+	select FC7300_FLEXCAN
+	default n
+
+config FC7300_FTU0
+	bool "FTU0"
+	default n
+	select FC7300_FTU
+
+config FC7300_FTU1
+	bool "FTU1"
+	default n
+	select FC7300_FTU
+
+config FC7300_FTU2
+	bool "FTU2"
+	default n
+	select FC7300_FTU
+
+config FC7300_FTU3
+	bool "FTU3"
+	default n
+	select FC7300_FTU
+
+config FC7300_FTU4
+	bool "FTU4"
+	default n
+	select FC7300_FTU
+
+config FC7300_FTU5
+	bool "FTU5"
+	default n
+	select FC7300_FTU
+
+config FC7300_FTU6
+	bool "FTU6"
+	default n
+	select FC7300_FTU
+
+config FC7300_FTU7
+	bool "FTU7"
+	default n
+	select FC7300_FTU
+
+config FC7300_FTU8
+	bool "FTU8"
+	default n
+	select FC7300_FTU
+
+config FC7300_FTU9
+	bool "FTU9"
+	default n
+	select FC7300_FTU
+
+config FC7300_FTU10
+	bool "FTU10"
+	default n
+	select FC7300_FTU
+
+config FC7300_FTU11
+	bool "FTU11"
+	default n
+	select FC7300_FTU
+
+config FC7300_ISM0
+	bool "ISM0"
+	default n
+	select FC7300_ISM
+	select CAPTURE
+
+config FC7300_FCIIC0
+	bool "FCIIC0"
+	default n
+	select FC7300_FCIIC
+
+config FC7300_FCIIC1
+	bool "FCIIC1"
+	default n
+	select FC7300_FCIIC
+
+config FC7300_FCSPI0
+	bool "FCSPI0"
+	default n
+	select FC7300_FCSPI
+	select SPI
+
+config FC7300_FCSPI1
+	bool "FCSPI1"
+	default n
+	select FC7300_FCSPI
+	select SPI
+
+config FC7300_FCSPI2
+	bool "FCSPI2"
+	default n
+	select FC7300_FCSPI
+	select SPI
+
+config FC7300_FCSPI3
+	bool "FCSPI3"
+	default n
+	select FC7300_FCSPI
+	select SPI
+
+config FC7300_FCSPI4
+	bool "FCSPI4"
+	default n
+	select FC7300_FCSPI
+	select SPI
+
+config FC7300_FCSPI5
+	bool "FCSPI5"
+	default n
+	select FC7300_FCSPI
+	select SPI
+
+config FC7300_FCSPI6
+	bool "FCSPI6"
+	default n
+	select FC7300_FCSPI
+	select SPI
+
+config FC7300_FCSPI7
+	bool "FCSPI7"
+	default n
+	select FC7300_FCSPI
+	select SPI
+
+config FC7300_FCUART0
+	bool "FCUART0"
+	default n
+	select FC7300_FCUART
+	select FCUART0_SERIALDRIVER
+	select ARCH_HAVE_SERIAL_TERMIOS
+
+config FC7300_FCUART1
+	bool "FCUART1"
+	default n
+	select FC7300_FCUART
+	select FCUART1_SERIALDRIVER
+	select ARCH_HAVE_SERIAL_TERMIOS
+
+config FC7300_FCUART2
+	bool "FCUART2"
+	default n
+	select FC7300_FCUART
+	select FCUART2_SERIALDRIVER
+	select ARCH_HAVE_SERIAL_TERMIOS
+
+config FC7300_FCUART3
+	bool "FCUART3"
+	default n
+	select FC7300_FCUART
+	select FCUART3_SERIALDRIVER
+	select ARCH_HAVE_SERIAL_TERMIOS
+
+config FC7300_FCUART4
+	bool "FCUART4"
+	default n
+	select FC7300_FCUART
+	select FCUART4_SERIALDRIVER
+	select ARCH_HAVE_SERIAL_TERMIOS
+
+config FC7300_FCUART5
+	bool "FCUART5"
+	default n
+	select FC7300_FCUART
+	select FCUART5_SERIALDRIVER
+	select ARCH_HAVE_SERIAL_TERMIOS
+
+config FC7300_FCUART6
+	bool "FCUART6"
+	default n
+	select FC7300_FCUART
+	select FCUART6_SERIALDRIVER
+	select ARCH_HAVE_SERIAL_TERMIOS
+
+config FC7300_FCUART7
+	bool "FCUART7"
+	default n
+	select FC7300_FCUART
+	select FCUART7_SERIALDRIVER
+	select ARCH_HAVE_SERIAL_TERMIOS
+
+config FC7300_FCUART8
+	bool "FCUART8"
+	default n
+	select FC7300_FCUART
+	select FCUART8_SERIALDRIVER
+	select ARCH_HAVE_SERIAL_TERMIOS
+
+config FC7300_FCUART9
+	bool "FCUART9"
+	default n
+	select FC7300_FCUART
+	select FCUART9_SERIALDRIVER
+	select ARCH_HAVE_SERIAL_TERMIOS
+
+config FC7300_FCUART10
+	bool "FCUART10"
+	default n
+	select FC7300_FCUART
+	select FCUART10_SERIALDRIVER
+	select ARCH_HAVE_SERIAL_TERMIOS
+
+config FC7300_FCUART11
+	bool "FCUART11"
+	default n
+	select FC7300_FCUART
+	select FCUART11_SERIALDRIVER
+	select ARCH_HAVE_SERIAL_TERMIOS
+
+config FC7300_FCUART12
+	bool "FCUART12"
+	default n
+	select FC7300_FCUART
+	select FCUART12_SERIALDRIVER
+	select ARCH_HAVE_SERIAL_TERMIOS
+
+config FC7300_FCUART13
+	bool "FCUART13"
+	default n
+	select FC7300_FCUART
+	select FCUART13_SERIALDRIVER
+	select ARCH_HAVE_SERIAL_TERMIOS
+
+config FC7300_FCUART14
+	bool "FCUART14"
+	default n
+	select FC7300_FCUART
+	select FCUART14_SERIALDRIVER
+	select ARCH_HAVE_SERIAL_TERMIOS
+
+config FC7300_FCUART15
+	bool "FCUART15"
+	default n
+	select FC7300_FCUART
+	select FCUART15_SERIALDRIVER
+	select ARCH_HAVE_SERIAL_TERMIOS
+
+config FC7300_FCUART16
+	bool "FCUART16"
+	default n
+	select FC7300_FCUART
+	select FCUART16_SERIALDRIVER
+	select ARCH_HAVE_SERIAL_TERMIOS
+
+config FC7300_FCUART17
+	bool "FCUART17"
+	default n
+	select FC7300_FCUART
+	select FCUART17_SERIALDRIVER
+	select ARCH_HAVE_SERIAL_TERMIOS
+
+config FC7300_LIN0
+	bool "LIN0"
+	depends on !FC7300_FCUART0
+	select FC7300_LIN
+	default n
+
+config FC7300_LIN1
+	bool "LIN1"
+	depends on !FC7300_FCUART1
+	select FC7300_LIN
+	default n
+
+config FC7300_LIN2
+	bool "LIN2"
+	depends on !FC7300_FCUART2
+	select FC7300_LIN
+	default n
+
+config FC7300_LIN3
+	bool "LIN3"
+	depends on !FC7300_FCUART3
+	select FC7300_LIN
+	default n
+
+config FC7300_LIN4
+	bool "LIN4"
+	depends on !FC7300_FCUART4
+	select FC7300_LIN
+	default n
+
+config FC7300_LIN5
+	bool "LIN5"
+	depends on !FC7300_FCUART5
+	select FC7300_LIN
+	default n
+
+config FC7300_LIN6
+	bool "LIN6"
+	depends on !FC7300_FCUART6
+	select FC7300_LIN
+	default n
+
+config FC7300_LIN7
+	bool "LIN7"
+	depends on !FC7300_FCUART7
+	select FC7300_LIN
+	default n
+
+config FC7300_LIN8
+	bool "LIN8"
+	depends on !FC7300_FCUART8
+	select FC7300_LIN
+	default n
+
+config FC7300_LIN9
+	bool "LIN9"
+	depends on !FC7300_FCUART9
+	select FC7300_LIN
+	default n
+
+config FC7300_LIN10
+	bool "LIN10"
+	depends on !FC7300_FCUART10
+	select FC7300_LIN
+	default n
+
+config FC7300_LIN11
+	bool "LIN11"
+	depends on !FC7300_FCUART11
+	select FC7300_LIN
+	default n
+
+config FC7300_LIN12
+	bool "LIN12"
+	depends on !FC7300_FCUART12
+	select FC7300_LIN
+	default n
+
+config FC7300_LIN13
+	bool "LIN13"
+	depends on !FC7300_FCUART13
+	select FC7300_LIN
+	default n
+
+config FC7300_LIN14
+	bool "LIN14"
+	depends on !FC7300_FCUART14
+	select FC7300_LIN
+	default n
+
+config FC7300_LIN15
+	bool "LIN15"
+	depends on !FC7300_FCUART15
+	select FC7300_LIN
+	default n
+
+config FC7300_LIN16
+	bool "LIN16"
+	depends on !FC7300_FCUART16
+	select FC7300_LIN
+	default n
+
+config FC7300_LIN17
+	bool "LIN17"
+	depends on !FC7300_FCUART17
+	select FC7300_LIN
+	default n
+
+config FC7300_FCPIT0
+	bool
+	default n
+	select FC7300_FCPIT
+
+config FC7300_FCPIT0_CH0
+	bool "FCPIT0_CH0"
+	default n
+	select FC7300_FCPIT0
+
+config FC7300_FCPIT0_CH1
+	bool "FCPIT0_CH1"
+	default n
+	select FC7300_FCPIT0
+
+config FC7300_FCPIT0_CH2
+	bool "FCPIT0_CH2"
+	default n
+	select FC7300_FCPIT0
+
+config FC7300_FCPIT0_CH3
+	bool "FCPIT0_CH3"
+	default n
+	select FC7300_FCPIT0
+
+config FC7300_FCPIT1
+	bool
+	default n
+	select FC7300_FCPIT
+
+config FC7300_FCPIT1_CH0
+	bool "FCPIT1_CH0"
+	default n
+	select FC7300_FCPIT1
+
+config FC7300_FCPIT1_CH1
+	bool "FCPIT1_CH1"
+	default n
+	select FC7300_FCPIT1
+
+config FC7300_FCPIT1_CH2
+	bool "FCPIT1_CH2"
+	default n
+	select FC7300_FCPIT1
+
+config FC7300_FCPIT1_CH3
+	bool "FCPIT1_CH3"
+	default n
+	select FC7300_FCPIT1
+
+config FC7300_TSTMP1
+	bool "TSTMP1"
+	default n
+	select FC7300_TSTMP
+
+config FC7300_TSTMP2
+	bool "TSTMP2"
+	default n
+	select FC7300_TSTMP
+
+config FC7300_TSTMP3
+	bool "TSTMP3"
+	default n
+	select FC7300_TSTMP
+
+config FC7300_RTC
+	bool "RTC"
+	default n
+ 	select RTC
+
+config FC7300_PWM
+	bool "PWM"
+	select PWM
+	default n
+
+config FC7300_FTU_CAP
+	bool "FTU_CAP"
+	default n
+	select FC7300_CAP
+
+config FC7300_ISM_CAP
+    bool "ISM_CAP"
+	default n
+	select FC7300_CAP
+
+config FC7300_CAP
+	bool "CAP"
+	default n
+
+config FC7300_PROGMEM
+	bool "PROGMEM"
+	default n
+	select ARCH_HAVE_PROGMEM
+	depends on (ARCH_CHIP_FC7300F8M)
+	---help---
+		Use the 256 KB of d-flash memory as a
+		Memory-Technology-Device (MTD).
+
+config FC7300_NORFLASH_MTD
+	bool "Flash/NVR"
+	default n
+	---help---
+		Initialize an MTD driver for the FC7300 NOR Flash, which will
+		add an entry at /dev for application access from userspace.
+
+config FC7300_MB
+	bool "Mailbox"
+	default n
+	---help---
+		Use Mailbox driver for multicore communication and spinlock.
+
+config FC7300_HWSPINLOCK
+	bool "Hardware Spinlock"
+	default n
+	select FC7300_MB
+	---help---
+		Enable the hardware spinlock support.
+
+config FC7300_RPTUN
+	bool "Rptun"
+	default n
+	select RPTUN
+	select FC7300_MB
+	---help---
+		Select FC7300_RPTUN for multicore communication.
+
+config FC7300_RPMSG_VIRTIO
+	bool "Rpmsg Virtio"
+	default n
+	depends on !FC7300_RPTUN
+	select RPMSG_VIRTIO
+	select FC7300_MB
+	---help---
+		Select FC7300_RPMSG_VIRTIO for multicore communication.
+
+config FC7300_HSM
+	bool "HSM"
+	default n
+	select HSM
+	---help---
+		Select FC7300_HSM for crypto request.
+
+config FC7300_CRC32
+	bool "CRC32"
+	default n
+	select CRC32
+	---help---
+		Select FC7300_CRC32 for CRC32 request.
+
+config FC7300_ERM
+	bool "ERM"
+	default n
+
+config FC7300_FCSMU
+	bool "FCSMU"
+	default n
+
+config FC7300_STCU
+	bool "STCU"
+	default n
+
+config FC7300_EIM
+	bool "EIM"
+	default n
+config FC7300_RNG
+	bool "Random Number Generator (RNG)"
+	default n
+	select ARCH_HAVE_RNG
+	select FC7300_MB
+
+config FC7300_CMU
+	bool "Clock Monitor Unit"
+	default n
+
+config FC7300_PMC
+	bool "Power Management Controller"
+	default n
+
+config FC7300_TMU
+	bool "Temperature Monitor Unit"
+	default n
+
+config FC7300_MAM
+	bool "Matrix Access Monitor"
+	default n
+
+endmenu # FC7300 Peripheral Selection
+
+config FC7300_WATCHDOG_OPERATION_IN_START
+    bool "Watchdog operation in start entry"
+    default y
+
+config FC7300_WATCHDOG_TIMEOUT_IN_START
+    int "Watchdog timeout in start entry"
+    depends on FC7300_WATCHDOG_OPERATION_IN_START
+    range 0 130000
+    default 0
+    ---help---
+        The timeout value is in milliseconds. The max value for this is 130000ms.
+        Speically, 0 means disable watchdog.
+
+menu "Reset Configuration"
+
+config FC7300_SWRST_SYSTEM
+	bool "SW reset trigger system reset"
+	default y
+
+config FC7300_INTM_STSTEM
+	bool "INTM reset trigger system reset"
+	default y
+
+config FC7300_WDOG_SYSTEM
+	bool "WDOG reset trigger system reset"
+	default y
+
+config FC7300_SYSRST_SYSTEM
+	bool "SYSRST reset trigger system reset"
+	default y
+
+config FC7300_LOCKUP_SYSTEM
+	bool "LOCKUP reset trigger system reset"
+	default y
+
+endmenu # Reset Configuration
+
+menu "Timer Configuration"
+	depends on FC7300_TSTMP1 || FC7300_TSTMP2 || FC7300_TSTMP3
+
+config FC7300_TSTMP1_CH0
+	bool "TSTMP1_CH0"
+	default n
+	depends on FC7300_TSTMP1
+
+config FC7300_TSTMP1_CH0_USED_FOR_TICK
+	bool "TSTMP1_CH0 used for systick"
+	default y
+	depends on FC7300_TSTMP1_CH0
+
+config FC7300_TSTMP1_CH1
+	bool "TSTMP1_CH1"
+	default n
+	depends on FC7300_TSTMP1
+
+config FC7300_TSTMP1_CH2
+	bool "TSTMP1_CH2"
+	default n
+	depends on FC7300_TSTMP1
+
+config FC7300_TSTMP1_CH3
+	bool "TSTMP1_CH3"
+	default n
+	depends on FC7300_TSTMP1
+
+config FC7300_TSTMP1_ISR_PRIORITY
+	int "TSTMP1 ISR PRIORITY"
+	default 192
+	depends on FC7300_TSTMP1
+
+config FC7300_TSTMP2_CH0
+	bool "TSTMP2_CH0"
+	default n
+	depends on FC7300_TSTMP2
+
+config FC7300_TSTMP2_CH0_USED_FOR_TICK
+	bool "TSTMP2_CH0 used for systick"
+	default y
+	depends on FC7300_TSTMP2_CH0
+
+config FC7300_TSTMP2_CH1
+	bool "TSTMP2_CH1"
+	default n
+	depends on FC7300_TSTMP2
+
+config FC7300_TSTMP2_CH2
+	bool "TSTMP2_CH2"
+	default n
+	depends on FC7300_TSTMP2
+
+config FC7300_TSTMP2_CH3
+	bool "TSTMP2_CH3"
+	default n
+	depends on FC7300_TSTMP2
+
+config FC7300_TSTMP2_ISR_PRIORITY
+	int "TSTMP2 ISR PRIORITY"
+	default 192
+	depends on FC7300_TSTMP2
+
+config FC7300_TSTMP3_CH0
+	bool "TSTMP3_CH0"
+	default n
+	depends on FC7300_TSTMP3
+
+config FC7300_TSTMP3_CH0_USED_FOR_TICK
+	bool "TSTMP3_CH0 used for systick"
+	default y
+	depends on FC7300_TSTMP3_CH0
+
+config FC7300_TSTMP3_CH1
+	bool "TSTMP3_CH1"
+	default n
+	depends on FC7300_TSTMP3
+
+config FC7300_TSTMP3_CH2
+	bool "TSTMP3_CH2"
+	default n
+	depends on FC7300_TSTMP3
+
+config FC7300_TSTMP3_CH3
+	bool "TSTMP3_CH3"
+	default n
+	depends on FC7300_TSTMP3
+
+config FC7300_TSTMP3_ISR_PRIORITY
+	int "TSTMP3 ISR PRIORITY"
+	default 192
+	depends on FC7300_TSTMP3
+
+config FC7300_TSTMP_IRQ_ATTACH_THREAD
+	bool "TSTMP IRQ Use irq_attach_thread"
+	default n
+
+config FC7300_TSTMP_THREAD_PRIORITY
+	int "TSTMP THREAD PRIORITY"
+	default 254
+	range 0 255
+	depends on FC7300_TSTMP_IRQ_ATTACH_THREAD
+
+config FC7300_TSTMP_THREAD_STACK_SIZE
+	int "TSTMP THREAD STACK SIZE"
+	default 1500
+	range 0 4096
+	depends on FC7300_TSTMP_IRQ_ATTACH_THREAD
+
+config FC7300_ONESHOT
+	bool "TSTMP one-shot wrapper"
+	default y
+	---help---
+		Enable a wrapper around the low level timer/counter functions to
+		support one-shot timer.
+
+endmenu # Timer Configuration
+
+menu "FC7300 Watchdog Configuration"
+    depends on FC7300_WATCHDOG
+
+config FC7300_WATCHDOG_SW_WATCHDOG_INTERVAL
+    int "Timeout interval between software and interal watchdog"
+    default 0
+    range 0 130000
+    ---help---
+        The interval value is in milliseconds.
+
+config FC7300_WATCHDOG0_ISR_PRIORITY
+    int "Watchdog0 ISR PRIORITY"
+    depends on FC7300_WATCHDOG0
+    default 0
+
+config FC7300_WATCHDOG1_ISR_PRIORITY
+    int "Watchdog1 ISR PRIORITY"
+    depends on FC7300_WATCHDOG1
+    default 0
+
+config FC7300_WATCHDOG2_ISR_PRIORITY
+    int "Watchdog2 ISR PRIORITY"
+    depends on FC7300_WATCHDOG2
+    default 0
+
+endmenu # FC7300 Watchdog Configuration
+
+menu "FC7300 ADC Configuration"
+	depends on FC7300_ADC
+
+config FC7300_ADC_WDG
+	bool "ADC Watchdog"
+	default n
+
+config FC7300_ADC_USE_NO_FIFO
+	bool "ADC Use No FIFO"
+	default n
+
+config FC7300_ADC_IRQ_ATTACH_THREAD
+	bool "ADC IRQ Use irq_attach_thread"
+	default n
+
+config FC7300_ADC_THREAD_PRIORITY
+	int "ADC THREAD PRIORITY"
+	default 250
+	range 0 255
+	depends on FC7300_ADC_IRQ_ATTACH_THREAD
+
+config FC7300_ADC_THREAD_STACK_SIZE
+	int "ADC THREAD STACK SIZE"
+	default 1500
+	range 0 4096
+	depends on FC7300_ADC_IRQ_ATTACH_THREAD
+
+menu "FC7300 ADC0 Configuration"
+	depends on FC7300_ADC0
+
+config FC7300_ADC0_DMA
+	bool "ADC0 DMA"
+	default n
+
+config FC7300_ADC0_FIFO_SIZE
+	int "ADC0 FIFO Size"
+	default 32
+	range 0 65535
+
+config FC7300_ADC0_DMA_CHANNEL
+	int "ADC0 DMA Channel"
+	default 0
+	range 0 31
+	depends on FC7300_ADC0_DMA
+
+config FC7300_ADC0_DMA_NOTIFY_THRESH
+	int "ADC0 DMA ISR threshold"
+	default 10
+	range 1 1000
+	depends on FC7300_ADC0_DMA
+
+config FC7300_ADC0_DMA_MAX_SAMPLES
+	int "ADC0 DMA MAX samples"
+	default 29
+	range 1 1000
+	depends on FC7300_ADC0_DMA
+
+config FC7300_ADC0_WDG
+	bool "ADC0 Watchdog"
+	default n
+	select FC7300_ADC_WDG
+
+config FC7300_ADC0_WDG_CHANNEL
+	int "ADC0 Watchdog channel"
+	default 0
+	range 0 36
+	depends on FC7300_ADC0_WDG
+
+config FC7300_ADC0_WDG_HIGHTHRES
+	int "ADC0 Watchdog high threshold"
+	default 4095
+	range 1 4095
+	depends on FC7300_ADC0_WDG
+
+config FC7300_ADC0_WDG_LOWTHRES
+	int "ADC0 Watchdog low threshold"
+	default 0
+	range 0 4094
+	depends on FC7300_ADC0_WDG
+
+config FC7300_ADC0_ISR_PRIORITY
+	int "ADC0 ISR PRIORITY"
+	default 192
+
+config FC7300_ADC0_IRQ
+	bool "ADC0 interrupt used"
+	default n
+
+config FC7300_ADC0_WDGINTEN
+	bool "ADC0 Watchdog interrupt enable"
+	default n
+	depends on FC7300_ADC0_WDG
+	select FC7300_ADC0_IRQ
+
+config FC7300_ADC0_OVERRUNINTEN
+	bool "ADC0 Overrun interrupt enable"
+	default n
+	select FC7300_ADC0_IRQ
+
+config FC7300_ADC0_CONVCOMPINTEN
+	bool "ADC0 Sequence conversion complete interrupt enable"
+	default n
+	select FC7300_ADC0_IRQ
+
+config FC7300_ADC0_SAMPTIME0
+	int "ADC0 Sample Time Option 0, unit in adc cycles"
+	default 4
+	range 2 255
+
+config FC7300_ADC0_SAMPTIME1
+	int "ADC0 Sample Time Option 1, unit in adc cycles"
+	default 20
+	range 2 255
+
+config FC7300_ADC0_SAMPTIME2
+	int "ADC0 Sample Time Option 2, unit in adc cycles"
+	default 40
+	range 2 255
+
+config FC7300_ADC0_SAMPTIME3
+	int "ADC0 Sample Time Option 3, unit in adc cycles"
+	default 80
+	range 2 255
+
+config FC7300_ADC0_MODE
+	int "ADC0 work mode"
+	default 0
+	range 0 1
+	---help---
+		Specifies that the work mode
+			0 for SW_SEQMODE_SINGLE
+			1 for HW_SEQMODE_SINGLE
+
+config FC7300_ADC0_HAVETIMER
+	bool "ADC0 TIMER enable"
+	default n
+
+config FC7300_ADC0_TIMER_FREQ
+	int "ADC0 timer trigger frequency"
+	default 0
+	range 0 1000000
+	---help---
+		Specifies that the timer trigger frequency in us
+
+config FC7300_ADC0_CLKDIV
+	int "ADC0 Clock Divider"
+	default 0
+	range 0 3
+	---help---
+		Specifies that the clock divider
+			0 for ADC_CLOCK_DIV_1
+			1 for ADC_CLOCK_DIV_2
+			2 for ADC_CLOCK_DIV_4
+			3 for ADC_CLOCK_DIV_8
+
+config FC7300_ADC0_RESOLUTION
+	int "ADC0 resolution"
+	default 0
+	range 0 2
+	---help---
+		Specifies that the clock divider
+			0 for ADC_RESOLUTION_12_BIT
+			1 for ADC_RESOLUTION_10_BIT
+			2 for ADC_RESOLUTION_8_BIT
+
+config FC7300_ADC0_REF_SEL
+	int "ADC0 reference sel"
+	default 0
+	range 0 1
+	---help---
+		Specifies that the reference voltage select
+			0 for ADC_REF_INTERNAL
+			1 for ADC_REF_EXTERNAL
+
+endmenu # FC7300 ADC0 Configuration
+
+menu "FC7300 ADC1 Configuration"
+	depends on FC7300_ADC1
+
+config FC7300_ADC1_FIFO_SIZE
+	int "ADC1 FIFO Size"
+	default 32
+	range 0 65535
+
+config FC7300_ADC1_DMA
+	bool "ADC1 DMA"
+	default n
+
+config FC7300_ADC1_DMA_CHANNEL
+	int "ADC1 DMA Channel"
+	default 0
+	range 0 31
+	depends on FC7300_ADC1_DMA
+
+config FC7300_ADC1_DMA_NOTIFY_THRESH
+	int "ADC1 DMA ISR threshold"
+	default 10
+	range 1 1000
+	depends on FC7300_ADC1_DMA
+
+config FC7300_ADC1_DMA_MAX_SAMPLES
+	int "ADC1 DMA MAX samples"
+	default 29
+	range 1 1000
+	depends on FC7300_ADC1_DMA
+
+config FC7300_ADC1_WDG
+	bool "ADC1 Watchdog"
+	default n
+	select FC7300_ADC_WDG
+
+config FC7300_ADC1_WDG_CHANNEL
+	int "ADC1 Watchdog channel"
+	default 0
+	range 0 36
+	depends on FC7300_ADC1_WDG
+
+config FC7300_ADC1_WDG_HIGHTHRES
+	int "ADC1 Watchdog high threshold"
+	default 4095
+	range 1 4095
+	depends on FC7300_ADC1_WDG
+
+config FC7300_ADC1_WDG_LOWTHRES
+	int "ADC1 Watchdog low threshold"
+	default 0
+	range 0 4094
+	depends on FC7300_ADC1_WDG
+
+config FC7300_ADC1_IRQ
+	bool "ADC1 interrupt used"
+	default n
+
+config FC7300_ADC1_ISR_PRIORITY
+	int "ADC1 ISR PRIORITY"
+	default 192
+
+config FC7300_ADC1_WDGINTEN
+	bool "ADC1 Watchdog interrupt enable"
+	default n
+	depends on FC7300_ADC1_WDG
+	select FC7300_ADC1_IRQ
+
+config FC7300_ADC1_OVERRUNINTEN
+	bool "ADC1 Overrun interrupt enable"
+	default n
+	select FC7300_ADC1_IRQ
+
+config FC7300_ADC1_CONVCOMPINTEN
+	bool "ADC1 Sequence conversion complete interrupt enable"
+	default n
+	select FC7300_ADC1_IRQ
+
+config FC7300_ADC1_SAMPTIME0
+	int "ADC1 Sample Time Option 0, unit in adc cycles"
+	default 4
+	range 2 255
+
+config FC7300_ADC1_SAMPTIME1
+	int "ADC1 Sample Time Option 1, unit in adc cycles"
+	default 20
+	range 2 255
+
+config FC7300_ADC1_SAMPTIME2
+	int "ADC1 Sample Time Option 2, unit in adc cycles"
+	default 40
+	range 2 255
+
+config FC7300_ADC1_SAMPTIME3
+	int "ADC1 Sample Time Option 3, unit in adc cycles"
+	default 80
+	range 2 255
+
+config FC7300_ADC1_MODE
+	int "ADC1 work mode"
+	default 0
+	range 0 1
+	---help---
+		Specifies that the work mode
+			0 for SW_SEQMODE_SINGLE
+			1 for HW_SEQMODE_SINGLE
+
+config FC7300_ADC1_HAVETIMER
+	bool "ADC1 TIMER enable"
+	default n
+
+config FC7300_ADC1_TIMER_FREQ
+	int "ADC1 timer trigger frequency"
+	default 0
+	range 0 1000000
+	---help---
+		Specifies that the timer trigger frequency in us
+
+config FC7300_ADC1_CLKDIV
+	int "ADC1 Clock Divider"
+	default 0
+	range 0 3
+	---help---
+		Specifies that the clock divider
+			0 for ADC_CLOCK_DIV_1
+			1 for ADC_CLOCK_DIV_2
+			2 for ADC_CLOCK_DIV_4
+			3 for ADC_CLOCK_DIV_8
+
+config FC7300_ADC1_RESOLUTION
+	int "ADC1 resolution"
+	default 0
+	range 0 2
+	---help---
+		Specifies that the clock divider
+			0 for ADC_RESOLUTION_12_BIT
+			1 for ADC_RESOLUTION_10_BIT
+			2 for ADC_RESOLUTION_8_BIT
+
+config FC7300_ADC1_REF_SEL
+	int "ADC1 reference sel"
+	default 0
+	range 0 1
+	---help---
+		Specifies that the reference voltage select
+			0 for ADC_REF_INTERNAL
+			1 for ADC_REF_EXTERNAL
+
+endmenu # FC7300 ADC1 Configuration
+
+
+menu "FC7300 ADC2 Configuration"
+	depends on FC7300_ADC2
+
+config FC7300_ADC2_FIFO_SIZE
+	int "ADC2 FIFO Size"
+	default 32
+	range 0 65535
+
+config FC7300_ADC2_DMA
+	bool "ADC2 DMA"
+	default n
+
+config FC7300_ADC2_DMA_CHANNEL
+	int "ADC2 DMA Channel"
+	default 0
+	range 0 31
+	depends on FC7300_ADC2_DMA
+
+config FC7300_ADC2_DMA_NOTIFY_THRESH
+	int "ADC2 DMA ISR threshold"
+	default 10
+	range 1 1000
+	depends on FC7300_ADC2_DMA
+
+config FC7300_ADC2_DMA_MAX_SAMPLES
+	int "ADC2 DMA MAX samples"
+	default 29
+	range 1 1000
+	depends on FC7300_ADC2_DMA
+
+config FC7300_ADC2_WDG
+	bool "ADC2 Watchdog"
+	default n
+	select FC7300_ADC_WDG
+
+config FC7300_ADC2_WDG_CHANNEL
+	int "ADC2 Watchdog channel"
+	default 0
+	range 0 36
+	depends on FC7300_ADC2_WDG
+
+config FC7300_ADC2_WDG_HIGHTHRES
+	int "ADC2 Watchdog high threshold"
+	default 4095
+	range 1 4095
+	depends on FC7300_ADC2_WDG
+
+config FC7300_ADC2_WDG_LOWTHRES
+	int "ADC2 Watchdog low threshold"
+	default 0
+	range 0 4094
+	depends on FC7300_ADC2_WDG
+
+config FC7300_ADC2_IRQ
+	bool "ADC2 interrupt used"
+	default n
+
+config FC7300_ADC2_ISR_PRIORITY
+	int "ADC2 ISR PRIORITY"
+	default 192
+
+config FC7300_ADC2_WDGINTEN
+	bool "ADC2 Watchdog interrupt enable"
+	default n
+	depends on FC7300_ADC2_WDG
+	select FC7300_ADC2_IRQ
+
+config FC7300_ADC2_OVERRUNINTEN
+	bool "ADC2 Overrun interrupt enable"
+	default n
+	select FC7300_ADC2_IRQ
+
+config FC7300_ADC2_CONVCOMPINTEN
+	bool "ADC2 Sequence conversion complete interrupt enable"
+	default n
+	select FC7300_ADC2_IRQ
+
+config FC7300_ADC2_SAMPTIME0
+	int "ADC2 Sample Time Option 0, unit in adc cycles"
+	default 4
+	range 2 255
+
+config FC7300_ADC2_SAMPTIME1
+	int "ADC2 Sample Time Option 1, unit in adc cycles"
+	default 20
+	range 2 255
+
+config FC7300_ADC2_SAMPTIME2
+	int "ADC2 Sample Time Option 2, unit in adc cycles"
+	default 40
+	range 2 255
+
+config FC7300_ADC2_SAMPTIME3
+	int "ADC2 Sample Time Option 3, unit in adc cycles"
+	default 80
+	range 2 255
+
+config FC7300_ADC2_MODE
+	int "ADC2 work mode"
+	default 0
+	range 0 1
+	---help---
+		Specifies that the work mode
+			0 for SW_SEQMODE_SINGLE
+			1 for HW_SEQMODE_SINGLE
+
+config FC7300_ADC2_HAVETIMER
+	bool "ADC2 TIMER enable"
+	default n
+
+config FC7300_ADC2_TIMER_FREQ
+	int "ADC2 timer trigger frequency"
+	default 0
+	range 0 1000000
+	---help---
+		Specifies that the timer trigger frequency in us
+
+config FC7300_ADC2_CLKDIV
+	int "ADC2 Clock Divider"
+	default 0
+	range 0 3
+	---help---
+		Specifies that the clock divider
+			0 for ADC_CLOCK_DIV_1
+			1 for ADC_CLOCK_DIV_2
+			2 for ADC_CLOCK_DIV_4
+			3 for ADC_CLOCK_DIV_8
+
+config FC7300_ADC2_RESOLUTION
+	int "ADC2 resolution"
+	default 0
+	range 0 2
+	---help---
+		Specifies that the clock divider
+			0 for ADC_RESOLUTION_12_BIT
+			1 for ADC_RESOLUTION_10_BIT
+			2 for ADC_RESOLUTION_8_BIT
+
+config FC7300_ADC2_REF_SEL
+	int "ADC2 reference sel"
+	default 0
+	range 0 1
+	---help---
+		Specifies that the reference voltage select
+			0 for ADC_REF_INTERNAL
+			1 for ADC_REF_EXTERNAL
+
+endmenu # FC7300 ADC2 Configuration
+
+menu "FC7300 ADC3 Configuration"
+	depends on FC7300_ADC3
+
+config FC7300_ADC3_FIFO_SIZE
+	int "ADC3 FIFO Size"
+	default 32
+	range 0 65535
+
+config FC7300_ADC3_DMA
+	bool "ADC3 DMA"
+	default n
+
+config FC7300_ADC3_DMA_CHANNEL
+	int "ADC3 DMA Channel"
+	default 0
+	range 0 31
+	depends on FC7300_ADC3_DMA
+
+config FC7300_ADC3_DMA_NOTIFY_THRESH
+	int "ADC3 DMA ISR threshold"
+	default 10
+	range 1 1000
+	depends on FC7300_ADC3_DMA
+
+config FC7300_ADC3_DMA_MAX_SAMPLES
+	int "ADC3 DMA MAX samples"
+	default 29
+	range 1 1000
+	depends on FC7300_ADC3_DMA
+
+config FC7300_ADC3_WDG
+	bool "ADC3 Watchdog"
+	default n
+	select FC7300_ADC_WDG
+
+config FC7300_ADC3_WDG_CHANNEL
+	int "ADC3 Watchdog channel"
+	default 0
+	range 0 36
+	depends on FC7300_ADC3_WDG
+
+config FC7300_ADC3_WDG_HIGHTHRES
+	int "ADC3 Watchdog high threshold"
+	default 4095
+	range 1 4095
+	depends on FC7300_ADC3_WDG
+
+config FC7300_ADC3_WDG_LOWTHRES
+	int "ADC3 Watchdog low threshold"
+	default 0
+	range 0 4094
+	depends on FC7300_ADC3_WDG
+
+config FC7300_ADC3_IRQ
+	bool "ADC3 interrupt used"
+	default n
+
+config FC7300_ADC3_ISR_PRIORITY
+	int "ADC3 ISR PRIORITY"
+	default 192
+
+config FC7300_ADC3_WDGINTEN
+	bool "ADC3 Watchdog interrupt enable"
+	default n
+	depends on FC7300_ADC3_WDG
+	select FC7300_ADC3_IRQ
+
+config FC7300_ADC3_OVERRUNINTEN
+	bool "ADC3 Overrun interrupt enable"
+	default n
+	select FC7300_ADC3_IRQ
+
+config FC7300_ADC3_CONVCOMPINTEN
+	bool "ADC3 Sequence conversion complete interrupt enable"
+	default n
+	select FC7300_ADC3_IRQ
+
+config FC7300_ADC3_SAMPTIME0
+	int "ADC3 Sample Time Option 0, unit in adc cycles"
+	default 4
+	range 2 255
+
+config FC7300_ADC3_SAMPTIME1
+	int "ADC3 Sample Time Option 1, unit in adc cycles"
+	default 20
+	range 2 255
+
+config FC7300_ADC3_SAMPTIME2
+	int "ADC3 Sample Time Option 2, unit in adc cycles"
+	default 40
+	range 2 255
+
+config FC7300_ADC3_SAMPTIME3
+	int "ADC3 Sample Time Option 3, unit in adc cycles"
+	default 80
+	range 2 255
+
+config FC7300_ADC3_MODE
+	int "ADC3 work mode"
+	default 0
+	range 0 1
+	---help---
+		Specifies that the work mode
+			0 for SW_SEQMODE_SINGLE
+			1 for HW_SEQMODE_SINGLE
+
+config FC7300_ADC3_HAVETIMER
+	bool "ADC3 TIMER enable"
+	default n
+
+config FC7300_ADC3_TIMER_FREQ
+	int "ADC3 timer trigger frequency"
+	default 0
+	range 0 1000000
+	---help---
+		Specifies that the timer trigger frequency in us
+
+config FC7300_ADC3_CLKDIV
+	int "ADC3 Clock Divider"
+	default 0
+	range 0 3
+	---help---
+		Specifies that the clock divider
+			0 for ADC_CLOCK_DIV_1
+			1 for ADC_CLOCK_DIV_2
+			2 for ADC_CLOCK_DIV_4
+			3 for ADC_CLOCK_DIV_8
+
+config FC7300_ADC3_RESOLUTION
+	int "ADC3 resolution"
+	default 0
+	range 0 2
+	---help---
+		Specifies that the clock divider
+			0 for ADC_RESOLUTION_12_BIT
+			1 for ADC_RESOLUTION_10_BIT
+			2 for ADC_RESOLUTION_8_BIT
+
+config FC7300_ADC3_REF_SEL
+	int "ADC3 reference sel"
+	default 0
+	range 0 1
+	---help---
+		Specifies that the reference voltage select
+			0 for ADC_REF_INTERNAL
+			1 for ADC_REF_EXTERNAL
+
+endmenu # FC7300 ADC3 Configuration
+
+endmenu # FC7300 Analog to Digital Converter Module (ADC)
+
+menu "FC7300 FTU CAP Configuration"
+	depends on FC7300_FTU
+
+config FC7300_CAP_IRQ_ATTACH_THREAD
+	bool "CAP IRQ Use irq_attach_thread"
+	default n
+
+config FC7300_CAP_THREAD_PRIORITY
+	int "CAP THREAD PRIORITY"
+	default 253
+	range 0 255
+	depends on FC7300_CAP_IRQ_ATTACH_THREAD
+
+config FC7300_CAP_THREAD_STACK_SIZE
+	int "CAP THREAD STACK SIZE"
+	default 1500
+	range 0 4096
+	depends on FC7300_CAP_IRQ_ATTACH_THREAD
+
+config FC7300_FTU_CAP_IRQ_OVERFLOW
+	bool "FTU OVERFLOW"
+	default n
+	depends on FC7300_FTU
+
+config FC7300_FTU0_CAP
+	bool "FTU0 CAP"
+	default n
+	depends on FC7300_FTU0
+
+config FC7300_FTU0_CAP_ISR_PRIORITY
+	int "FTU0 CAP ISR PRIORITY"
+	default 112
+	depends on FC7300_FTU0_CAP
+
+config FC7300_FTU0_CAP_CHANNEL0
+	bool "FTU0 CAP Input Channel0"
+	default n
+	---help---
+		Enables channel 0 capture.
+
+config FC7300_FTU_CAP_CH0_MODE
+	int "FTU0 CAP CH0 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU0_CAP_CHANNEL0
+	---help---
+		Specifies that the CAP mode
+			0 for FTU_INPUT_RISING_EDGE
+			1 for FTU_INPUT_FALLING_EDGE
+			2 for FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU0_CAP_CHANNEL1
+	bool "FTU0 CAP Input Channel1"
+	default n
+	---help---
+		Enables channel 1 capture.
+
+config FC7300_FTU_CAP_CH1_MODE
+	int "FTU0 CAP CH1 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU0_CAP_CHANNEL1
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU0_CAP_CHANNEL2
+	bool "FTU0 CAP Input Channel2"
+	default n
+	---help---
+		Enables channel 2 capture.
+
+config FC7300_FTU_CAP_CH2_MODE
+	int "FTU0 CAP CH2 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU0_CAP_CHANNEL2
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU0_CAP_CHANNEL3
+	bool "FTU0 CAP Input Channel3"
+	default n
+	---help---
+		Enables channel 3 capture.
+
+config FC7300_FTU_CAP_CH3_MODE
+	int "FTU0 CAP CH3 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU0_CAP_CHANNEL3
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU0_CAP_CHANNEL4
+	bool "FTU0 CAP Input Channel4"
+	default n
+	---help---
+		Enables channel 4 capture.
+
+config FC7300_FTU_CAP_CH4_MODE
+	int "FTU0 CAP CH4 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU0_CAP_CHANNEL4
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU0_CAP_CHANNEL5
+	bool "FTU0 CAP Input Channel5"
+	default n
+	---help---
+		Enables channel 5 capture.
+
+config FC7300_FTU_CAP_CH5_MODE
+	int "FTU0 CAP CH5 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU0_CAP_CHANNEL5
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU0_CAP_CHANNEL6
+	bool "FTU0 CAP Input Channel6"
+	default n
+	---help---
+		Enables channel 6 capture.
+
+config FC7300_FTU_CAP_CH6_MODE
+	int "FTU0 CAP CH6 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU0_CAP_CHANNEL6
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU0_CAP_CHANNEL7
+	bool "FTU0 CAP Input Channel7"
+	default n
+	---help---
+		Enables channel 7 capture.
+
+config FC7300_FTU_CAP_CH7_MODE
+	int "FTU0 CAP CH7 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU0_CAP_CHANNEL7
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU1_CAP
+	bool "FTU1 CAP"
+	default n
+	depends on FC7300_FTU1
+
+config FC7300_FTU1_CAP_ISR_PRIORITY
+	int "FTU1 CAP ISR PRIORITY"
+	default 112
+	depends on FC7300_FTU1_CAP
+
+config FC7300_FTU1_CAP_CHANNEL0
+	bool "FTU1 CAP Input Channel0"
+	default n
+	---help---
+		Enables channel 0 capture.
+
+config FC7300_FTU_CAP_CH8_MODE
+	int "FTU1 CAP CH0 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU1_CAP_CHANNEL0
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU1_CAP_CHANNEL1
+	bool "FTU1 CAP Input Channel1"
+	default n
+	---help---
+		Enables channel 1 capture.
+
+config FC7300_FTU_CAP_CH9_MODE
+	int "FTU1 CAP CH1 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU1_CAP_CHANNEL1
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU1_CAP_CHANNEL2
+	bool "FTU1 CAP Input Channel2"
+	default n
+	---help---
+		Enables channel 2 capture.
+
+config FC7300_FTU_CAP_CH10_MODE
+	int "FTU1 CAP CH2 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU1_CAP_CHANNEL2
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU1_CAP_CHANNEL3
+	bool "FTU1 CAP Input Channel3"
+	default n
+	---help---
+		Enables channel 3 capture.
+
+config FC7300_FTU_CAP_CH11_MODE
+	int "FTU1 CAP CH3 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU1_CAP_CHANNEL3
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU1_CAP_CHANNEL4
+	bool "FTU1 CAP Input Channel4"
+	default n
+	---help---
+		Enables channel 4 capture.
+
+config FC7300_FTU_CAP_CH12_MODE
+	int "FTU1 CAP CH4 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU1_CAP_CHANNEL4
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU1_CAP_CHANNEL5
+	bool "FTU1 CAP Input Channel5"
+	default n
+	---help---
+		Enables channel 5 capture.
+
+config FC7300_FTU_CAP_CH13_MODE
+	int "FTU1 CAP CH5 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU1_CAP_CHANNEL5
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU1_CAP_CHANNEL6
+	bool "FTU1 CAP Input Channel6"
+	default n
+	---help---
+		Enables channel 6 capture.
+
+config FC7300_FTU_CAP_CH14_MODE
+	int "FTU1 CAP CH6 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU1_CAP_CHANNEL6
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU1_CAP_CHANNEL7
+	bool "FTU1 CAP Input Channel7"
+	default n
+	---help---
+		Enables channel 7 capture.
+
+config FC7300_FTU_CAP_CH15_MODE
+	int "FTU1 CAP CH7 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU1_CAP_CHANNEL7
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU2_CAP
+	bool "FTU2 CAP"
+	default n
+	depends on FC7300_FTU2
+
+config FC7300_FTU2_CAP_ISR_PRIORITY
+	int "FTU2 CAP ISR PRIORITY"
+	default 112
+	depends on FC7300_FTU2_CAP
+
+config FC7300_FTU2_CAP_CHANNEL0
+	bool "FTU2 CAP Input Channel0"
+	default n
+	---help---
+		Enables channel 0 capture.
+
+config FC7300_FTU_CAP_CH16_MODE
+	int "FTU2 CAP CH0 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU2_CAP_CHANNEL0
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU2_CAP_CHANNEL1
+	bool "FTU2 CAP Input Channel1"
+	default n
+	---help---
+		Enables channel 1 capture.
+
+config FC7300_FTU_CAP_CH17_MODE
+	int "FTU2 CAP CH1 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU2_CAP_CHANNEL1
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU2_CAP_CHANNEL2
+	bool "FTU2 CAP Input Channel2"
+	default n
+	---help---
+		Enables channel 2 capture.
+
+config FC7300_FTU_CAP_CH18_MODE
+	int "FTU2 CAP CH2 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU2_CAP_CHANNEL2
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU2_CAP_CHANNEL3
+	bool "FTU2 CAP Input Channel3"
+	default n
+	---help---
+		Enables channel 3 capture.
+
+config FC7300_FTU_CAP_CH19_MODE
+	int "FTU2 CAP CH3 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU2_CAP_CHANNEL3
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU2_CAP_CHANNEL4
+	bool "FTU2 CAP Input Channel4"
+	default n
+	---help---
+		Enables channel 4 capture.
+
+config FC7300_FTU_CAP_CH20_MODE
+	int "FTU2 CAP CH4 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU2_CAP_CHANNEL4
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU2_CAP_CHANNEL5
+	bool "FTU2 CAP Input Channel5"
+	default n
+	---help---
+		Enables channel 5 capture.
+
+config FC7300_FTU_CAP_CH21_MODE
+	int "FTU2 CAP CH5 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU2_CAP_CHANNEL5
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU2_CAP_CHANNEL6
+	bool "FTU2 CAP Input Channel6"
+	default n
+	---help---
+		Enables channel 6 capture.
+
+config FC7300_FTU_CAP_CH22_MODE
+	int "FTU2 CAP CH6 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU2_CAP_CHANNEL6
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU2_CAP_CHANNEL7
+	bool "FTU2 CAP Input Channel7"
+	default n
+	---help---
+		Enables channel 7 capture.
+
+config FC7300_FTU_CAP_CH23_MODE
+	int "FTU2 CAP CH7 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU2_CAP_CHANNEL7
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU3_CAP
+	bool "FTU3 CAP"
+	default n
+	depends on FC7300_FTU3
+
+config FC7300_FTU3_CAP_ISR_PRIORITY
+	int "FTU3 CAP ISR PRIORITY"
+	default 112
+	depends on FC7300_FTU3_CAP
+
+config FC7300_FTU3_CAP_CHANNEL0
+	bool "FTU3 CAP Input Channel0"
+	default n
+	---help---
+		Enables channel 0 capture.
+
+config FC7300_FTU_CAP_CH24_MODE
+	int "FTU3 CAP CH0 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU3_CAP_CHANNEL0
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU3_CAP_CHANNEL1
+	bool "FTU3 CAP Input Channel1"
+	default n
+	---help---
+		Enables channel 1 capture.
+
+config FC7300_FTU_CAP_CH25_MODE
+	int "FTU3 CAP CH1 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU3_CAP_CHANNEL1
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU3_CAP_CHANNEL2
+	bool "FTU3 CAP Input Channel2"
+	default n
+	---help---
+		Enables channel 2 capture.
+
+config FC7300_FTU_CAP_CH26_MODE
+	int "FTU3 CAP CH2 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU3_CAP_CHANNEL2
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU3_CAP_CHANNEL3
+	bool "FTU3 CAP Input Channel3"
+	default n
+	---help---
+		Enables channel 3 capture.
+
+config FC7300_FTU_CAP_CH27_MODE
+	int "FTU3 CAP CH3 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU3_CAP_CHANNEL3
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU3_CAP_CHANNEL4
+	bool "FTU3 CAP Input Channel4"
+	default n
+	---help---
+		Enables channel 4 capture.
+
+config FC7300_FTU_CAP_CH28_MODE
+	int "FTU3 CAP CH4 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU3_CAP_CHANNEL4
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU3_CAP_CHANNEL5
+	bool "FTU3 CAP Input Channel5"
+	default n
+	---help---
+		Enables channel 5 capture.
+
+config FC7300_FTU_CAP_CH29_MODE
+	int "FTU3 CAP CH5 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU3_CAP_CHANNEL5
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU3_CAP_CHANNEL6
+	bool "FTU3 CAP Input Channel6"
+	default n
+	---help---
+		Enables channel 6 capture.
+
+config FC7300_FTU_CAP_CH30_MODE
+	int "FTU3 CAP CH6 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU3_CAP_CHANNEL6
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU3_CAP_CHANNEL7
+	bool "FTU3 CAP Input Channel7"
+	default n
+	---help---
+		Enables channel 7 capture.
+
+config FC7300_FTU_CAP_CH31_MODE
+	int "FTU3 CAP CH7 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU3_CAP_CHANNEL7
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU4_CAP
+	bool "FTU4 CAP"
+	default n
+	depends on FC7300_FTU4
+
+config FC7300_FTU4_CAP_ISR_PRIORITY
+	int "FTU4 CAP ISR PRIORITY"
+	default 112
+	depends on FC7300_FTU4_CAP
+
+config FC7300_FTU4_CAP_CHANNEL0
+	bool "FTU4 CAP Input Channel0"
+	default n
+	---help---
+		Enables channel 0 capture.
+
+config FC7300_FTU_CAP_CH32_MODE
+	int "FTU4 CAP CH0 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU4_CAP_CHANNEL0
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU4_CAP_CHANNEL1
+	bool "FTU4 CAP Input Channel1"
+	default n
+	---help---
+		Enables channel 1 capture.
+
+config FC7300_FTU_CAP_CH33_MODE
+	int "FTU4 CAP CH1 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU4_CAP_CHANNEL1
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU4_CAP_CHANNEL2
+	bool "FTU4 CAP Input Channel2"
+	default n
+	---help---
+		Enables channel 2 capture.
+
+config FC7300_FTU_CAP_CH34_MODE
+	int "FTU4 CAP CH2 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU4_CAP_CHANNEL2
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU4_CAP_CHANNEL3
+	bool "FTU4 CAP Input Channel3"
+	default n
+	---help---
+		Enables channel 3 capture.
+
+config FC7300_FTU_CAP_CH35_MODE
+	int "FTU4 CAP CH3 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU4_CAP_CHANNEL3
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU4_CAP_CHANNEL4
+	bool "FTU4 CAP Input Channel4"
+	default n
+	---help---
+		Enables channel 4 capture.
+
+config FC7300_FTU_CAP_CH36_MODE
+	int "FTU4 CAP CH4 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU4_CAP_CHANNEL4
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU4_CAP_CHANNEL5
+	bool "FTU4 CAP Input Channel5"
+	default n
+	---help---
+		Enables channel 5 capture.
+
+config FC7300_FTU_CAP_CH37_MODE
+	int "FTU4 CAP CH5 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU4_CAP_CHANNEL5
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU4_CAP_CHANNEL6
+	bool "FTU4 CAP Input Channel6"
+	default n
+	---help---
+		Enables channel 6 capture.
+
+config FC7300_FTU_CAP_CH38_MODE
+	int "FTU4 CAP CH6 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU4_CAP_CHANNEL6
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU4_CAP_CHANNEL7
+	bool "FTU4 CAP Input Channel7"
+	default n
+	---help---
+		Enables channel 7 capture.
+
+config FC7300_FTU_CAP_CH39_MODE
+	int "FTU4 CAP CH7 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU4_CAP_CHANNEL7
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU5_CAP
+	bool "FTU5 CAP"
+	default n
+	depends on FC7300_FTU5
+
+config FC7300_FTU5_CAP_ISR_PRIORITY
+	int "FTU5 CAP ISR PRIORITY"
+	default 112
+	depends on FC7300_FTU5_CAP
+
+config FC7300_FTU5_CAP_CHANNEL0
+	bool "FTU5 CAP Input Channel0"
+	default n
+	---help---
+		Enables channel 0 capture.
+
+config FC7300_FTU_CAP_CH40_MODE
+	int "FTU5 CAP CH0 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU5_CAP_CHANNEL0
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU5_CAP_CHANNEL1
+	bool "FTU5 CAP Input Channel1"
+	default n
+	---help---
+		Enables channel 1 capture.
+
+config FC7300_FTU_CAP_CH41_MODE
+	int "FTU5 CAP CH1 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU5_CAP_CHANNEL1
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU5_CAP_CHANNEL2
+	bool "FTU5 CAP Input Channel2"
+	default n
+	---help---
+		Enables channel 2 capture.
+
+config FC7300_FTU_CAP_CH42_MODE
+	int "FTU5 CAP CH2 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU5_CAP_CHANNEL2
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU5_CAP_CHANNEL3
+	bool "FTU5 CAP Input Channel3"
+	default n
+	---help---
+		Enables channel 3 capture.
+
+config FC7300_FTU_CAP_CH43_MODE
+	int "FTU5 CAP CH3 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU5_CAP_CHANNEL3
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU5_CAP_CHANNEL4
+	bool "FTU5 CAP Input Channel4"
+	default n
+	---help---
+		Enables channel 4 capture.
+
+config FC7300_FTU_CAP_CH44_MODE
+	int "FTU5 CAP CH4 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU5_CAP_CHANNEL4
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU5_CAP_CHANNEL5
+	bool "FTU5 CAP Input Channel5"
+	default n
+	---help---
+		Enables channel 5 capture.
+
+config FC7300_FTU_CAP_CH45_MODE
+	int "FTU5 CAP CH5 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU5_CAP_CHANNEL5
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU5_CAP_CHANNEL6
+	bool "FTU5 CAP Input Channel6"
+	default n
+	---help---
+		Enables channel 6 capture.
+
+config FC7300_FTU_CAP_CH46_MODE
+	int "FTU5 CAP CH6 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU5_CAP_CHANNEL6
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU5_CAP_CHANNEL7
+	bool "FTU5 CAP Input Channel7"
+	default n
+	---help---
+		Enables channel 7 capture.
+
+config FC7300_FTU_CAP_CH47_MODE
+	int "FTU5 CAP CH7 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU5_CAP_CHANNEL7
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU6_CAP
+	bool "FTU6 CAP"
+	default n
+	depends on FC7300_FTU6
+
+config FC7300_FTU6_CAP_ISR_PRIORITY
+	int "FTU6 CAP ISR PRIORITY"
+	default 112
+	depends on FC7300_FTU6_CAP
+
+config FC7300_FTU6_CAP_CHANNEL0
+	bool "FTU6 CAP Input Channel0"
+	default n
+	---help---
+		Enables channel 0 capture.
+
+config FC7300_FTU_CAP_CH48_MODE
+	int "FTU6 CAP CH0 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU6_CAP_CHANNEL0
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU6_CAP_CHANNEL1
+	bool "FTU6 CAP Input Channel1"
+	default n
+	---help---
+		Enables channel 1 capture.
+
+config FC7300_FTU_CAP_CH49_MODE
+	int "FTU6 CAP CH1 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU6_CAP_CHANNEL1
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU6_CAP_CHANNEL2
+	bool "FTU6 CAP Input Channel2"
+	default n
+	---help---
+		Enables channel 2 capture.
+
+config FC7300_FTU_CAP_CH50_MODE
+	int "FTU6 CAP CH2 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU6_CAP_CHANNEL2
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU6_CAP_CHANNEL3
+	bool "FTU6 CAP Input Channel3"
+	default n
+	---help---
+		Enables channel 3 capture.
+
+config FC7300_FTU_CAP_CH51_MODE
+	int "FTU6 CAP CH3 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU6_CAP_CHANNEL3
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU6_CAP_CHANNEL4
+	bool "FTU6 CAP Input Channel4"
+	default n
+	---help---
+		Enables channel 4 capture.
+
+config FC7300_FTU_CAP_CH52_MODE
+	int "FTU6 CAP CH4 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU6_CAP_CHANNEL4
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU6_CAP_CHANNEL5
+	bool "FTU6 CAP Input Channel5"
+	default n
+	---help---
+		Enables channel 5 capture.
+
+config FC7300_FTU_CAP_CH53_MODE
+	int "FTU6 CAP CH5 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU6_CAP_CHANNEL5
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU6_CAP_CHANNEL6
+	bool "FTU6 CAP Input Channel6"
+	default n
+	---help---
+		Enables channel 6 capture.
+
+config FC7300_FTU_CAP_CH54_MODE
+	int "FTU6 CAP CH6 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU6_CAP_CHANNEL6
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU6_CAP_CHANNEL7
+	bool "FTU6 CAP Input Channel7"
+	default n
+	---help---
+		Enables channel 7 capture.
+
+config FC7300_FTU_CAP_CH55_MODE
+	int "FTU6 CAP CH7 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU6_CAP_CHANNEL7
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU7_CAP
+	bool "FTU7 CAP"
+	default n
+	depends on FC7300_FTU7
+
+config FC7300_FTU7_CAP_ISR_PRIORITY
+	int "FTU7 CAP ISR PRIORITY"
+	default 112
+	depends on FC7300_FTU7_CAP
+
+config FC7300_FTU7_CAP_CHANNEL0
+	bool "FTU7 CAP Input Channel0"
+	default n
+	---help---
+		Enables channel 0 capture.
+
+config FC7300_FTU_CAP_CH56_MODE
+	int "FTU7 CAP CH0 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU7_CAP_CHANNEL0
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU7_CAP_CHANNEL1
+	bool "FTU7 CAP Input Channel1"
+	default n
+	---help---
+		Enables channel 1 capture.
+
+config FC7300_FTU_CAP_CH57_MODE
+	int "FTU7 CAP CH1 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU7_CAP_CHANNEL1
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU7_CAP_CHANNEL2
+	bool "FTU7 CAP Input Channel2"
+	default n
+	---help---
+		Enables channel 2 capture.
+
+config FC7300_FTU_CAP_CH58_MODE
+	int "FTU7 CAP CH2 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU7_CAP_CHANNEL2
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU7_CAP_CHANNEL3
+	bool "FTU7 CAP Input Channel3"
+	default n
+	---help---
+		Enables channel 3 capture.
+
+config FC7300_FTU_CAP_CH59_MODE
+	int "FTU7 CAP CH3 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU7_CAP_CHANNEL3
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU7_CAP_CHANNEL4
+	bool "FTU7 CAP Input Channel4"
+	default n
+	---help---
+		Enables channel 4 capture.
+
+config FC7300_FTU_CAP_CH60_MODE
+	int "FTU7 CAP CH4 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU7_CAP_CHANNEL4
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU7_CAP_CHANNEL5
+	bool "FTU7 CAP Input Channel5"
+	default n
+	---help---
+		Enables channel 5 capture.
+
+config FC7300_FTU_CAP_CH61_MODE
+	int "FTU7 CAP CH5 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU7_CAP_CHANNEL5
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU7_CAP_CHANNEL6
+	bool "FTU7 CAP Input Channel6"
+	default n
+	---help---
+		Enables channel 6 capture.
+
+config FC7300_FTU_CAP_CH62_MODE
+	int "FTU7 CAP CH6 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU7_CAP_CHANNEL6
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU7_CAP_CHANNEL7
+	bool "FTU7 CAP Input Channel7"
+	default n
+	---help---
+		Enables channel 7 capture.
+
+config FC7300_FTU_CAP_CH63_MODE
+	int "FTU7 CAP CH7 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU7_CAP_CHANNEL7
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU8_CAP
+	bool "FTU8 CAP"
+	default n
+	depends on FC7300_FTU8
+
+config FC7300_FTU8_CAP_ISR_PRIORITY
+	int "FTU8 CAP ISR PRIORITY"
+	default 112
+	depends on FC7300_FTU8_CAP
+
+config FC7300_FTU8_CAP_CHANNEL0
+	bool "FTU8 CAP Input Channel0"
+	default n
+	---help---
+		Enables channel 0 capture.
+
+config FC7300_FTU_CAP_CH64_MODE
+	int "FTU8 CAP CH0 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU8_CAP_CHANNEL0
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU8_CAP_CHANNEL1
+	bool "FTU8 CAP Input Channel1"
+	default n
+	---help---
+		Enables channel 1 capture.
+
+config FC7300_FTU_CAP_CH65_MODE
+	int "FTU8 CAP CH1 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU8_CAP_CHANNEL1
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU8_CAP_CHANNEL2
+	bool "FTU8 CAP Input Channel2"
+	default n
+	---help---
+		Enables channel 2 capture.
+
+config FC7300_FTU_CAP_CH66_MODE
+	int "FTU8 CAP CH2 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU8_CAP_CHANNEL2
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU8_CAP_CHANNEL3
+	bool "FTU8 CAP Input Channel3"
+	default n
+	---help---
+		Enables channel 3 capture.
+
+config FC7300_FTU_CAP_CH67_MODE
+	int "FTU8 CAP CH3 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU8_CAP_CHANNEL3
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU8_CAP_CHANNEL4
+	bool "FTU8 CAP Input Channel4"
+	default n
+	---help---
+		Enables channel 4 capture.
+
+config FC7300_FTU_CAP_CH68_MODE
+	int "FTU8 CAP CH4 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU8_CAP_CHANNEL4
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU8_CAP_CHANNEL5
+	bool "FTU8 CAP Input Channel5"
+	default n
+	---help---
+		Enables channel 5 capture.
+
+config FC7300_FTU_CAP_CH69_MODE
+	int "FTU8 CAP CH5 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU8_CAP_CHANNEL5
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU8_CAP_CHANNEL6
+	bool "FTU8 CAP Input Channel6"
+	default n
+	---help---
+		Enables channel 6 capture.
+
+config FC7300_FTU_CAP_CH70_MODE
+	int "FTU8 CAP CH6 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU8_CAP_CHANNEL6
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU8_CAP_CHANNEL7
+	bool "FTU8 CAP Input Channel7"
+	default n
+	---help---
+		Enables channel 7 capture.
+
+config FC7300_FTU_CAP_CH71_MODE
+	int "FTU8 CAP CH7 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU8_CAP_CHANNEL7
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU9_CAP
+	bool "FTU9 CAP"
+	default n
+	depends on FC7300_FTU9
+
+config FC7300_FTU9_CAP_ISR_PRIORITY
+	int "FTU9 CAP ISR PRIORITY"
+	default 112
+	depends on FC7300_FTU9_CAP
+
+config FC7300_FTU9_CAP_CHANNEL0
+	bool "FTU9 CAP Input Channel0"
+	default n
+	---help---
+		Enables channel 0 capture.
+
+config FC7300_FTU_CAP_CH72_MODE
+	int "FTU9 CAP CH0 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU9_CAP_CHANNEL0
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU9_CAP_CHANNEL1
+	bool "FTU9 CAP Input Channel1"
+	default n
+	---help---
+		Enables channel 1 capture.
+
+config FC7300_FTU_CAP_CH73_MODE
+	int "FTU9 CAP CH1 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU9_CAP_CHANNEL1
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU9_CAP_CHANNEL2
+	bool "FTU9 CAP Input Channel2"
+	default n
+	---help---
+		Enables channel 2 capture.
+
+config FC7300_FTU_CAP_CH74_MODE
+	int "FTU9 CAP CH2 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU9_CAP_CHANNEL2
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU9_CAP_CHANNEL3
+	bool "FTU9 CAP Input Channel3"
+	default n
+	---help---
+		Enables channel 3 capture.
+
+config FC7300_FTU_CAP_CH75_MODE
+	int "FTU9 CAP CH3 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU9_CAP_CHANNEL3
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU9_CAP_CHANNEL4
+	bool "FTU9 CAP Input Channel4"
+	default n
+	---help---
+		Enables channel 4 capture.
+
+config FC7300_FTU_CAP_CH76_MODE
+	int "FTU9 CAP CH4 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU9_CAP_CHANNEL4
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU9_CAP_CHANNEL5
+	bool "FTU9 CAP Input Channel5"
+	default n
+	---help---
+		Enables channel 5 capture.
+
+config FC7300_FTU_CAP_CH77_MODE
+	int "FTU9 CAP CH5 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU9_CAP_CHANNEL5
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU9_CAP_CHANNEL6
+	bool "FTU9 CAP Input Channel6"
+	default n
+	---help---
+		Enables channel 6 capture.
+
+config FC7300_FTU_CAP_CH78_MODE
+	int "FTU9 CAP CH6 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU9_CAP_CHANNEL6
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU9_CAP_CHANNEL7
+	bool "FTU9 CAP Input Channel7"
+	default n
+	---help---
+		Enables channel 7 capture.
+
+config FC7300_FTU_CAP_CH79_MODE
+	int "FTU9 CAP CH7 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU9_CAP_CHANNEL7
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU10_CAP
+	bool "FTU10 CAP"
+	default n
+	depends on FC7300_FTU10
+
+config FC7300_FTU10_CAP_ISR_PRIORITY
+	int "FTU10 CAP ISR PRIORITY"
+	default 112
+	depends on FC7300_FTU10_CAP
+
+config FC7300_FTU10_CAP_CHANNEL0
+	bool "FTU10 CAP Input Channel0"
+	default n
+	---help---
+		Enables channel 0 capture.
+
+config FC7300_FTU_CAP_CH80_MODE
+	int "FTU10 CAP CH0 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU10_CAP_CHANNEL0
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU10_CAP_CHANNEL1
+	bool "FTU10 CAP Input Channel1"
+	default n
+	---help---
+		Enables channel 1 capture.
+
+config FC7300_FTU_CAP_CH81_MODE
+	int "FTU10 CAP CH1 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU10_CAP_CHANNEL1
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU10_CAP_CHANNEL2
+	bool "FTU10 CAP Input Channel2"
+	default n
+	---help---
+		Enables channel 2 capture.
+
+config FC7300_FTU_CAP_CH82_MODE
+	int "FTU10 CAP CH2 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU10_CAP_CHANNEL2
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU10_CAP_CHANNEL3
+	bool "FTU10 CAP Input Channel3"
+	default n
+	---help---
+		Enables channel 3 capture.
+
+config FC7300_FTU_CAP_CH83_MODE
+	int "FTU10 CAP CH3 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU10_CAP_CHANNEL3
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU10_CAP_CHANNEL4
+	bool "FTU10 CAP Input Channel4"
+	default n
+	---help---
+		Enables channel 4 capture.
+
+config FC7300_FTU_CAP_CH84_MODE
+	int "FTU10 CAP CH4 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU10_CAP_CHANNEL4
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU10_CAP_CHANNEL5
+	bool "FTU10 CAP Input Channel5"
+	default n
+	---help---
+		Enables channel 5 capture.
+
+config FC7300_FTU_CAP_CH85_MODE
+	int "FTU10 CAP CH5 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU10_CAP_CHANNEL5
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU10_CAP_CHANNEL6
+	bool "FTU10 CAP Input Channel6"
+	default n
+	---help---
+		Enables channel 6 capture.
+
+config FC7300_FTU_CAP_CH86_MODE
+	int "FTU10 CAP CH6 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU10_CAP_CHANNEL6
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU10_CAP_CHANNEL7
+	bool "FTU10 CAP Input Channel7"
+	default n
+	---help---
+		Enables channel 7 capture.
+
+config FC7300_FTU_CAP_CH87_MODE
+	int "FTU10 CAP CH7 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU10_CAP_CHANNEL7
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU11_CAP
+	bool "FTU11 CAP"
+	default n
+	depends on FC7300_FTU11
+
+config FC7300_FTU11_CAP_ISR_PRIORITY
+	int "FTU11 CAP ISR PRIORITY"
+	default 112
+	depends on FC7300_FTU11_CAP
+
+config FC7300_FTU11_CAP_CHANNEL0
+	bool "FTU11 CAP Input Channel0"
+	default n
+	---help---
+		Enables channel 0 capture.
+
+config FC7300_FTU_CAP_CH88_MODE
+	int "FTU11 CAP CH0 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU11_CAP_CHANNEL0
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU11_CAP_CHANNEL1
+	bool "FTU11 CAP Input Channel1"
+	default n
+	---help---
+		Enables channel 1 capture.
+
+config FC7300_FTU_CAP_CH89_MODE
+	int "FTU11 CAP CH1 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU11_CAP_CHANNEL1
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU11_CAP_CHANNEL2
+	bool "FTU11 CAP Input Channel2"
+	default n
+	---help---
+		Enables channel 2 capture.
+
+config FC7300_FTU_CAP_CH90_MODE
+	int "FTU11 CAP CH2 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU11_CAP_CHANNEL2
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU11_CAP_CHANNEL3
+	bool "FTU11 CAP Input Channel3"
+	default n
+	---help---
+		Enables channel 3 capture.
+
+config FC7300_FTU_CAP_CH91_MODE
+	int "FTU11 CAP CH3 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU11_CAP_CHANNEL3
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU11_CAP_CHANNEL4
+	bool "FTU11 CAP Input Channel4"
+	default n
+	---help---
+		Enables channel 4 capture.
+
+config FC7300_FTU_CAP_CH92_MODE
+	int "FTU11 CAP CH4 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU11_CAP_CHANNEL4
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU11_CAP_CHANNEL5
+	bool "FTU11 CAP Input Channel5"
+	default n
+	---help---
+		Enables channel 5 capture.
+
+config FC7300_FTU_CAP_CH93_MODE
+	int "FTU11 CAP CH5 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU11_CAP_CHANNEL5
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU11_CAP_CHANNEL6
+	bool "FTU11 CAP Input Channel6"
+	default n
+	---help---
+		Enables channel 6 capture.
+
+config FC7300_FTU_CAP_CH94_MODE
+	int "FTU11 CAP CH6 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU11_CAP_CHANNEL6
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+config FC7300_FTU11_CAP_CHANNEL7
+	bool "FTU11 CAP Input Channel7"
+	default n
+	---help---
+		Enables channel 7 capture.
+
+config FC7300_FTU_CAP_CH95_MODE
+	int "FTU11 CAP CH7 MODE"
+	default 0
+	range 0 2
+	depends on FC7300_FTU11_CAP_CHANNEL7
+	---help---
+		Specifies that the CAP mode
+			0 - FTU_INPUT_RISING_EDGE
+			1 - FTU_INPUT_FALLING_EDGE
+			2 - FTU_INPUT_BOTH_EDGE
+			BOTH_EDGE is actually used, here only specifies the starting edge.
+
+endmenu # FC7300 FTU CAP Configuration
+
+menu "FC7300 ISM CAP Configuration"
+	depends on FC7300_ISM
+
+config FC7300_ISM0_CAP
+	bool "ISM0 CAP"
+	default n
+	depends on FC7300_ISM0
+
+config FC7300_ISM0_CAP_CHANNEL0
+	bool "ISM0 CAP Input Channel0"
+	default n
+	---help---
+		Enables channel 0 capture.
+
+config FC7300_ISM_CAP_CH0_MODE
+	int "ISM0 CAP CH0 MODE"
+	default 0
+	range 0 1
+	depends on FC7300_ISM0_CAP_CHANNEL0
+	---help---
+		Specifies that the CAP mode
+			0 for ISM_INPUT_PERIOD
+			1 for ISM_INPUT_DUTY
+			One ISM channel only support one mode.
+
+config FC7300_ISM0_CAP_CHANNEL1
+	bool "ISM0 CAP Input Channel1"
+	default n
+	---help---
+		Enables channel 1 capture.
+
+config FC7300_ISM_CAP_CH1_MODE
+	int "ISM0 CAP CH1 MODE"
+	default 0
+	range 0 1
+	depends on FC7300_ISM0_CAP_CHANNEL1
+	---help---
+		Specifies that the CAP mode
+			0 for ISM_INPUT_PERIOD
+			1 for ISM_INPUT_DUTY
+			One ISM channel only support one mode.
+
+config FC7300_ISM0_CAP_CHANNEL2
+	bool "ISM0 CAP Input Channel2"
+	default n
+	---help---
+		Enables channel 2 capture.
+
+config FC7300_ISM_CAP_CH2_MODE
+	int "ISM0 CAP CH2 MODE"
+	default 0
+	range 0 1
+	depends on FC7300_ISM0_CAP_CHANNEL2
+	---help---
+		Specifies that the CAP mode
+			0 for ISM_INPUT_PERIOD
+			1 for ISM_INPUT_DUTY
+			One ISM channel only support one mode.
+
+config FC7300_ISM0_CAP_CHANNEL3
+	bool "ISM0 CAP Input Channel3"
+	default n
+	---help---
+		Enables channel 3 capture.
+
+config FC7300_ISM_CAP_CH3_MODE
+	int "ISM0 CAP CH3 MODE"
+	default 0
+	range 0 1
+	depends on FC7300_ISM0_CAP_CHANNEL3
+	---help---
+		Specifies that the CAP mode
+			0 for ISM_INPUT_PERIOD
+			1 for ISM_INPUT_DUTY
+			One ISM channel only support one mode.
+
+config FC7300_ISM0_CAP_CHANNEL4
+	bool "ISM0 CAP Input Channel4"
+	default n
+	---help---
+		Enables channel 4 capture.
+
+config FC7300_ISM_CAP_CH4_MODE
+	int "ISM0 CAP CH4 MODE"
+	default 0
+	range 0 1
+	depends on FC7300_ISM0_CAP_CHANNEL4
+	---help---
+		Specifies that the CAP mode
+			0 for ISM_INPUT_PERIOD
+			1 for ISM_INPUT_DUTY
+			One ISM channel only support one mode.
+
+config FC7300_ISM0_CAP_CHANNEL5
+	bool "ISM0 CAP Input Channel5"
+	default n
+	---help---
+		Enables channel 5 capture.
+
+config FC7300_ISM_CAP_CH5_MODE
+	int "ISM0 CAP CH5 MODE"
+	default 0
+	range 0 1
+	depends on FC7300_ISM0_CAP_CHANNEL5
+	---help---
+		Specifies that the CAP mode
+			0 for ISM_INPUT_PERIOD
+			1 for ISM_INPUT_DUTY
+			One ISM channel only support one mode.
+
+config FC7300_ISM0_CAP_CHANNEL6
+	bool "ISM0 CAP Input Channel6"
+	default n
+	---help---
+		Enables channel 6 capture.
+
+config FC7300_ISM_CAP_CH6_MODE
+	int "ISM0 CAP CH6 MODE"
+	default 0
+	range 0 1
+	depends on FC7300_ISM0_CAP_CHANNEL6
+	---help---
+		Specifies that the CAP mode
+			0 for ISM_INPUT_PERIOD
+			1 for ISM_INPUT_DUTY
+			One ISM channel only support one mode.
+
+config FC7300_ISM0_CAP_CHANNEL7
+	bool "ISM0 CAP Input Channel7"
+	default n
+	---help---
+		Enables channel 7 capture.
+
+config FC7300_ISM_CAP_CH7_MODE
+	int "ISM0 CAP CH7 MODE"
+	default 0
+	range 0 1
+	depends on FC7300_ISM0_CAP_CHANNEL7
+	---help---
+		Specifies that the CAP mode
+			0 for ISM_INPUT_PERIOD
+			1 for ISM_INPUT_DUTY
+			One ISM channel only support one mode.
+
+config FC7300_ISM0_CAP_CHANNEL8
+	bool "ISM0 CAP Input Channel8"
+	default n
+	---help---
+		Enables channel 8 capture.
+
+config FC7300_ISM_CAP_CH8_MODE
+	int "ISM0 CAP CH8 MODE"
+	default 0
+	range 0 1
+	depends on FC7300_ISM0_CAP_CHANNEL8
+	---help---
+		Specifies that the CAP mode
+			0 for ISM_INPUT_PERIOD
+			1 for ISM_INPUT_DUTY
+			One ISM channel only support one mode.
+
+config FC7300_ISM0_CAP_CHANNEL9
+	bool "ISM0 CAP Input Channel9"
+	default n
+	---help---
+		Enables channel 9 capture.
+
+config FC7300_ISM_CAP_CH9_MODE
+	int "ISM0 CAP CH9 MODE"
+	default 0
+	range 0 1
+	depends on FC7300_ISM0_CAP_CHANNEL9
+	---help---
+		Specifies that the CAP mode
+			0 for ISM_INPUT_PERIOD
+			1 for ISM_INPUT_DUTY
+			One ISM channel only support one mode.
+
+config FC7300_ISM0_CAP_CHANNEL10
+	bool "ISM0 CAP Input Channel10"
+	default n
+	---help---
+		Enables channel 10 capture.
+
+config FC7300_ISM_CAP_CH10_MODE
+	int "ISM0 CAP CH10 MODE"
+	default 0
+	range 0 1
+	depends on FC7300_ISM0_CAP_CHANNEL10
+	---help---
+		Specifies that the CAP mode
+			0 for ISM_INPUT_PERIOD
+			1 for ISM_INPUT_DUTY
+			One ISM channel only support one mode.
+
+config FC7300_ISM0_CAP_CHANNEL11
+	bool "ISM0 CAP Input Channel11"
+	default n
+	---help---
+		Enables channel 11 capture.
+
+config FC7300_ISM_CAP_CH11_MODE
+	int "ISM0 CAP CH11 MODE"
+	default 0
+	range 0 1
+	depends on FC7300_ISM0_CAP_CHANNEL11
+	---help---
+		Specifies that the CAP mode
+			0 for ISM_INPUT_PERIOD
+			1 for ISM_INPUT_DUTY
+			One ISM channel only support one mode.
+
+config FC7300_ISM0_CAP_CHANNEL12
+	bool "ISM0 CAP Input Channel12"
+	default n
+	---help---
+		Enables channel 12 capture.
+
+config FC7300_ISM_CAP_CH12_MODE
+	int "ISM0 CAP CH12 MODE"
+	default 0
+	range 0 1
+	depends on FC7300_ISM0_CAP_CHANNEL12
+	---help---
+		Specifies that the CAP mode
+			0 for ISM_INPUT_PERIOD
+			1 for ISM_INPUT_DUTY
+			One ISM channel only support one mode.
+
+config FC7300_ISM0_CAP_CHANNEL13
+	bool "ISM0 CAP Input Channel13"
+	default n
+	---help---
+		Enables channel 13 capture.
+
+config FC7300_ISM_CAP_CH13_MODE
+	int "ISM0 CAP CH13 MODE"
+	default 0
+	range 0 1
+	depends on FC7300_ISM0_CAP_CHANNEL13
+	---help---
+		Specifies that the CAP mode
+			0 for ISM_INPUT_PERIOD
+			1 for ISM_INPUT_DUTY
+			One ISM channel only support one mode.
+
+config FC7300_ISM0_CAP_CHANNEL14
+	bool "ISM0 CAP Input Channel14"
+	default n
+	---help---
+		Enables channel 14 capture.
+
+config FC7300_ISM_CAP_CH14_MODE
+	int "ISM0 CAP CH14 MODE"
+	default 0
+	range 0 1
+	depends on FC7300_ISM0_CAP_CHANNEL14
+	---help---
+		Specifies that the CAP mode
+			0 for ISM_INPUT_PERIOD
+			1 for ISM_INPUT_DUTY
+			One ISM channel only support one mode.
+
+config FC7300_ISM0_CAP_CHANNEL15
+	bool "ISM0 CAP Input Channel15"
+	default n
+	---help---
+		Enables channel 15 capture.
+
+config FC7300_ISM_CAP_CH15_MODE
+	int "ISM0 CAP CH15 MODE"
+	default 0
+	range 0 1
+	depends on FC7300_ISM0_CAP_CHANNEL15
+	---help---
+		Specifies that the CAP mode
+			0 for ISM_INPUT_PERIOD
+			1 for ISM_INPUT_DUTY
+			One ISM channel only support one mode.
+endmenu # FC7300 ISM CAP Configuration
+
+menu "FC7300 FTU PWM Configuration"
+	depends on FC7300_FTU
+
+config FC7300_PWM_MULTICHAN
+	bool "PWM Multiple Output Channels"
+	default n
+	depends on FC7300_PWM
+	select ARCH_HAVE_PWM_MULTICHAN
+	---help---
+		Specifies that the PWM driver supports multiple output
+		channels per hardware unit.
+
+config FC7300_FTU0_PWM
+	bool "FTU0 PWM"
+	default n
+	depends on FC7300_FTU0
+
+config FC7300_FTU0_PWM_MODE
+	int "FTU0 PWM Output Mode"
+	default 0
+	range 0 3
+	depends on FC7300_FTU0_PWM
+	---help---
+		Specifies that the PWM mode.
+		0 - FTU_EDGE_PWM_HIGH_TRUE_PULSE,
+		1 - FTU_EDGE_PWM_LOW_TRUE_PULSE,
+		2 - FTU_CENTER_PWM_HIGH_TRUE_PULSE,
+		3 - FTU_CENTER_PWM_LOW_TRUE_PULSE
+
+config FC7300_FTU0_PWM_DEADTIMEFREQ
+	int "FTU0 PWM Output DeadTimeFrequency"
+	default 0
+	range 0 150000000
+	depends on FC7300_FTU0_PWM
+
+config FC7300_FTU0_PWM_CHANNEL0
+	bool "FTU0 PWM Output Channel0"
+	default n
+	---help---
+		Enables channel 0.
+
+config FC7300_FTU0_PWM_CH0_DEADTIMEEN
+	bool "FTU0 PWM CH0 DEADTIME EN"
+	default n
+	depends on FC7300_FTU0_PWM_CHANNEL0
+
+config FC7300_FTU0_PWM_CHANNEL1
+	bool "FTU0 PWM Output Channel1"
+	default n
+	---help---
+		Enables channel 1.
+
+config FC7300_FTU0_PWM_CH1_DEADTIMEEN
+	bool "FTU0 PWM CH1 DEADTIME EN"
+	default n
+	depends on FC7300_FTU0_PWM_CHANNEL1
+
+config FC7300_FTU0_PWM_CHANNEL2
+	bool "FTU0 PWM Output Channel2"
+	default n
+	---help---
+		Enables channel 2.
+
+config FC7300_FTU0_PWM_CH2_DEADTIMEEN
+	bool "FTU0 PWM CH2 DEADTIME EN"
+	default n
+	depends on FC7300_FTU0_PWM_CHANNEL2
+
+config FC7300_FTU0_PWM_CHANNEL3
+	bool "FTU0 PWM Output Channel3"
+	default n
+	---help---
+		Enables channel 3.
+
+config FC7300_FTU0_PWM_CH3_DEADTIMEEN
+	bool "FTU0 PWM CH3 DEADTIME EN"
+	default n
+	depends on FC7300_FTU0_PWM_CHANNEL3
+
+config FC7300_FTU0_PWM_CHANNEL4
+	bool "FTU0 PWM Output Channel4"
+	default n
+	---help---
+		Enables channel 4.
+
+config FC7300_FTU0_PWM_CH4_DEADTIMEEN
+	bool "FTU0 PWM CH4 DEADTIME EN"
+	default n
+	depends on FC7300_FTU0_PWM_CHANNEL4
+
+config FC7300_FTU0_PWM_CHANNEL5
+	bool "FTU0 PWM Output Channel5"
+	default n
+	---help---
+		Enables channel 5.
+
+config FC7300_FTU0_PWM_CH5_DEADTIMEEN
+	bool "FTU0 PWM CH5 DEADTIME EN"
+	default n
+	depends on FC7300_FTU0_PWM_CHANNEL5
+
+config FC7300_FTU0_PWM_CHANNEL6
+	bool "FTU0 PWM Output Channel6"
+	default n
+	---help---
+		Enables channel 6.
+
+config FC7300_FTU0_PWM_CH6_DEADTIMEEN
+	bool "FTU0 PWM CH6 DEADTIME EN"
+	default n
+	depends on FC7300_FTU0_PWM_CHANNEL6
+
+config FC7300_FTU0_PWM_CHANNEL7
+	bool "FTU0 PWM Output Channel7"
+	default n
+	---help---
+		Enables channel 7.
+
+config FC7300_FTU0_PWM_CH7_DEADTIMEEN
+	bool "FTU0 PWM CH7 DEADTIME EN"
+	default n
+	depends on FC7300_FTU0_PWM_CHANNEL7
+
+config FC7300_FTU1_PWM
+	bool "FTU1 PWM"
+	default n
+	depends on FC7300_FTU1
+
+config FC7300_FTU1_PWM_MODE
+	int "FTU1 PWM Output Mode"
+	default 0
+	range 0 3
+	depends on FC7300_FTU1_PWM
+	---help---
+		Specifies that the PWM mode.
+		0 - FTU_EDGE_PWM_HIGH_TRUE_PULSE,
+		1 - FTU_EDGE_PWM_LOW_TRUE_PULSE,
+		2 - FTU_CENTER_PWM_HIGH_TRUE_PULSE,
+		3 - FTU_CENTER_PWM_LOW_TRUE_PULSE
+
+config FC7300_FTU1_PWM_DEADTIMEFREQ
+	int "FTU1 PWM Output DeadTimeFrequency"
+	default 0
+	range 0 150000000
+	depends on FC7300_FTU1_PWM
+
+config FC7300_FTU1_PWM_CHANNEL0
+	bool "FTU1 PWM Output Channel0"
+	default n
+	---help---
+		Enables channel 0.
+
+config FC7300_FTU1_PWM_CH1_DEADTIMEEN
+	bool "FTU1 PWM CH0 DEADTIME EN"
+	default n
+	depends on FC7300_FTU1_PWM_CHANNEL0
+
+config FC7300_FTU1_PWM_CHANNEL1
+	bool "FTU1 PWM Output Channel1"
+	default n
+	---help---
+		Enables channel 1.
+
+config FC7300_FTU1_PWM_CH1_DEADTIMEEN
+	bool "FTU1 PWM CH1 DEADTIME EN"
+	default n
+	depends on FC7300_FTU1_PWM_CHANNEL1
+
+config FC7300_FTU1_PWM_CHANNEL2
+	bool "FTU1 PWM Output Channel2"
+	default n
+	---help---
+		Enables channel 2.
+
+config FC7300_FTU1_PWM_CH2_DEADTIMEEN
+	bool "FTU1 PWM CH2 DEADTIME EN"
+	default n
+	depends on FC7300_FTU1_PWM_CHANNEL2
+
+config FC7300_FTU1_PWM_CHANNEL3
+	bool "FTU1 PWM Output Channel3"
+	default n
+	---help---
+		Enables channel 3.
+
+config FC7300_FTU1_PWM_CH3_DEADTIMEEN
+	bool "FTU1 PWM CH3 DEADTIME EN"
+	default n
+	depends on FC7300_FTU1_PWM_CHANNEL3
+
+config FC7300_FTU1_PWM_CHANNEL4
+	bool "FTU1 PWM Output Channel4"
+	default n
+	---help---
+		Enables channel 4.
+
+config FC7300_FTU1_PWM_CH4_DEADTIMEEN
+	bool "FTU1 PWM CH4 DEADTIME EN"
+	default n
+	depends on FC7300_FTU1_PWM_CHANNEL4
+
+config FC7300_FTU1_PWM_CHANNEL5
+	bool "FTU1 PWM Output Channel5"
+	default n
+	---help---
+		Enables channel 5.
+
+config FC7300_FTU1_PWM_CH5_DEADTIMEEN
+	bool "FTU1 PWM CH5 DEADTIME EN"
+	default n
+	depends on FC7300_FTU1_PWM_CHANNEL5
+
+config FC7300_FTU1_PWM_CHANNEL6
+	bool "FTU1 PWM Output Channel6"
+	default n
+	---help---
+		Enables channel 6.
+
+config FC7300_FTU1_PWM_CH6_DEADTIMEEN
+	bool "FTU1 PWM CH6 DEADTIME EN"
+	default n
+	depends on FC7300_FTU1_PWM_CHANNEL6
+
+config FC7300_FTU1_PWM_CHANNEL7
+	bool "FTU1 PWM Output Channel7"
+	default n
+	---help---
+		Enables channel 7.
+
+config FC7300_FTU1_PWM_CH7_DEADTIMEEN
+	bool "FTU1 PWM CH7 DEADTIME EN"
+	default n
+	depends on FC7300_FTU1_PWM_CHANNEL7
+
+config FC7300_FTU2_PWM
+	bool "FTU2 PWM"
+	default n
+	depends on FC7300_FTU2
+
+config FC7300_FTU2_PWM_MODE
+	int "FTU2 PWM Output Mode"
+	default 0
+	range 0 3
+	depends on FC7300_FTU2_PWM
+	---help---
+		Specifies that the PWM mode.
+		0 - FTU_EDGE_PWM_HIGH_TRUE_PULSE,
+		1 - FTU_EDGE_PWM_LOW_TRUE_PULSE,
+		2 - FTU_CENTER_PWM_HIGH_TRUE_PULSE,
+		3 - FTU_CENTER_PWM_LOW_TRUE_PULSE
+
+config FC7300_FTU2_PWM_DEADTIMEFREQ
+	int "FTU2 PWM Output DeadTimeFrequency"
+	default 0
+	range 0 150000000
+	depends on FC7300_FTU2_PWM
+
+config FC7300_FTU2_PWM_CHANNEL0
+	bool "FTU2 PWM Output Channel0"
+	default n
+	---help---
+		Enables channel 0.
+
+config FC7300_FTU2_PWM_CH1_DEADTIMEEN
+	bool "FTU2 PWM CH0 DEADTIME EN"
+	default n
+	depends on FC7300_FTU2_PWM_CHANNEL0
+
+config FC7300_FTU2_PWM_CHANNEL1
+	bool "FTU2 PWM Output Channel1"
+	default n
+	---help---
+		Enables channel 1.
+
+config FC7300_FTU2_PWM_CH1_DEADTIMEEN
+	bool "FTU2 PWM CH1 DEADTIME EN"
+	default n
+	depends on FC7300_FTU2_PWM_CHANNEL1
+
+config FC7300_FTU2_PWM_CHANNEL2
+	bool "FTU2 PWM Output Channel2"
+	default n
+	---help---
+		Enables channel 2.
+
+config FC7300_FTU2_PWM_CH2_DEADTIMEEN
+	bool "FTU2 PWM CH2 DEADTIME EN"
+	default n
+	depends on FC7300_FTU2_PWM_CHANNEL2
+
+config FC7300_FTU2_PWM_CHANNEL3
+	bool "FTU2 PWM Output Channel3"
+	default n
+	---help---
+		Enables channel 3.
+
+config FC7300_FTU2_PWM_CH3_DEADTIMEEN
+	bool "FTU2 PWM CH3 DEADTIME EN"
+	default n
+	depends on FC7300_FTU2_PWM_CHANNEL3
+
+config FC7300_FTU2_PWM_CHANNEL4
+	bool "FTU2 PWM Output Channel4"
+	default n
+	---help---
+		Enables channel 4.
+
+config FC7300_FTU2_PWM_CH4_DEADTIMEEN
+	bool "FTU2 PWM CH4 DEADTIME EN"
+	default n
+	depends on FC7300_FTU2_PWM_CHANNEL4
+
+config FC7300_FTU2_PWM_CHANNEL5
+	bool "FTU2 PWM Output Channel5"
+	default n
+	---help---
+		Enables channel 5.
+
+config FC7300_FTU2_PWM_CH5_DEADTIMEEN
+	bool "FTU2 PWM CH5 DEADTIME EN"
+	default n
+	depends on FC7300_FTU2_PWM_CHANNEL5
+
+config FC7300_FTU2_PWM_CHANNEL6
+	bool "FTU2 PWM Output Channel6"
+	default n
+	---help---
+		Enables channel 6.
+
+config FC7300_FTU2_PWM_CH6_DEADTIMEEN
+	bool "FTU2 PWM CH6 DEADTIME EN"
+	default n
+	depends on FC7300_FTU2_PWM_CHANNEL6
+
+config FC7300_FTU2_PWM_CHANNEL7
+	bool "FTU2 PWM Output Channel7"
+	default n
+	---help---
+		Enables channel 7.
+
+config FC7300_FTU2_PWM_CH7_DEADTIMEEN
+	bool "FTU2 PWM CH7 DEADTIME EN"
+	default n
+	depends on FC7300_FTU2_PWM_CHANNEL7
+
+config FC7300_FTU3_PWM
+	bool "FTU3 PWM"
+	default n
+	depends on FC7300_FTU3
+
+config FC7300_FTU3_PWM_MODE
+	int "FTU3 PWM Output Mode"
+	default 0
+	range 0 3
+	depends on FC7300_FTU3_PWM
+	---help---
+		Specifies that the PWM mode.
+		0 - FTU_EDGE_PWM_HIGH_TRUE_PULSE,
+		1 - FTU_EDGE_PWM_LOW_TRUE_PULSE,
+		2 - FTU_CENTER_PWM_HIGH_TRUE_PULSE,
+		3 - FTU_CENTER_PWM_LOW_TRUE_PULSE
+
+config FC7300_FTU3_PWM_DEADTIMEFREQ
+	int "FTU3 PWM Output DeadTimeFrequency"
+	default 0
+	range 0 150000000
+	depends on FC7300_FTU3_PWM
+
+config FC7300_FTU3_PWM_CHANNEL0
+	bool "FTU3 PWM Output Channel0"
+	default n
+	---help---
+		Enables channel 0.
+
+config FC7300_FTU3_PWM_CH1_DEADTIMEEN
+	bool "FTU3 PWM CH0 DEADTIME EN"
+	default n
+	depends on FC7300_FTU3_PWM_CHANNEL0
+
+config FC7300_FTU3_PWM_CHANNEL1
+	bool "FTU3 PWM Output Channel1"
+	default n
+	---help---
+		Enables channel 1.
+
+config FC7300_FTU3_PWM_CH1_DEADTIMEEN
+	bool "FTU3 PWM CH1 DEADTIME EN"
+	default n
+	depends on FC7300_FTU3_PWM_CHANNEL1
+
+config FC7300_FTU3_PWM_CHANNEL2
+	bool "FTU3 PWM Output Channel2"
+	default n
+	---help---
+		Enables channel 2.
+
+config FC7300_FTU3_PWM_CH2_DEADTIMEEN
+	bool "FTU3 PWM CH2 DEADTIME EN"
+	default n
+	depends on FC7300_FTU3_PWM_CHANNEL2
+
+config FC7300_FTU3_PWM_CHANNEL3
+	bool "FTU3 PWM Output Channel3"
+	default n
+	---help---
+		Enables channel 3.
+
+config FC7300_FTU3_PWM_CH3_DEADTIMEEN
+	bool "FTU3 PWM CH3 DEADTIME EN"
+	default n
+	depends on FC7300_FTU3_PWM_CHANNEL3
+
+config FC7300_FTU3_PWM_CHANNEL4
+	bool "FTU3 PWM Output Channel4"
+	default n
+	---help---
+		Enables channel 4.
+
+config FC7300_FTU3_PWM_CH4_DEADTIMEEN
+	bool "FTU3 PWM CH4 DEADTIME EN"
+	default n
+	depends on FC7300_FTU3_PWM_CHANNEL4
+
+config FC7300_FTU3_PWM_CHANNEL5
+	bool "FTU3 PWM Output Channel5"
+	default n
+	---help---
+		Enables channel 5.
+
+config FC7300_FTU3_PWM_CH5_DEADTIMEEN
+	bool "FTU3 PWM CH5 DEADTIME EN"
+	default n
+	depends on FC7300_FTU3_PWM_CHANNEL5
+
+config FC7300_FTU3_PWM_CHANNEL6
+	bool "FTU3 PWM Output Channel6"
+	default n
+	---help---
+		Enables channel 6.
+
+config FC7300_FTU3_PWM_CH6_DEADTIMEEN
+	bool "FTU3 PWM CH6 DEADTIME EN"
+	default n
+	depends on FC7300_FTU3_PWM_CHANNEL6
+
+config FC7300_FTU3_PWM_CHANNEL7
+	bool "FTU3 PWM Output Channel7"
+	default n
+	---help---
+		Enables channel 7.
+
+config FC7300_FTU3_PWM_CH7_DEADTIMEEN
+	bool "FTU3 PWM CH7 DEADTIME EN"
+	default n
+	depends on FC7300_FTU3_PWM_CHANNEL7
+
+config FC7300_FTU4_PWM
+	bool "FTU4 PWM"
+	default n
+	depends on FC7300_FTU4
+
+config FC7300_FTU4_PWM_MODE
+	int "FTU4 PWM Output Mode"
+	default 0
+	range 0 3
+	depends on FC7300_FTU4_PWM
+	---help---
+		Specifies that the PWM mode.
+		0 - FTU_EDGE_PWM_HIGH_TRUE_PULSE,
+		1 - FTU_EDGE_PWM_LOW_TRUE_PULSE,
+		2 - FTU_CENTER_PWM_HIGH_TRUE_PULSE,
+		3 - FTU_CENTER_PWM_LOW_TRUE_PULSE
+
+config FC7300_FTU4_PWM_DEADTIMEFREQ
+	int "FTU4 PWM Output DeadTimeFrequency"
+	default 0
+	range 0 150000000
+	depends on FC7300_FTU4_PWM
+
+config FC7300_FTU4_PWM_CHANNEL0
+	bool "FTU4 PWM Output Channel0"
+	default n
+	---help---
+		Enables channel 0.
+
+config FC7300_FTU4_PWM_CH1_DEADTIMEEN
+	bool "FTU4 PWM CH0 DEADTIME EN"
+	default n
+	depends on FC7300_FTU4_PWM_CHANNEL0
+
+config FC7300_FTU4_PWM_CHANNEL1
+	bool "FTU4 PWM Output Channel1"
+	default n
+	---help---
+		Enables channel 1.
+
+config FC7300_FTU4_PWM_CH1_DEADTIMEEN
+	bool "FTU4 PWM CH1 DEADTIME EN"
+	default n
+	depends on FC7300_FTU4_PWM_CHANNEL1
+
+config FC7300_FTU4_PWM_CHANNEL2
+	bool "FTU4 PWM Output Channel2"
+	default n
+	---help---
+		Enables channel 2.
+
+config FC7300_FTU4_PWM_CH2_DEADTIMEEN
+	bool "FTU4 PWM CH2 DEADTIME EN"
+	default n
+	depends on FC7300_FTU4_PWM_CHANNEL2
+
+config FC7300_FTU4_PWM_CHANNEL3
+	bool "FTU4 PWM Output Channel3"
+	default n
+	---help---
+		Enables channel 3.
+
+config FC7300_FTU4_PWM_CH3_DEADTIMEEN
+	bool "FTU4 PWM CH3 DEADTIME EN"
+	default n
+	depends on FC7300_FTU4_PWM_CHANNEL3
+
+config FC7300_FTU4_PWM_CHANNEL4
+	bool "FTU4 PWM Output Channel4"
+	default n
+	---help---
+		Enables channel 4.
+
+config FC7300_FTU4_PWM_CH4_DEADTIMEEN
+	bool "FTU4 PWM CH4 DEADTIME EN"
+	default n
+	depends on FC7300_FTU4_PWM_CHANNEL4
+
+config FC7300_FTU4_PWM_CHANNEL5
+	bool "FTU4 PWM Output Channel5"
+	default n
+	---help---
+		Enables channel 5.
+
+config FC7300_FTU4_PWM_CH5_DEADTIMEEN
+	bool "FTU4 PWM CH5 DEADTIME EN"
+	default n
+	depends on FC7300_FTU4_PWM_CHANNEL5
+
+config FC7300_FTU4_PWM_CHANNEL6
+	bool "FTU4 PWM Output Channel6"
+	default n
+	---help---
+		Enables channel 6.
+
+config FC7300_FTU4_PWM_CH6_DEADTIMEEN
+	bool "FTU4 PWM CH6 DEADTIME EN"
+	default n
+	depends on FC7300_FTU4_PWM_CHANNEL6
+
+config FC7300_FTU4_PWM_CHANNEL7
+	bool "FTU4 PWM Output Channel7"
+	default n
+	---help---
+		Enables channel 7.
+
+config FC7300_FTU4_PWM_CH7_DEADTIMEEN
+	bool "FTU4 PWM CH7 DEADTIME EN"
+	default n
+	depends on FC7300_FTU4_PWM_CHANNEL7
+
+config FC7300_FTU5_PWM
+	bool "FTU5 PWM"
+	default n
+	depends on FC7300_FTU5
+
+config FC7300_FTU5_PWM_MODE
+	int "FTU5 PWM Output Mode"
+	default 0
+	range 0 3
+	depends on FC7300_FTU5_PWM
+	---help---
+		Specifies that the PWM mode.
+		0 - FTU_EDGE_PWM_HIGH_TRUE_PULSE,
+		1 - FTU_EDGE_PWM_LOW_TRUE_PULSE,
+		2 - FTU_CENTER_PWM_HIGH_TRUE_PULSE,
+		3 - FTU_CENTER_PWM_LOW_TRUE_PULSE
+
+config FC7300_FTU5_PWM_DEADTIMEFREQ
+	int "FTU5 PWM Output DeadTimeFrequency"
+	default 0
+	range 0 150000000
+	depends on FC7300_FTU5_PWM
+
+config FC7300_FTU5_PWM_CHANNEL0
+	bool "FTU5 PWM Output Channel0"
+	default n
+	---help---
+		Enables channel 0.
+
+config FC7300_FTU5_PWM_CH1_DEADTIMEEN
+	bool "FTU5 PWM CH0 DEADTIME EN"
+	default n
+	depends on FC7300_FTU5_PWM_CHANNEL0
+
+config FC7300_FTU5_PWM_CHANNEL1
+	bool "FTU5 PWM Output Channel1"
+	default n
+	---help---
+		Enables channel 1.
+
+config FC7300_FTU5_PWM_CH1_DEADTIMEEN
+	bool "FTU5 PWM CH1 DEADTIME EN"
+	default n
+	depends on FC7300_FTU5_PWM_CHANNEL1
+
+config FC7300_FTU5_PWM_CHANNEL2
+	bool "FTU5 PWM Output Channel2"
+	default n
+	---help---
+		Enables channel 2.
+
+config FC7300_FTU5_PWM_CH2_DEADTIMEEN
+	bool "FTU5 PWM CH2 DEADTIME EN"
+	default n
+	depends on FC7300_FTU5_PWM_CHANNEL2
+
+config FC7300_FTU5_PWM_CHANNEL3
+	bool "FTU5 PWM Output Channel3"
+	default n
+	---help---
+		Enables channel 3.
+
+config FC7300_FTU5_PWM_CH3_DEADTIMEEN
+	bool "FTU5 PWM CH3 DEADTIME EN"
+	default n
+	depends on FC7300_FTU5_PWM_CHANNEL3
+
+config FC7300_FTU5_PWM_CHANNEL4
+	bool "FTU5 PWM Output Channel4"
+	default n
+	---help---
+		Enables channel 4.
+
+config FC7300_FTU5_PWM_CH4_DEADTIMEEN
+	bool "FTU5 PWM CH4 DEADTIME EN"
+	default n
+	depends on FC7300_FTU5_PWM_CHANNEL4
+
+config FC7300_FTU5_PWM_CHANNEL5
+	bool "FTU5 PWM Output Channel5"
+	default n
+	---help---
+		Enables channel 5.
+
+config FC7300_FTU5_PWM_CH5_DEADTIMEEN
+	bool "FTU5 PWM CH5 DEADTIME EN"
+	default n
+	depends on FC7300_FTU5_PWM_CHANNEL5
+
+config FC7300_FTU5_PWM_CHANNEL6
+	bool "FTU5 PWM Output Channel6"
+	default n
+	---help---
+		Enables channel 6.
+
+config FC7300_FTU5_PWM_CH6_DEADTIMEEN
+	bool "FTU5 PWM CH6 DEADTIME EN"
+	default n
+	depends on FC7300_FTU5_PWM_CHANNEL6
+
+config FC7300_FTU5_PWM_CHANNEL7
+	bool "FTU5 PWM Output Channel7"
+	default n
+	---help---
+		Enables channel 7.
+
+config FC7300_FTU5_PWM_CH7_DEADTIMEEN
+	bool "FTU5 PWM CH7 DEADTIME EN"
+	default n
+	depends on FC7300_FTU5_PWM_CHANNEL7
+
+config FC7300_FTU6_PWM
+	bool "FTU6 PWM"
+	default n
+	depends on FC7300_FTU6
+
+config FC7300_FTU6_PWM_MODE
+	int "FTU6 PWM Output Mode"
+	default 0
+	range 0 3
+	depends on FC7300_FTU6_PWM
+	---help---
+		Specifies that the PWM mode.
+		0 - FTU_EDGE_PWM_HIGH_TRUE_PULSE,
+		1 - FTU_EDGE_PWM_LOW_TRUE_PULSE,
+		2 - FTU_CENTER_PWM_HIGH_TRUE_PULSE,
+		3 - FTU_CENTER_PWM_LOW_TRUE_PULSE
+
+config FC7300_FTU6_PWM_DEADTIMEFREQ
+	int "FTU6 PWM Output DeadTimeFrequency"
+	default 0
+	range 0 150000000
+	depends on FC7300_FTU6_PWM
+
+config FC7300_FTU6_PWM_CHANNEL0
+	bool "FTU6 PWM Output Channel0"
+	default n
+	---help---
+		Enables channel 0.
+
+config FC7300_FTU6_PWM_CH1_DEADTIMEEN
+	bool "FTU6 PWM CH0 DEADTIME EN"
+	default n
+	depends on FC7300_FTU6_PWM_CHANNEL0
+
+config FC7300_FTU6_PWM_CHANNEL1
+	bool "FTU6 PWM Output Channel1"
+	default n
+	---help---
+		Enables channel 1.
+
+config FC7300_FTU6_PWM_CH1_DEADTIMEEN
+	bool "FTU6 PWM CH1 DEADTIME EN"
+	default n
+	depends on FC7300_FTU6_PWM_CHANNEL1
+
+config FC7300_FTU6_PWM_CHANNEL2
+	bool "FTU6 PWM Output Channel2"
+	default n
+	---help---
+		Enables channel 2.
+
+config FC7300_FTU6_PWM_CH2_DEADTIMEEN
+	bool "FTU6 PWM CH2 DEADTIME EN"
+	default n
+	depends on FC7300_FTU6_PWM_CHANNEL2
+
+config FC7300_FTU6_PWM_CHANNEL3
+	bool "FTU6 PWM Output Channel3"
+	default n
+	---help---
+		Enables channel 3.
+
+config FC7300_FTU6_PWM_CH3_DEADTIMEEN
+	bool "FTU6 PWM CH3 DEADTIME EN"
+	default n
+	depends on FC7300_FTU6_PWM_CHANNEL3
+
+config FC7300_FTU6_PWM_CHANNEL4
+	bool "FTU6 PWM Output Channel4"
+	default n
+	---help---
+		Enables channel 4.
+
+config FC7300_FTU6_PWM_CH4_DEADTIMEEN
+	bool "FTU6 PWM CH4 DEADTIME EN"
+	default n
+	depends on FC7300_FTU6_PWM_CHANNEL4
+
+config FC7300_FTU6_PWM_CHANNEL5
+	bool "FTU6 PWM Output Channel5"
+	default n
+	---help---
+		Enables channel 5.
+
+config FC7300_FTU6_PWM_CH5_DEADTIMEEN
+	bool "FTU6 PWM CH5 DEADTIME EN"
+	default n
+	depends on FC7300_FTU6_PWM_CHANNEL5
+
+config FC7300_FTU6_PWM_CHANNEL6
+	bool "FTU6 PWM Output Channel6"
+	default n
+	---help---
+		Enables channel 6.
+
+config FC7300_FTU6_PWM_CH6_DEADTIMEEN
+	bool "FTU6 PWM CH6 DEADTIME EN"
+	default n
+	depends on FC7300_FTU6_PWM_CHANNEL6
+
+config FC7300_FTU6_PWM_CHANNEL7
+	bool "FTU6 PWM Output Channel7"
+	default n
+	---help---
+		Enables channel 7.
+
+config FC7300_FTU6_PWM_CH7_DEADTIMEEN
+	bool "FTU6 PWM CH7 DEADTIME EN"
+	default n
+	depends on FC7300_FTU6_PWM_CHANNEL7
+
+config FC7300_FTU7_PWM
+	bool "FTU7 PWM"
+	default n
+	depends on FC7300_FTU7
+
+config FC7300_FTU7_PWM_MODE
+	int "FTU7 PWM Output Mode"
+	default 0
+	range 0 3
+	depends on FC7300_FTU7_PWM
+	---help---
+		Specifies that the PWM mode.
+		0 - FTU_EDGE_PWM_HIGH_TRUE_PULSE,
+		1 - FTU_EDGE_PWM_LOW_TRUE_PULSE,
+		2 - FTU_CENTER_PWM_HIGH_TRUE_PULSE,
+		3 - FTU_CENTER_PWM_LOW_TRUE_PULSE
+
+config FC7300_FTU7_PWM_DEADTIMEFREQ
+	int "FTU7 PWM Output DeadTimeFrequency"
+	default 0
+	range 0 150000000
+	depends on FC7300_FTU7_PWM
+
+config FC7300_FTU7_PWM_CHANNEL0
+	bool "FTU7 PWM Output Channel0"
+	default n
+	---help---
+		Enables channel 0.
+
+config FC7300_FTU7_PWM_CH1_DEADTIMEEN
+	bool "FTU7 PWM CH0 DEADTIME EN"
+	default n
+	depends on FC7300_FTU7_PWM_CHANNEL0
+
+config FC7300_FTU7_PWM_CHANNEL1
+	bool "FTU7 PWM Output Channel1"
+	default n
+	---help---
+		Enables channel 1.
+
+config FC7300_FTU7_PWM_CH1_DEADTIMEEN
+	bool "FTU7 PWM CH1 DEADTIME EN"
+	default n
+	depends on FC7300_FTU7_PWM_CHANNEL1
+
+config FC7300_FTU7_PWM_CHANNEL2
+	bool "FTU7 PWM Output Channel2"
+	default n
+	---help---
+		Enables channel 2.
+
+config FC7300_FTU7_PWM_CH2_DEADTIMEEN
+	bool "FTU7 PWM CH2 DEADTIME EN"
+	default n
+	depends on FC7300_FTU7_PWM_CHANNEL2
+
+config FC7300_FTU7_PWM_CHANNEL3
+	bool "FTU7 PWM Output Channel3"
+	default n
+	---help---
+		Enables channel 3.
+
+config FC7300_FTU7_PWM_CH3_DEADTIMEEN
+	bool "FTU7 PWM CH3 DEADTIME EN"
+	default n
+	depends on FC7300_FTU7_PWM_CHANNEL3
+
+config FC7300_FTU7_PWM_CHANNEL4
+	bool "FTU7 PWM Output Channel4"
+	default n
+	---help---
+		Enables channel 4.
+
+config FC7300_FTU7_PWM_CH4_DEADTIMEEN
+	bool "FTU7 PWM CH4 DEADTIME EN"
+	default n
+	depends on FC7300_FTU7_PWM_CHANNEL4
+
+config FC7300_FTU7_PWM_CHANNEL5
+	bool "FTU7 PWM Output Channel5"
+	default n
+	---help---
+		Enables channel 5.
+
+config FC7300_FTU7_PWM_CH5_DEADTIMEEN
+	bool "FTU7 PWM CH5 DEADTIME EN"
+	default n
+	depends on FC7300_FTU7_PWM_CHANNEL5
+
+config FC7300_FTU7_PWM_CHANNEL6
+	bool "FTU7 PWM Output Channel6"
+	default n
+	---help---
+		Enables channel 6.
+
+config FC7300_FTU7_PWM_CH6_DEADTIMEEN
+	bool "FTU7 PWM CH6 DEADTIME EN"
+	default n
+	depends on FC7300_FTU7_PWM_CHANNEL6
+
+config FC7300_FTU7_PWM_CHANNEL7
+	bool "FTU7 PWM Output Channel7"
+	default n
+	---help---
+		Enables channel 7.
+
+config FC7300_FTU7_PWM_CH7_DEADTIMEEN
+	bool "FTU7 PWM CH7 DEADTIME EN"
+	default n
+	depends on FC7300_FTU7_PWM_CHANNEL7
+
+config FC7300_FTU8_PWM
+	bool "FTU8 PWM"
+	default n
+	depends on FC7300_FTU8
+
+config FC7300_FTU8_PWM_MODE
+	int "FTU8 PWM Output Mode"
+	default 0
+	range 0 3
+	depends on FC7300_FTU8_PWM
+	---help---
+		Specifies that the PWM mode.
+		0 - FTU_EDGE_PWM_HIGH_TRUE_PULSE,
+		1 - FTU_EDGE_PWM_LOW_TRUE_PULSE,
+		2 - FTU_CENTER_PWM_HIGH_TRUE_PULSE,
+		3 - FTU_CENTER_PWM_LOW_TRUE_PULSE
+
+config FC7300_FTU8_PWM_DEADTIMEFREQ
+	int "FTU8 PWM Output DeadTimeFrequency"
+	default 0
+	range 0 150000000
+	depends on FC7300_FTU8_PWM
+
+config FC7300_FTU8_PWM_CHANNEL0
+	bool "FTU8 PWM Output Channel0"
+	default n
+	---help---
+		Enables channel 0.
+
+config FC7300_FTU8_PWM_CH0_DEADTIMEEN
+	bool "FTU8 PWM CH0 DEADTIME EN"
+	default n
+	depends on FC7300_FTU8_PWM_CHANNEL0
+
+config FC7300_FTU8_PWM_CHANNEL1
+	bool "FTU8 PWM Output Channel1"
+	default n
+	---help---
+		Enables channel 1.
+
+config FC7300_FTU8_PWM_CH1_DEADTIMEEN
+	bool "FTU8 PWM CH1 DEADTIME EN"
+	default n
+	depends on FC7300_FTU8_PWM_CHANNEL1
+
+config FC7300_FTU8_PWM_CHANNEL2
+	bool "FTU8 PWM Output Channel2"
+	default n
+	---help---
+		Enables channel 2.
+
+config FC7300_FTU8_PWM_CH2_DEADTIMEEN
+	bool "FTU8 PWM CH2 DEADTIME EN"
+	default n
+	depends on FC7300_FTU8_PWM_CHANNEL2
+
+config FC7300_FTU8_PWM_CHANNEL3
+	bool "FTU8 PWM Output Channel3"
+	default n
+	---help---
+		Enables channel 3.
+
+config FC7300_FTU8_PWM_CH3_DEADTIMEEN
+	bool "FTU8 PWM CH3 DEADTIME EN"
+	default n
+	depends on FC7300_FTU8_PWM_CHANNEL3
+
+config FC7300_FTU8_PWM_CHANNEL4
+	bool "FTU8 PWM Output Channel4"
+	default n
+	---help---
+		Enables channel 4.
+
+config FC7300_FTU8_PWM_CH4_DEADTIMEEN
+	bool "FTU8 PWM CH4 DEADTIME EN"
+	default n
+	depends on FC7300_FTU8_PWM_CHANNEL4
+
+config FC7300_FTU8_PWM_CHANNEL5
+	bool "FTU8 PWM Output Channel5"
+	default n
+	---help---
+		Enables channel 5.
+
+config FC7300_FTU8_PWM_CH5_DEADTIMEEN
+	bool "FTU8 PWM CH5 DEADTIME EN"
+	default n
+	depends on FC7300_FTU8_PWM_CHANNEL5
+
+config FC7300_FTU8_PWM_CHANNEL6
+	bool "FTU8 PWM Output Channel6"
+	default n
+	---help---
+		Enables channel 6.
+
+config FC7300_FTU8_PWM_CH6_DEADTIMEEN
+	bool "FTU8 PWM CH6 DEADTIME EN"
+	default n
+	depends on FC7300_FTU8_PWM_CHANNEL6
+
+config FC7300_FTU8_PWM_CHANNEL7
+	bool "FTU8 PWM Output Channel7"
+	default n
+	---help---
+		Enables channel 7.
+
+config FC7300_FTU8_PWM_CH7_DEADTIMEEN
+	bool "FTU8 PWM CH7 DEADTIME EN"
+	default n
+	depends on FC7300_FTU8_PWM_CHANNEL7
+
+config FC7300_FTU9_PWM
+	bool "FTU9 PWM"
+	default n
+	depends on FC7300_FTU9
+
+config FC7300_FTU9_PWM_MODE
+	int "FTU9 PWM Output Mode"
+	default 0
+	range 0 3
+	depends on FC7300_FTU9_PWM
+	---help---
+		Specifies that the PWM mode.
+		0 - FTU_EDGE_PWM_HIGH_TRUE_PULSE,
+		1 - FTU_EDGE_PWM_LOW_TRUE_PULSE,
+		2 - FTU_CENTER_PWM_HIGH_TRUE_PULSE,
+		3 - FTU_CENTER_PWM_LOW_TRUE_PULSE
+
+config FC7300_FTU9_PWM_DEADTIMEFREQ
+	int "FTU9 PWM Output DeadTimeFrequency"
+	default 0
+	range 0 150000000
+	depends on FC7300_FTU9_PWM
+
+config FC7300_FTU9_PWM_CHANNEL0
+	bool "FTU9 PWM Output Channel0"
+	default n
+	---help---
+		Enables channel 0.
+
+config FC7300_FTU9_PWM_CH0_DEADTIMEEN
+	bool "FTU9 PWM CH0 DEADTIME EN"
+	default n
+	depends on FC7300_FTU9_PWM_CHANNEL0
+
+config FC7300_FTU9_PWM_CHANNEL1
+	bool "FTU9 PWM Output Channel1"
+	default n
+	---help---
+		Enables channel 1.
+
+config FC7300_FTU9_PWM_CH1_DEADTIMEEN
+	bool "FTU9 PWM CH1 DEADTIME EN"
+	default n
+	depends on FC7300_FTU9_PWM_CHANNEL1
+
+config FC7300_FTU9_PWM_CHANNEL2
+	bool "FTU9 PWM Output Channel2"
+	default n
+	---help---
+		Enables channel 2.
+
+config FC7300_FTU9_PWM_CH2_DEADTIMEEN
+	bool "FTU9 PWM CH2 DEADTIME EN"
+	default n
+	depends on FC7300_FTU9_PWM_CHANNEL2
+
+config FC7300_FTU9_PWM_CHANNEL3
+	bool "FTU9 PWM Output Channel3"
+	default n
+	---help---
+		Enables channel 3.
+
+config FC7300_FTU9_PWM_CH3_DEADTIMEEN
+	bool "FTU9 PWM CH3 DEADTIME EN"
+	default n
+	depends on FC7300_FTU9_PWM_CHANNEL3
+
+config FC7300_FTU9_PWM_CHANNEL4
+	bool "FTU9 PWM Output Channel4"
+	default n
+	---help---
+		Enables channel 4.
+
+config FC7300_FTU9_PWM_CH4_DEADTIMEEN
+	bool "FTU9 PWM CH4 DEADTIME EN"
+	default n
+	depends on FC7300_FTU9_PWM_CHANNEL4
+
+config FC7300_FTU9_PWM_CHANNEL5
+	bool "FTU9 PWM Output Channel5"
+	default n
+	---help---
+		Enables channel 5.
+
+config FC7300_FTU9_PWM_CH5_DEADTIMEEN
+	bool "FTU9 PWM CH5 DEADTIME EN"
+	default n
+	depends on FC7300_FTU9_PWM_CHANNEL5
+
+config FC7300_FTU9_PWM_CHANNEL6
+	bool "FTU9 PWM Output Channel6"
+	default n
+	---help---
+		Enables channel 6.
+
+config FC7300_FTU9_PWM_CH6_DEADTIMEEN
+	bool "FTU9 PWM CH6 DEADTIME EN"
+	default n
+	depends on FC7300_FTU9_PWM_CHANNEL6
+
+config FC7300_FTU9_PWM_CHANNEL7
+	bool "FTU9 PWM Output Channel7"
+	default n
+	---help---
+		Enables channel 7.
+
+config FC7300_FTU9_PWM_CH7_DEADTIMEEN
+	bool "FTU9 PWM CH7 DEADTIME EN"
+	default n
+	depends on FC7300_FTU9_PWM_CHANNEL7
+
+config FC7300_FTU10_PWM
+	bool "FTU10 PWM"
+	default n
+	depends on FC7300_FTU10
+
+config FC7300_FTU10_PWM_MODE
+	int "FTU10 PWM Output Mode"
+	default 0
+	range 0 3
+	depends on FC7300_FTU10_PWM
+	---help---
+		Specifies that the PWM mode.
+		0 - FTU_EDGE_PWM_HIGH_TRUE_PULSE,
+		1 - FTU_EDGE_PWM_LOW_TRUE_PULSE,
+		2 - FTU_CENTER_PWM_HIGH_TRUE_PULSE,
+		3 - FTU_CENTER_PWM_LOW_TRUE_PULSE
+
+config FC7300_FTU10_PWM_DEADTIMEFREQ
+	int "FTU10 PWM Output DeadTimeFrequency"
+	default 0
+	range 0 150000000
+	depends on FC7300_FTU10_PWM
+
+config FC7300_FTU10_PWM_CHANNEL0
+	bool "FTU10 PWM Output Channel0"
+	default n
+	---help---
+		Enables channel 0.
+
+config FC7300_FTU10_PWM_CH0_DEADTIMEEN
+	bool "FTU10 PWM CH0 DEADTIME EN"
+	default n
+	depends on FC7300_FTU10_PWM_CHANNEL0
+
+config FC7300_FTU10_PWM_CHANNEL1
+	bool "FTU10 PWM Output Channel1"
+	default n
+	---help---
+		Enables channel 1.
+
+config FC7300_FTU10_PWM_CH1_DEADTIMEEN
+	bool "FTU10 PWM CH1 DEADTIME EN"
+	default n
+	depends on FC7300_FTU10_PWM_CHANNEL1
+
+config FC7300_FTU10_PWM_CHANNEL2
+	bool "FTU10 PWM Output Channel2"
+	default n
+	---help---
+		Enables channel 2.
+
+config FC7300_FTU10_PWM_CH2_DEADTIMEEN
+	bool "FTU10 PWM CH2 DEADTIME EN"
+	default n
+	depends on FC7300_FTU10_PWM_CHANNEL2
+
+config FC7300_FTU10_PWM_CHANNEL3
+	bool "FTU10 PWM Output Channel3"
+	default n
+	---help---
+		Enables channel 3.
+
+config FC7300_FTU10_PWM_CH3_DEADTIMEEN
+	bool "FTU10 PWM CH3 DEADTIME EN"
+	default n
+	depends on FC7300_FTU10_PWM_CHANNEL3
+
+config FC7300_FTU10_PWM_CHANNEL4
+	bool "FTU10 PWM Output Channel4"
+	default n
+	---help---
+		Enables channel 4.
+
+config FC7300_FTU10_PWM_CH4_DEADTIMEEN
+	bool "FTU10 PWM CH4 DEADTIME EN"
+	default n
+	depends on FC7300_FTU10_PWM_CHANNEL4
+
+config FC7300_FTU10_PWM_CHANNEL5
+	bool "FTU10 PWM Output Channel5"
+	default n
+	---help---
+		Enables channel 5.
+
+config FC7300_FTU10_PWM_CH5_DEADTIMEEN
+	bool "FTU10 PWM CH5 DEADTIME EN"
+	default n
+	depends on FC7300_FTU10_PWM_CHANNEL5
+
+config FC7300_FTU10_PWM_CHANNEL6
+	bool "FTU10 PWM Output Channel6"
+	default n
+	---help---
+		Enables channel 6.
+
+config FC7300_FTU10_PWM_CH6_DEADTIMEEN
+	bool "FTU10 PWM CH6 DEADTIME EN"
+	default n
+	depends on FC7300_FTU10_PWM_CHANNEL6
+
+config FC7300_FTU10_PWM_CHANNEL7
+	bool "FTU10 PWM Output Channel7"
+	default n
+	---help---
+		Enables channel 7.
+
+config FC7300_FTU10_PWM_CH7_DEADTIMEEN
+	bool "FTU10 PWM CH7 DEADTIME EN"
+	default n
+	depends on FC7300_FTU10_PWM_CHANNEL7
+
+config FC7300_FTU11_PWM
+	bool "FTU11 PWM"
+	default n
+	depends on FC7300_FTU11
+
+config FC7300_FTU11_PWM_MODE
+	int "FTU11 PWM Output Mode"
+	default 0
+	range 0 3
+	depends on FC7300_FTU11_PWM
+	---help---
+		Specifies that the PWM mode.
+		0 - FTU_EDGE_PWM_HIGH_TRUE_PULSE,
+		1 - FTU_EDGE_PWM_LOW_TRUE_PULSE,
+		2 - FTU_CENTER_PWM_HIGH_TRUE_PULSE,
+		3 - FTU_CENTER_PWM_LOW_TRUE_PULSE
+
+config FC7300_FTU11_PWM_DEADTIMEFREQ
+	int "FTU11 PWM Output DeadTimeFrequency"
+	default 0
+	range 0 150000000
+	depends on FC7300_FTU11_PWM
+
+config FC7300_FTU11_PWM_CHANNEL0
+	bool "FTU11 PWM Output Channel0"
+	default n
+	---help---
+		Enables channel 0.
+
+config FC7300_FTU11_PWM_CH0_DEADTIMEEN
+	bool "FTU11 PWM CH0 DEADTIME EN"
+	default n
+	depends on FC7300_FTU11_PWM_CHANNEL0
+
+config FC7300_FTU11_PWM_CHANNEL1
+	bool "FTU11 PWM Output Channel1"
+	default n
+	---help---
+		Enables channel 1.
+
+config FC7300_FTU11_PWM_CH1_DEADTIMEEN
+	bool "FTU11 PWM CH1 DEADTIME EN"
+	default n
+	depends on FC7300_FTU11_PWM_CHANNEL1
+
+config FC7300_FTU11_PWM_CHANNEL2
+	bool "FTU11 PWM Output Channel2"
+	default n
+	---help---
+		Enables channel 2.
+
+config FC7300_FTU11_PWM_CH2_DEADTIMEEN
+	bool "FTU11 PWM CH2 DEADTIME EN"
+	default n
+	depends on FC7300_FTU11_PWM_CHANNEL2
+
+config FC7300_FTU11_PWM_CHANNEL3
+	bool "FTU11 PWM Output Channel3"
+	default n
+	---help---
+		Enables channel 3.
+
+config FC7300_FTU11_PWM_CH3_DEADTIMEEN
+	bool "FTU11 PWM CH3 DEADTIME EN"
+	default n
+	depends on FC7300_FTU11_PWM_CHANNEL3
+
+config FC7300_FTU11_PWM_CHANNEL4
+	bool "FTU11 PWM Output Channel4"
+	default n
+	---help---
+		Enables channel 4.
+
+config FC7300_FTU11_PWM_CH4_DEADTIMEEN
+	bool "FTU11 PWM CH4 DEADTIME EN"
+	default n
+	depends on FC7300_FTU11_PWM_CHANNEL4
+
+config FC7300_FTU11_PWM_CHANNEL5
+	bool "FTU11 PWM Output Channel5"
+	default n
+	---help---
+		Enables channel 5.
+
+config FC7300_FTU11_PWM_CH5_DEADTIMEEN
+	bool "FTU11 PWM CH5 DEADTIME EN"
+	default n
+	depends on FC7300_FTU11_PWM_CHANNEL5
+
+config FC7300_FTU11_PWM_CHANNEL6
+	bool "FTU11 PWM Output Channel6"
+	default n
+	---help---
+		Enables channel 6.
+
+config FC7300_FTU11_PWM_CH6_DEADTIMEEN
+	bool "FTU11 PWM CH6 DEADTIME EN"
+	default n
+	depends on FC7300_FTU11_PWM_CHANNEL6
+
+config FC7300_FTU11_PWM_CHANNEL7
+	bool "FTU11 PWM Output Channel7"
+	default n
+	---help---
+		Enables channel 7.
+
+config FC7300_FTU11_PWM_CH7_DEADTIMEEN
+	bool "FTU11 PWM CH7 DEADTIME EN"
+	default n
+	depends on FC7300_FTU11_PWM_CHANNEL7
+
+endmenu # FC7300 FTU PWM Configuration
+
+config FC7300_RESETCAUSE_PROCFS
+	bool "FC7300 MCU Reset Cause PROCFS entry"
+	default n
+	depends on !DISABLE_MOUNTPOINT && FS_PROCFS && FS_PROCFS_REGISTER
+
+menu "FC7300 GPIO Interrupt Configuration"
+
+config FC7300_GPIOIRQ
+	bool "GPIO pin interrupts"
+	---help---
+		Enable support for interrupting GPIO pins
+
+if FC7300_GPIOIRQ
+
+config FC7300_GPIO_IRQ_ATTACH_THREAD
+	bool "GPIO IRQ Use irq_attach_thread"
+	default n
+
+config FC7300_GPIO_THREAD_PRIORITY
+	int "GPIO THREAD PRIORITY"
+	default 250
+	range 0 255
+	depends on FC7300_GPIO_IRQ_ATTACH_THREAD
+
+config FC7300_GPIO_THREAD_STACK_SIZE
+	int "GPIO THREAD STACK SIZE"
+	default 2048
+	range 0 4096
+	depends on FC7300_GPIO_IRQ_ATTACH_THREAD
+
+config FC7300_PORTAINTS
+	bool "GPIOA interrupts"
+	---help---
+		Enable support for interrupts from GPIO port A pins
+
+config FC7300_PORTA_ISR_PRIORITY
+	int "PORTA ISR PRIORITY"
+	default 208
+	depends on FC7300_PORTAINTS
+
+config FC7300_PORTBINTS
+	bool "GPIOB interrupts"
+	---help---
+		Enable support for interrupts from GPIO port B pins
+
+config FC7300_PORTB_ISR_PRIORITY
+	int "PORTB ISR PRIORITY"
+	default 208
+	depends on FC7300_PORTBINTS
+
+config FC7300_PORTCINTS
+	bool "GPIOC interrupts"
+	---help---
+		Enable support for interrupts from GPIO port C pins
+
+config FC7300_PORTC_ISR_PRIORITY
+	int "PORTC ISR PRIORITY"
+	default 208
+	depends on FC7300_PORTCINTS
+
+config FC7300_PORTDINTS
+	bool "GPIOD interrupts"
+	---help---
+		Enable support for interrupts from GPIO port D pins
+
+config FC7300_PORTD_ISR_PRIORITY
+	int "PORTD ISR PRIORITY"
+	default 208
+	depends on FC7300_PORTDINTS
+
+config FC7300_PORTEINTS
+	bool "GPIOE interrupts"
+	---help---
+		Enable support for interrupts from GPIO port E pins
+
+config FC7300_PORTE_ISR_PRIORITY
+	int "PORTE ISR PRIORITY"
+	default 208
+	depends on FC7300_PORTEINTS
+
+config FC7300_PORTFINTS
+	bool "GPIOF interrupts"
+	---help---
+		Enable support for interrupts from GPIO port F pins
+
+config FC7300_PORTF_ISR_PRIORITY
+	int "PORTF ISR PRIORITY"
+	default 208
+	depends on FC7300_PORTFINTS
+
+config FC7300_PORTGINTS
+	bool "GPIOG interrupts"
+	---help---
+		Enable support for interrupts from GPIO port G pins
+
+config FC7300_PORTG_ISR_PRIORITY
+	int "PORTG ISR PRIORITY"
+	default 208
+	depends on FC7300_PORTGINTS
+
+config FC7300_PORTHINTS
+	bool "GPIOH interrupts"
+	---help---
+		Enable support for interrupts from GPIO port H pins
+
+config FC7300_PORTH_ISR_PRIORITY
+	int "PORTH ISR PRIORITY"
+	default 208
+	depends on FC7300_PORTHINTS
+
+config FC7300_PORTIINTS
+	bool "GPIOI interrupts"
+	---help---
+		Enable support for interrupts from GPIO port I pins
+
+config FC7300_PORTI_ISR_PRIORITY
+	int "PORTI ISR PRIORITY"
+	default 208
+	depends on FC7300_PORTIINTS
+
+endif
+endmenu # FC7300 GPIO Interrupt Configuration
+
+menu "FC7300 DMA Configuration"
+	depends on FC7300_DMA
+
+config FC7300_DMA_IRQ_ATTACH_THREAD
+	bool "DMA IRQ Use irq_attach_thread"
+	default n
+
+config FC7300_DMA_THREAD_PRIORITY
+	int "DMA THREAD PRIORITY"
+	default 254
+	range 0 255
+	depends on FC7300_DMA_IRQ_ATTACH_THREAD
+
+config FC7300_DMA_THREAD_STACK_SIZE
+	int "DMA THREAD STACK SIZE"
+	default 1500
+	range 0 4096
+	depends on FC7300_DMA_IRQ_ATTACH_THREAD
+
+config FC7300_DMA_SUPPORT_TCM
+	bool "Support ITCM/DTCM memory access"
+	default n
+	---help---
+		Normally, DMA does not support accessing ITCM and DTCM memory. If
+		this option is selected, DMA will use backdoor address to access
+		ITCM and DTCM. Note: Backdoor access of ITCM and DTCM will be much
+		more slower than SRAM.
+
+menu "FC7300 DMA0"
+	depends on FC7300_DMA0
+
+config FC7300_DMA0_ERCA
+	bool "Round Robin Channel Arbitration"
+	default n
+	---help---
+		Normally, a fixed priority arbitration is used for channel
+		selection.  If this option is selected, round robin arbitration is
+		used for channel selection.
+
+config FC7300_DMA0_HOE
+	bool "Halt On Error"
+	default y
+	---help---
+		Any error causes the HALT bit to set. Subsequently, all service
+		requests are ignored until the HALT bit is cleared.
+
+config FC7300_DMA0_CTM
+	bool "Continuous Trig Mode"
+	default n
+	---help---
+		By default, A inner loop channel link made to itself goes through
+		channel arbitration before being activated again.  If this option is
+		selected, a inner loop channel link made to itself does not go
+		through channel arbitration before being activated again. Upon inner
+		loop completion, the channel activates again if that channel has a
+		inner loop channel link enabled and the link channel is itself. This
+		effectively applies the inner loop offsets and restarts the next
+		inner loop.
+
+config FC7300_DMA0_DBGS
+	bool "Stop DMA in Debug Mode"
+	default n
+	---help---
+		When in debug mode, the DMA stalls the start of a new channel. Executing
+		channels are allowed to complete. Channel execution resumes when the
+		system exits debug mode or the DBGS bit is cleared
+
+config FC7300_DMA0_ERROR_ISR_PRIORITY
+	hex "DMA Error ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA error interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA0_CHAN0_ISR_PRIORITY
+	hex "DMA Channel 0 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 0 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA0_CHAN1_ISR_PRIORITY
+	hex "DMA Channel 1 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 1 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA0_CHAN2_ISR_PRIORITY
+	hex "DMA Channel 2 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 2 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA0_CHAN3_ISR_PRIORITY
+	hex "DMA Channel 3 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 3 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA0_CHAN4_ISR_PRIORITY
+	hex "DMA Channel 4 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 4 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA0_CHAN5_ISR_PRIORITY
+	hex "DMA Channel 5 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 5 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA0_CHAN6_ISR_PRIORITY
+	hex "DMA Channel 6 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 6 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA0_CHAN7_ISR_PRIORITY
+	hex "DMA Channel 7 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 7 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA0_CHAN8_ISR_PRIORITY
+	hex "DMA Channel 8 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 8 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA0_CHAN9_ISR_PRIORITY
+	hex "DMA Channel 9 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 9 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA0_CHAN10_ISR_PRIORITY
+	hex "DMA Channel 10 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 10 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA0_CHAN11_ISR_PRIORITY
+	hex "DMA Channel 11 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 11 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA0_CHAN12_ISR_PRIORITY
+	hex "DMA Channel 12 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 12 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA0_CHAN13_ISR_PRIORITY
+	hex "DMA Channel 13 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 13 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA0_CHAN14_ISR_PRIORITY
+	hex "DMA Channel 14 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 14 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA0_CHAN15_ISR_PRIORITY
+	hex "DMA Channel 15 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 15 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA0_CHAN16_ISR_PRIORITY
+	hex "DMA Channel 16 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 16 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA0_CHAN17_ISR_PRIORITY
+	hex "DMA Channel 17 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 17 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA0_CHAN18_ISR_PRIORITY
+	hex "DMA Channel 18 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 18 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA0_CHAN19_ISR_PRIORITY
+	hex "DMA Channel 19 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 19 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA0_CHAN20_ISR_PRIORITY
+	hex "DMA Channel 20 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 20 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA0_CHAN21_ISR_PRIORITY
+	hex "DMA Channel 21 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 21 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA0_CHAN22_ISR_PRIORITY
+	hex "DMA Channel 22 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 22 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA0_CHAN23_ISR_PRIORITY
+	hex "DMA Channel 23 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 23 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA0_CHAN24_ISR_PRIORITY
+	hex "DMA Channel 24 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 24 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA0_CHAN25_ISR_PRIORITY
+	hex "DMA Channel 25 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 25 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA0_CHAN26_ISR_PRIORITY
+	hex "DMA Channel 26 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 26 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA0_CHAN27_ISR_PRIORITY
+	hex "DMA Channel 27 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 27 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA0_CHAN28_ISR_PRIORITY
+	hex "DMA Channel 28 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 28 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA0_CHAN29_ISR_PRIORITY
+	hex "DMA Channel 29 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 29 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA0_CHAN30_ISR_PRIORITY
+	hex "DMA Channel 30 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 30 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA0_CHAN31_ISR_PRIORITY
+	hex "DMA Channel 31 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 31 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+endmenu #FC7300 DMA0
+
+menu "FC7300 DMA1"
+    depends on FC7300_DMA1
+
+config FC7300_DMA1_ERCA
+	bool "Round Robin Channel Arbitration"
+	default n
+	---help---
+		Normally, a fixed priority arbitration is used for channel
+		selection.  If this option is selected, round robin arbitration is
+		used for channel selection.
+
+config FC7300_DMA1_HOE
+	bool "Halt On Error"
+	default y
+	---help---
+		Any error causes the HALT bit to set. Subsequently, all service
+		requests are ignored until the HALT bit is cleared.
+
+config FC7300_DMA1_CTM
+	bool "Continuous Trig Mode"
+	default n
+	---help---
+		By default, A inner loop channel link made to itself goes through
+		channel arbitration before being activated again.  If this option is
+		selected, a inner loop channel link made to itself does not go
+		through channel arbitration before being activated again. Upon inner
+		loop completion, the channel activates again if that channel has a
+		inner loop channel link enabled and the link channel is itself. This
+		effectively applies the inner loop offsets and restarts the next
+		inner loop.
+
+config FC7300_DMA1_DBGS
+	bool "Stop DMA in Debug Mode"
+	default n
+	---help---
+		When in debug mode, the DMA stalls the start of a new channel. Executing
+		channels are allowed to complete. Channel execution resumes when the
+		system exits debug mode or the DBGS bit is cleared
+
+config FC7300_DMA1_ERROR_ISR_PRIORITY
+	hex "DMA Error ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA error interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA1_CHAN0_ISR_PRIORITY
+	hex "DMA Channel 0 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 0 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA1_CHAN1_ISR_PRIORITY
+	hex "DMA Channel 1 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 1 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA1_CHAN2_ISR_PRIORITY
+	hex "DMA Channel 2 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 2 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA1_CHAN3_ISR_PRIORITY
+	hex "DMA Channel 3 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 3 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA1_CHAN4_ISR_PRIORITY
+	hex "DMA Channel 4 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 4 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA1_CHAN5_ISR_PRIORITY
+	hex "DMA Channel 5 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 5 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA1_CHAN6_ISR_PRIORITY
+	hex "DMA Channel 6 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 6 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA1_CHAN7_ISR_PRIORITY
+	hex "DMA Channel 7 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 7 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA1_CHAN8_ISR_PRIORITY
+	hex "DMA Channel 8 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 8 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA1_CHAN9_ISR_PRIORITY
+	hex "DMA Channel 9 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 9 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA1_CHAN10_ISR_PRIORITY
+	hex "DMA Channel 10 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 10 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA1_CHAN11_ISR_PRIORITY
+	hex "DMA Channel 11 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 11 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA1_CHAN12_ISR_PRIORITY
+	hex "DMA Channel 12 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 12 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA1_CHAN13_ISR_PRIORITY
+	hex "DMA Channel 13 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 13 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA1_CHAN14_ISR_PRIORITY
+	hex "DMA Channel 14 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 14 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA1_CHAN15_ISR_PRIORITY
+	hex "DMA Channel 15 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 15 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA1_CHAN16_ISR_PRIORITY
+	hex "DMA Channel 16 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 16 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA1_CHAN17_ISR_PRIORITY
+	hex "DMA Channel 17 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 17 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA1_CHAN18_ISR_PRIORITY
+	hex "DMA Channel 18 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 18 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA1_CHAN19_ISR_PRIORITY
+	hex "DMA Channel 19 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 19 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA1_CHAN20_ISR_PRIORITY
+	hex "DMA Channel 20 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 20 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA1_CHAN21_ISR_PRIORITY
+	hex "DMA Channel 21 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 21 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA1_CHAN22_ISR_PRIORITY
+	hex "DMA Channel 22 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 22 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA1_CHAN23_ISR_PRIORITY
+	hex "DMA Channel 23 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 23 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA1_CHAN24_ISR_PRIORITY
+	hex "DMA Channel 24 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 24 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA1_CHAN25_ISR_PRIORITY
+	hex "DMA Channel 25 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 25 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA1_CHAN26_ISR_PRIORITY
+	hex "DMA Channel 26 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 26 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA1_CHAN27_ISR_PRIORITY
+	hex "DMA Channel 27 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 27 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA1_CHAN28_ISR_PRIORITY
+	hex "DMA Channel 28 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 28 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA1_CHAN29_ISR_PRIORITY
+	hex "DMA Channel 29 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 29 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA1_CHAN30_ISR_PRIORITY
+	hex "DMA Channel 30 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 30 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+config FC7300_DMA1_CHAN31_ISR_PRIORITY
+	hex "DMA Channel 31 ISR PRIORITY"
+	default 0xc0
+	depends on ARCH_IRQPRIO
+	---help---
+		DMA channel 31 interrupt priority, max priority is 0x0, min priority is 0xe0,
+		step is 0x20.
+
+endmenu #FC7300 DMA1
+
+endmenu #FC7300 DMA Global Configuration
+
+choice
+	prompt "FC7300 Serial Console"
+	default NO_FCUART_SERIAL_CONSOLE
+
+config FCUART0_SERIAL_CONSOLE
+	bool "FCUART0"
+	depends on FCUART0_SERIALDRIVER
+	select SERIAL_CONSOLE
+
+config FCUART1_SERIAL_CONSOLE
+	bool "FCUART1"
+	depends on FCUART1_SERIALDRIVER
+	select SERIAL_CONSOLE
+
+config FCUART2_SERIAL_CONSOLE
+	bool "FCUART2"
+	depends on FCUART2_SERIALDRIVER
+	select SERIAL_CONSOLE
+
+config FCUART3_SERIAL_CONSOLE
+	bool "FCUART3"
+	depends on FCUART3_SERIALDRIVER
+	select SERIAL_CONSOLE
+
+config FCUART4_SERIAL_CONSOLE
+	bool "FCUART4"
+	depends on FCUART4_SERIALDRIVER
+	select SERIAL_CONSOLE
+
+config FCUART5_SERIAL_CONSOLE
+	bool "FCUART5"
+	depends on FCUART5_SERIALDRIVER
+	select SERIAL_CONSOLE
+
+config FCUART6_SERIAL_CONSOLE
+	bool "FCUART6"
+	depends on FCUART6_SERIALDRIVER
+	select SERIAL_CONSOLE
+
+config FCUART7_SERIAL_CONSOLE
+	bool "FCUART7"
+	depends on FCUART7_SERIALDRIVER
+	select SERIAL_CONSOLE
+
+config FCUART8_SERIAL_CONSOLE
+	bool "FCUART8"
+	depends on FCUART8_SERIALDRIVER
+	select SERIAL_CONSOLE
+
+config FCUART9_SERIAL_CONSOLE
+	bool "FCUART9"
+	depends on FCUART9_SERIALDRIVER
+	select SERIAL_CONSOLE
+
+config FCUART10_SERIAL_CONSOLE
+	bool "FCUART10"
+	depends on FCUART10_SERIALDRIVER
+	select SERIAL_CONSOLE
+
+config FCUART11_SERIAL_CONSOLE
+	bool "FCUART11"
+	depends on FCUART11_SERIALDRIVER
+	select SERIAL_CONSOLE
+
+config FCUART12_SERIAL_CONSOLE
+	bool "FCUART12"
+	depends on FCUART12_SERIALDRIVER
+	select SERIAL_CONSOLE
+
+config FCUART13_SERIAL_CONSOLE
+	bool "FCUART13"
+	depends on FCUART13_SERIALDRIVER
+	select SERIAL_CONSOLE
+
+config FCUART14_SERIAL_CONSOLE
+	bool "FCUART14"
+	depends on FCUART14_SERIALDRIVER
+	select SERIAL_CONSOLE
+
+config FCUART15_SERIAL_CONSOLE
+	bool "FCUART15"
+	depends on FCUART15_SERIALDRIVER
+	select SERIAL_CONSOLE
+
+config FCUART16_SERIAL_CONSOLE
+	bool "FCUART16"
+	depends on FCUART16_SERIALDRIVER
+	select SERIAL_CONSOLE
+
+config FCUART17_SERIAL_CONSOLE
+	bool "FCUART17"
+	depends on FCUART17_SERIALDRIVER
+	select SERIAL_CONSOLE
+
+config NO_FCUART_SERIAL_CONSOLE
+	bool "No serial console"
+
+endchoice
+
+menu "FC7300 FCSPI Configuration"
+	depends on FC7300_FCSPI
+
+config FC7300_FCSPI_DWORD
+	bool "DWORD up to 64 bit transfer support"
+	default n
+
+config FC7300_FCSPI_BYTESWAP
+	bool "Swap bytes to adapt different data ordering"
+	default n
+
+config FC7300_FCSPI_DMA
+	bool "SPI DMA"
+	depends on FC7300_DMA
+	default n
+	---help---
+		Use DMA to improve SPI transfer performance.
+
+config FC7300_FCSPI0_DMA
+	bool "FCSPI0 DMA"
+	default n
+	depends on FC7300_FCSPI0 && FC7300_FCSPI_DMA
+	---help---
+		Use DMA to improve FCSPI0 transfer performance.
+
+config FC7300_FCSPI0_CONTEN
+	bool "SPI0 CONTINUOUS MODE"
+	depends on FC7300_FCSPI0
+	default n
+	---help---
+		Keep PCS select enable until transfer finish.
+
+config FC7300_FCSPI0_PIN_SWAP
+	bool "FCSPI0 MOSI<->MISO SWAP"
+	default n
+	depends on FC7300_FCSPI0
+	---help---
+		Use MOSI as MISO and use MISO as MOSI.
+
+config FC7300_FCSPI1_DMA
+	bool "FCSPI1 DMA"
+	default n
+	depends on FC7300_FCSPI1 && FC7300_FCSPI_DMA
+	---help---
+		Use DMA to improve FCSPI1 transfer performance.
+
+config FC7300_FCSPI1_CONTEN
+	bool "SPI1 CONTINUOUS MODE"
+	depends on FC7300_FCSPI1
+	default n
+	---help---
+		Keep PCS select enable until transfer finish.
+
+config FC7300_FCSPI1_PIN_SWAP
+	bool "FCSPI1 MOSI<->MISO SWAP"
+	default n
+	depends on FC7300_FCSPI1
+	---help---
+		Use MOSI as MISO and use MISO as MOSI.
+
+config FC7300_FCSPI2_DMA
+	bool "FCSPI2 DMA"
+	default n
+	depends on FC7300_FCSPI2 && FC7300_FCSPI_DMA
+	---help---
+		Use DMA to improve FCSPI2 transfer performance.
+
+config FC7300_FCSPI2_CONTEN
+	bool "SPI2 CONTINUOUS MODE"
+	depends on FC7300_FCSPI2
+	default n
+	---help---
+		Keep PCS select enable until transfer finish.
+
+config FC7300_FCSPI2_PIN_SWAP
+	bool "FCSPI2 MOSI<->MISO SWAP"
+	default n
+	depends on FC7300_FCSPI2
+	---help---
+		Use MOSI as MISO and use MISO as MOSI.
+
+config FC7300_FCSPI3_DMA
+	bool "FCSPI3 DMA"
+	default n
+	depends on FC7300_FCSPI3 && FC7300_FCSPI_DMA
+	---help---
+		Use DMA to improve FCSPI3 transfer performance.
+
+config FC7300_FCSPI3_CONTEN
+	bool "SPI3 CONTINUOUS MODE"
+	depends on FC7300_FCSPI3
+	default n
+	---help---
+		Keep PCS select enable until transfer finish.
+
+config FC7300_FCSPI3_PIN_SWAP
+	bool "FCSPI3 MOSI<->MISO SWAP"
+	default n
+	depends on FC7300_FCSPI3
+	---help---
+		Use MOSI as MISO and use MISO as MOSI.
+
+config FC7300_FCSPI4_DMA
+	bool "FCSPI4 DMA"
+	default n
+	depends on FC7300_FCSPI4 && FC7300_FCSPI_DMA
+	---help---
+		Use DMA to improve FCSPI4 transfer performance.
+
+config FC7300_FCSPI4_CONTEN
+	bool "SPI4 CONTINUOUS MODE"
+	depends on FC7300_FCSPI4
+	default n
+	---help---
+		Keep PCS select enable until transfer finish.
+
+config FC7300_FCSPI4_PIN_SWAP
+	bool "FCSPI4 MOSI<->MISO SWAP"
+	default n
+	depends on FC7300_FCSPI4
+	---help---
+		Use MOSI as MISO and use MISO as MOSI.
+
+config FC7300_FCSPI5_DMA
+	bool "FCSPI5 DMA"
+	default n
+	depends on FC7300_FCSPI5 && FC7300_FCSPI_DMA
+	---help---
+		Use DMA to improve FCSPI5 transfer performance.
+
+config FC7300_FCSPI5_CONTEN
+	bool "SPI5 CONTINUOUS MODE"
+	depends on FC7300_FCSPI5
+	default n
+	---help---
+		Keep PCS select enable until transfer finish.
+
+config FC7300_FCSPI5_PIN_SWAP
+	bool "FCSPI5 MOSI<->MISO SWAP"
+	default n
+	depends on FC7300_FCSPI5
+	---help---
+		Use MOSI as MISO and use MISO as MOSI.
+
+config FC7300_FCSPI6_DMA
+	bool "FCSPI6 DMA"
+	default n
+	depends on FC7300_FCSPI6 && FC7300_FCSPI_DMA
+	---help---
+		Use DMA to improve FCSPI6 transfer performance.
+
+config FC7300_FCSPI6_CONTEN
+	bool "SPI6 CONTINUOUS MODE"
+	depends on FC7300_FCSPI6
+	default n
+	---help---
+		Keep PCS select enable until transfer finish.
+
+config FC7300_FCSPI6_PIN_SWAP
+	bool "FCSPI6 MOSI<->MISO SWAP"
+	default n
+	depends on FC7300_FCSPI6
+	---help---
+		Use MOSI as MISO and use MISO as MOSI.
+
+config FC7300_FCSPI7_DMA
+	bool "FCSPI7 DMA"
+	default n
+	depends on FC7300_FCSPI7 && FC7300_FCSPI_DMA
+	---help---
+		Use DMA to improve FCSPI7 transfer performance.
+
+config FC7300_FCSPI7_CONTEN
+	bool "SPI7 CONTINUOUS MODE"
+	depends on FC7300_FCSPI7
+	default n
+	---help---
+		Keep PCS select enable until transfer finish.
+
+config FC7300_FCSPI7_PIN_SWAP
+	bool "FCSPI7 MOSI<->MISO SWAP"
+	default n
+	depends on FC7300_FCSPI7
+	---help---
+		Use MOSI as MISO and use MISO as MOSI.
+
+config FC7300_FCSPI_DMATHRESHOLD
+	int "SPI DMA threshold"
+	default 4
+	depends on FC7300_FCSPI_DMA
+	---help---
+		When SPI DMA is enabled, small DMA transfers will still be performed
+		by polling logic.  But we need a threshold value to determine what
+		is small.
+
+config FC7300_FCSPI0_HWPCS
+	bool "Use FCSPI0 native hardware peripheral chip selects instead of GPIOs"
+	default n
+	depends on FC7300_FCSPI0
+
+config FC7300_FCSPI1_HWPCS
+	bool "Use FCSPI1 native hardware peripheral chip selects instead of GPIOs"
+	default n
+	depends on FC7300_FCSPI1
+
+config FC7300_FCSPI2_HWPCS
+	bool "Use FCSPI2 native hardware peripheral chip selects instead of GPIOs"
+	default n
+	depends on FC7300_FCSPI2
+
+config FC7300_FCSPI3_HWPCS
+	bool "Use FCSPI3 native hardware peripheral chip selects instead of GPIOs"
+	default n
+	depends on FC7300_FCSPI3
+
+config FC7300_FCSPI4_HWPCS
+	bool "Use FCSPI4 native hardware peripheral chip selects instead of GPIOs"
+	default n
+	depends on FC7300_FCSPI4
+
+config FC7300_FCSPI5_HWPCS
+	bool "Use FCSPI5 native hardware peripheral chip selects instead of GPIOs"
+	default n
+	depends on FC7300_FCSPI5
+
+config FC7300_FCSPI6_HWPCS
+	bool "Use FCSPI6 native hardware peripheral chip selects instead of GPIOs"
+	default n
+	depends on FC7300_FCSPI6
+
+config FC7300_FCSPI7_HWPCS
+	bool "Use FCSPI7 native hardware peripheral chip selects instead of GPIOs"
+	default n
+	depends on FC7300_FCSPI7
+
+config FC7300_FCSPI0_CSDELAY
+	int "SPI0 CStoCS delay time"
+	default 0
+	depends on FC7300_FCSPI0
+
+config FC7300_FCSPI1_CSDELAY
+	int "SPI1 CStoCS delay time"
+	default 0
+	depends on FC7300_FCSPI1
+
+config FC7300_FCSPI2_CSDELAY
+	int "SPI2 CStoCS delay time"
+	default 0
+	depends on FC7300_FCSPI2
+
+config FC7300_FCSPI3_CSDELAY
+	int "SPI3 CStoCS delay time"
+	default 0
+	depends on FC7300_FCSPI3
+
+config FC7300_FCSPI4_CSDELAY
+	int "SPI4 CStoCS delay time"
+	default 0
+	depends on FC7300_FCSPI4
+
+config FC7300_FCSPI5_CSDELAY
+	int "SPI5 CStoCS delay time"
+	default 0
+	depends on FC7300_FCSPI5
+
+config FC7300_FCSPI6_CSDELAY
+	int "SPI6 CStoCS delay time"
+	default 0
+	depends on FC7300_FCSPI6
+
+config FC7300_FCSPI7_CSDELAY
+	int "SPI7 CStoCS delay time"
+	default 0
+	depends on FC7300_FCSPI7
+
+endmenu # FC7300 FCSPI Configuration
+
+menu "FC7300 RTC Configuration"
+	depends on FC7300_RTC
+
+config FC7300_RTC_IRQ_ATTACH_THREAD
+	bool "RTC IRQ Use irq_attach_thread"
+	default n
+
+config FC7300_RTC_ISR_PRIORITY
+	int "ISR PRIORITY"
+	default 192
+
+endmenu # RTC Configuration
+
+menu "FC7300 FCIIC Configuration"
+	depends on FC7300_FCIIC
+
+config FC7300_FCIIC_TIMEOSEC
+	int "Timeout seconds"
+	default 0
+	depends on FC7300_FCIIC
+
+config FC7300_FCIIC_TIMEOMS
+	int "Timeout Milliseconds"
+	default 500
+	depends on FC7300_FCIIC
+
+config FC7300_FCIIC_IRQ_ATTACH_THREAD
+	bool "FCIIC IRQ Use irq_attach_thread"
+	default n
+
+config FC7300_FCIIC_THREAD_PRIORITY
+	int "FCIIC THREAD PRIORITY"
+	default 250
+	range 0 255
+	depends on FC7300_FCIIC_IRQ_ATTACH_THREAD
+
+config FC7300_FCIIC_THREAD_STACK_SIZE
+	int "FCIIC THREAD STACK SIZE"
+	default 1500
+	range 0 4096
+	depends on FC7300_FCIIC_IRQ_ATTACH_THREAD
+
+menu "FCIIC0 Configuration"
+	depends on FC7300_FCIIC0
+
+config FC7300_FCIIC0_ISR_PRIORITY
+	int "ISR PRIORITY"
+	default 192
+
+config FC7300_FCIIC0_FILTSCL
+	int "Digital glitch filters for SCL input in clock cycles"
+	default 0
+
+config FC7300_FCIIC0_FILTSDA
+	int "Digital glitch filters for SDA input in clock cycles"
+	default 0
+
+menu "Master Configuration"
+
+config FC7300_FCIIC0_BUSIDLE
+	int "Bus idle timeout period in clock cycles"
+	default 0
+
+config FC7300_FCIIC0_PINLOW
+	int "Pin low timeout value in clock cycles for SCL"
+	default 0
+
+endmenu # Master Configuration
+endmenu # FCIIC0 Configuration
+
+menu "FCIIC1 Configuration"
+	depends on FC7300_FCIIC1
+
+config FC7300_FCIIC1_ISR_PRIORITY
+	int "ISR PRIORITY"
+	default 192
+
+config FC7300_FCIIC1_FILTSCL
+	int "Digital glitch filters for SCL input in clock cycles"
+	default 0
+
+config FC7300_FCIIC1_FILTSDA
+	int "Digital glitch filters for SDA input in clock cycles"
+	default 0
+
+menu "Master Configuration"
+
+config FC7300_FCIIC1_BUSIDLE
+	int "Bus idle timeout period in clock cycles"
+	default 0
+
+config FC7300_FCIIC1_PINLOW
+	int "Pin low timeout value in clock cycles for SCL"
+	default 0
+
+endmenu # Master Configuration
+endmenu # FCIIC1 Configuration
+endmenu # FC7300 FCIIC Configuration
+
+menu "FC7300 LIN Configuration"
+	depends on FC7300_LIN
+
+config FC7300_LIN_ISR_THREAD
+	bool "LIN ISR THREAD"
+	default n
+	depends on FC7300_LIN
+	---help---
+		Select the lin interrupt function to execute in thread context.
+
+config FC7300_LIN_ISR_THREAD_PRIORITY
+	int "LIN ISR THREAD PRIORITY"
+	default 250
+	range 0 255
+	depends on FC7300_LIN_ISR_THREAD
+	---help---
+		The priority of isr thread.
+
+config FC7300_LIN_ISR_THREAD_STACKSIZE
+	int "LIN ISR THREAD STACK SIZE"
+	default 1024
+	range 0 4096
+	depends on FC7300_LIN_ISR_THREAD
+	---help---
+		The stack size of isr thread.
+
+config FC7300_LIN_IDLE_TO_SLEEP
+	bool "LIN Idle To Sleep Mode"
+	default y
+	depends on FC7300_LIN
+	---help---
+		The driver switches to sleep mode after the LIN bus is idle for a period of time.
+
+config FC7300_LIN_IDLE_SLEEP_TIME
+	int "LIN Idle To Sleep Time"
+	default 4
+	range 4 10
+	depends on FC7300_LIN_IDLE_TO_SLEEP
+	---help---
+		The interval time in seconds from bus idle to sleep.
+
+config FC7300_LIN_BREAK_SOFTWARE
+	bool "LIN Send Break By Software"
+	default n
+	depends on FC7300_LIN
+	---help---
+		Send LIN break field and delimiter by software.
+
+config FC7300_LIN_REPORT_STATE_EVENT
+	bool "LIN Report State Change Event"
+	default n
+	depends on FC7300_LIN
+	---help---
+		When the driver state changes, report the event to the upper layer.
+
+config FC7300_LIN_STB_PIN_CFG
+	bool "LIN STANDBY PIN CONFIG"
+	default n
+	depends on FC7300_LIN
+	---help---
+		Configure the standby pin controlled by the driver, by default it is configured by application layer.
+
+config FC7300_LIN_INTERRUPT_EXECUT_TIMEMAX
+	bool "LIN INTERRUPT EXECUT TIMEMAX"
+	default n
+	depends on FC7300_LIN
+	---help---
+		Configure the switch that takes the longest time for statistical interruption.
+
+menu "FC7300 LIN0 Configuration"
+	depends on FC7300_LIN0
+
+config FC7300_LIN0_MASTER
+	bool "LIN MASTER SELECT"
+	default n
+	depends on FC7300_LIN0
+	---help---
+		Select LIN0 as the master node, otherwise LIN0 is the slave node.
+
+config FC7300_LIN0_DEFAULT_BAUDRATE
+	int "LIN DEFAULT BAUDRATE"
+	default 19200
+	depends on FC7300_LIN0
+	---help---
+		Select the default baudrate of LIN0.
+
+config FC7300_LIN0_ISR_PRIORITY
+	int "LIN ISR PRIORITY"
+	default 192
+	range 0 255
+	depends on FC7300_LIN0
+	---help---
+		Select the interrupt priority of LIN0.
+
+endmenu # FC7300 LIN0 Configuration
+
+menu "FC7300 LIN1 Configuration"
+	depends on FC7300_LIN1
+
+config FC7300_LIN1_MASTER
+	bool "LIN MASTER SELECT"
+	default n
+	depends on FC7300_LIN1
+	---help---
+		Select LIN1 as the master node, otherwise LIN1 is the slave node.
+
+config FC7300_LIN1_DEFAULT_BAUDRATE
+	int "LIN DEFAULT BAUDRATE"
+	default 19200
+	depends on FC7300_LIN1
+	---help---
+		Select the default baudrate of LIN1.
+
+config FC7300_LIN1_ISR_PRIORITY
+	int "LIN ISR PRIORITY"
+	default 192
+	range 0 255
+	depends on FC7300_LIN1
+	---help---
+		Select the interrupt priority of LIN1.
+
+endmenu # FC7300 LIN1 Configuration
+
+menu "FC7300 LIN2 Configuration"
+	depends on FC7300_LIN2
+
+config FC7300_LIN2_MASTER
+	bool "LIN MASTER SELECT"
+	default n
+	depends on FC7300_LIN2
+	---help---
+		Select LIN2 as the master node, otherwise LIN2 is the slave node.
+
+config FC7300_LIN2_DEFAULT_BAUDRATE
+	int "LIN DEFAULT BAUDRATE"
+	default 19200
+	depends on FC7300_LIN2
+	---help---
+		Select the default baudrate of LIN2.
+
+config FC7300_LIN2_ISR_PRIORITY
+	int "LIN ISR PRIORITY"
+	default 192
+	range 0 255
+	depends on FC7300_LIN2
+	---help---
+		Select the interrupt priority of LIN2.
+
+endmenu # FC7300 LIN2 Configuration
+
+menu "FC7300 LIN3 Configuration"
+	depends on FC7300_LIN3
+
+config FC7300_LIN3_MASTER
+	bool "LIN MASTER SELECT"
+	default n
+	depends on FC7300_LIN3
+	---help---
+		Select LIN3 as the master node, otherwise LIN3 is the slave node.
+
+config FC7300_LIN3_DEFAULT_BAUDRATE
+	int "LIN DEFAULT BAUDRATE"
+	default 19200
+	depends on FC7300_LIN3
+	---help---
+		Select the default baudrate of LIN3.
+
+config FC7300_LIN3_ISR_PRIORITY
+	int "LIN ISR PRIORITY"
+	default 192
+	range 0 255
+	depends on FC7300_LIN3
+	---help---
+		Select the interrupt priority of LIN3.
+
+endmenu # FC7300 LIN3 Configuration
+
+menu "FC7300 LIN4 Configuration"
+	depends on FC7300_LIN4
+
+config FC7300_LIN4_MASTER
+	bool "LIN MASTER SELECT"
+	default n
+	depends on FC7300_LIN4
+	---help---
+		Select LIN4 as the master node, otherwise LIN4 is the slave node.
+
+config FC7300_LIN4_DEFAULT_BAUDRATE
+	int "LIN DEFAULT BAUDRATE"
+	default 19200
+	depends on FC7300_LIN4
+	---help---
+		Select the default baudrate of LIN4.
+
+config FC7300_LIN4_ISR_PRIORITY
+	int "LIN ISR PRIORITY"
+	default 192
+	range 0 255
+	depends on FC7300_LIN4
+	---help---
+		Select the interrupt priority of LIN4.
+
+endmenu # FC7300 LIN4 Configuration
+
+menu "FC7300 LIN5 Configuration"
+	depends on FC7300_LIN5
+
+config FC7300_LIN5_MASTER
+	bool "LIN MASTER SELECT"
+	default n
+	depends on FC7300_LIN5
+	---help---
+		Select LIN5 as the master node, otherwise LIN5 is the slave node.
+
+config FC7300_LIN5_DEFAULT_BAUDRATE
+	int "LIN DEFAULT BAUDRATE"
+	default 19200
+	depends on FC7300_LIN5
+	---help---
+		Select the default baudrate of LIN5.
+
+config FC7300_LIN5_ISR_PRIORITY
+	int "LIN ISR PRIORITY"
+	default 192
+	range 0 255
+	depends on FC7300_LIN5
+	---help---
+		Select the interrupt priority of LIN5.
+
+endmenu # FC7300 LIN5 Configuration
+
+menu "FC7300 LIN6 Configuration"
+	depends on FC7300_LIN6
+
+config FC7300_LIN6_MASTER
+	bool "LIN MASTER SELECT"
+	default n
+	depends on FC7300_LIN6
+	---help---
+		Select LIN6 as the master node, otherwise LIN6 is the slave node.
+
+config FC7300_LIN6_DEFAULT_BAUDRATE
+	int "LIN DEFAULT BAUDRATE"
+	default 19200
+	depends on FC7300_LIN6
+	---help---
+		Select the default baudrate of LIN6.
+
+config FC7300_LIN6_ISR_PRIORITY
+	int "LIN ISR PRIORITY"
+	default 192
+	range 0 255
+	depends on FC7300_LIN6
+	---help---
+		Select the interrupt priority of LIN6.
+
+endmenu # FC7300 LIN6 Configuration
+
+menu "FC7300 LIN7 Configuration"
+	depends on FC7300_LIN7
+
+config FC7300_LIN7_MASTER
+	bool "LIN MASTER SELECT"
+	default n
+	depends on FC7300_LIN7
+	---help---
+		Select LIN7 as the master node, otherwise LIN7 is the slave node.
+
+config FC7300_LIN7_DEFAULT_BAUDRATE
+	int "LIN DEFAULT BAUDRATE"
+	default 19200
+	depends on FC7300_LIN7
+	---help---
+		Select the default baudrate of LIN7.
+
+config FC7300_LIN7_ISR_PRIORITY
+	int "LIN ISR PRIORITY"
+	default 192
+	range 0 255
+	depends on FC7300_LIN7
+	---help---
+		Select the interrupt priority of LIN7.
+
+endmenu # FC7300 LIN7 Configuration
+
+menu "FC7300 LIN8 Configuration"
+	depends on FC7300_LIN8
+
+config FC7300_LIN8_MASTER
+	bool "LIN MASTER SELECT"
+	default n
+	depends on FC7300_LIN8
+	---help---
+		Select LIN8 as the master node, otherwise LIN8 is the slave node.
+
+config FC7300_LIN8_DEFAULT_BAUDRATE
+	int "LIN DEFAULT BAUDRATE"
+	default 19200
+	depends on FC7300_LIN8
+	---help---
+		Select the default baudrate of LIN8.
+
+config FC7300_LIN8_ISR_PRIORITY
+	int "LIN ISR PRIORITY"
+	default 192
+	range 0 255
+	depends on FC7300_LIN8
+	---help---
+		Select the interrupt priority of LIN8.
+
+endmenu # FC7300 LIN8 Configuration
+
+menu "FC7300 LIN9 Configuration"
+	depends on FC7300_LIN9
+
+config FC7300_LIN9_MASTER
+	bool "LIN MASTER SELECT"
+	default n
+	depends on FC7300_LIN9
+	---help---
+		Select LIN9 as the master node, otherwise LIN9 is the slave node.
+
+config FC7300_LIN9_DEFAULT_BAUDRATE
+	int "LIN DEFAULT BAUDRATE"
+	default 19200
+	depends on FC7300_LIN9
+	---help---
+		Select the default baudrate of LIN9.
+
+config FC7300_LIN9_ISR_PRIORITY
+	int "LIN ISR PRIORITY"
+	default 192
+	range 0 255
+	depends on FC7300_LIN9
+	---help---
+		Select the interrupt priority of LIN9.
+
+endmenu # FC7300 LIN9 Configuration
+
+menu "FC7300 LIN10 Configuration"
+	depends on FC7300_LIN10
+
+config FC7300_LIN10_MASTER
+	bool "LIN MASTER SELECT"
+	default n
+	depends on FC7300_LIN10
+	---help---
+		Select LIN10 as the master node, otherwise LIN10 is the slave node.
+
+config FC7300_LIN10_DEFAULT_BAUDRATE
+	int "LIN DEFAULT BAUDRATE"
+	default 19200
+	depends on FC7300_LIN10
+	---help---
+		Select the default baudrate of LIN10.
+
+config FC7300_LIN10_ISR_PRIORITY
+	int "LIN ISR PRIORITY"
+	default 192
+	range 0 255
+	depends on FC7300_LIN10
+	---help---
+		Select the interrupt priority of LIN10.
+
+endmenu # FC7300 LIN10 Configuration
+
+menu "FC7300 LIN11 Configuration"
+	depends on FC7300_LIN11
+
+config FC7300_LIN11_MASTER
+	bool "LIN MASTER SELECT"
+	default n
+	depends on FC7300_LIN11
+	---help---
+		Select LIN11 as the master node, otherwise LIN11 is the slave node.
+
+config FC7300_LIN11_DEFAULT_BAUDRATE
+	int "LIN DEFAULT BAUDRATE"
+	default 19200
+	depends on FC7300_LIN11
+	---help---
+		Select the default baudrate of LIN11.
+
+config FC7300_LIN11_ISR_PRIORITY
+	int "LIN ISR PRIORITY"
+	default 192
+	range 0 255
+	depends on FC7300_LIN11
+	---help---
+		Select the interrupt priority of LIN11.
+
+endmenu # FC7300 LIN11 Configuration
+
+menu "FC7300 LIN12 Configuration"
+	depends on FC7300_LIN12
+
+config FC7300_LIN12_MASTER
+	bool "LIN MASTER SELECT"
+	default n
+	depends on FC7300_LIN12
+	---help---
+		Select LIN12 as the master node, otherwise LIN12 is the slave node.
+
+config FC7300_LIN12_DEFAULT_BAUDRATE
+	int "LIN DEFAULT BAUDRATE"
+	default 19200
+	depends on FC7300_LIN12
+	---help---
+		Select the default baudrate of LIN12.
+
+config FC7300_LIN12_ISR_PRIORITY
+	int "LIN ISR PRIORITY"
+	default 192
+	range 0 255
+	depends on FC7300_LIN12
+	---help---
+		Select the interrupt priority of LIN12.
+
+endmenu # FC7300 LIN12 Configuration
+
+menu "FC7300 LIN13 Configuration"
+	depends on FC7300_LIN13
+
+config FC7300_LIN13_MASTER
+	bool "LIN MASTER SELECT"
+	default n
+	depends on FC7300_LIN13
+	---help---
+		Select LIN13 as the master node, otherwise LIN13 is the slave node.
+
+config FC7300_LIN13_DEFAULT_BAUDRATE
+	int "LIN DEFAULT BAUDRATE"
+	default 19200
+	depends on FC7300_LIN13
+	---help---
+		Select the default baudrate of LIN13.
+
+config FC7300_LIN13_ISR_PRIORITY
+	int "LIN ISR PRIORITY"
+	default 192
+	range 0 255
+	depends on FC7300_LIN13
+	---help---
+		Select the interrupt priority of LIN13.
+
+endmenu # FC7300 LIN13 Configuration
+
+menu "FC7300 LIN14 Configuration"
+	depends on FC7300_LIN14
+
+config FC7300_LIN14_MASTER
+	bool "LIN MASTER SELECT"
+	default n
+	depends on FC7300_LIN14
+	---help---
+		Select LIN14 as the master node, otherwise LIN14 is the slave node.
+
+config FC7300_LIN14_DEFAULT_BAUDRATE
+	int "LIN DEFAULT BAUDRATE"
+	default 19200
+	depends on FC7300_LIN14
+	---help---
+		Select the default baudrate of LIN14.
+
+config FC7300_LIN14_ISR_PRIORITY
+	int "LIN ISR PRIORITY"
+	default 192
+	range 0 255
+	depends on FC7300_LIN14
+	---help---
+		Select the interrupt priority of LIN14.
+
+endmenu # FC7300 LIN14 Configuration
+
+menu "FC7300 LIN15 Configuration"
+	depends on FC7300_LIN15
+
+config FC7300_LIN15_MASTER
+	bool "LIN MASTER SELECT"
+	default n
+	depends on FC7300_LIN15
+	---help---
+		Select LIN15 as the master node, otherwise LIN15 is the slave node.
+
+config FC7300_LIN15_DEFAULT_BAUDRATE
+	int "LIN DEFAULT BAUDRATE"
+	default 19200
+	depends on FC7300_LIN15
+	---help---
+		Select the default baudrate of LIN15.
+
+config FC7300_LIN15_ISR_PRIORITY
+	int "LIN ISR PRIORITY"
+	default 192
+	range 0 255
+	depends on FC7300_LIN15
+	---help---
+		Select the interrupt priority of LIN15.
+
+endmenu # FC7300 LIN15 Configuration
+
+menu "FC7300 LIN16 Configuration"
+	depends on FC7300_LIN16
+
+config FC7300_LIN16_MASTER
+	bool "LIN MASTER SELECT"
+	default n
+	depends on FC7300_LIN16
+	---help---
+		Select LIN16 as the master node, otherwise LIN16 is the slave node.
+
+config FC7300_LIN16_DEFAULT_BAUDRATE
+	int "LIN DEFAULT BAUDRATE"
+	default 19200
+	depends on FC7300_LIN16
+	---help---
+		Select the default baudrate of LIN16.
+
+config FC7300_LIN16_ISR_PRIORITY
+	int "LIN ISR PRIORITY"
+	default 192
+	range 0 255
+	depends on FC7300_LIN16
+	---help---
+		Select the interrupt priority of LIN16.
+
+endmenu # FC7300 LIN16 Configuration
+
+menu "FC7300 LIN17 Configuration"
+	depends on FC7300_LIN17
+
+config FC7300_LIN17_MASTER
+	bool "LIN MASTER SELECT"
+	default n
+	depends on FC7300_LIN17
+	---help---
+		Select LIN17 as the master node, otherwise LIN17 is the slave node.
+
+config FC7300_LIN17_DEFAULT_BAUDRATE
+	int "LIN DEFAULT BAUDRATE"
+	default 19200
+	depends on FC7300_LIN17
+	---help---
+		Select the default baudrate of LIN17.
+
+config FC7300_LIN17_ISR_PRIORITY
+	int "LIN ISR PRIORITY"
+	default 192
+	range 0 255
+	depends on FC7300_LIN17
+	---help---
+		Select the interrupt priority of LIN17.
+
+endmenu # FC7300 LIN17 Configuration
+
+endmenu # FC7300 LIN Configuration
+
+menu "FC7300 PROGMEM Configuration"
+	depends on FC7300_PROGMEM
+config PROGMEM_SIZE
+	int "Progmem size (KB)"
+	default 256
+
+endmenu # FC7300 PROGMEM Configuration
+
+menu "FC7300 Flash Configuration"
+	depends on FC7300_NORFLASH_MTD
+config FC7300_NOR_DFLASH
+	bool "dflash"
+	default n
+
+config FC7300_MTD_CFG_FOR_NVM
+	bool "MTD Config for NVM"
+	default n
+	depends on FC7300_NOR_DFLASH
+
+config FC7300_MTD_CFG_PATH_FOR_NVM
+	string "MTD Config Path for NVM"
+	default "/dev/nvs"
+	depends on FC7300_MTD_CFG_FOR_NVM
+
+config FC7300_DFLASH_INJECT_ECC
+	bool "Inject Dflash ECC"
+	default n
+	depends on FC7300_NOR_DFLASH
+
+config FC7300_PFLASH_PREFETCH
+	bool "Pflash Prefetch"
+	default n
+
+config FC7300_NOR_PFLASH
+	bool "pflash"
+	default n
+
+config FC7300_NOR_NVR
+	bool "nvr"
+	default n
+
+endmenu # FC7300 Flash Configuration
+
+menu "FC7300 Mailbox Configuration"
+	depends on FC7300_MB
+config FC7300_MB_CH0
+	bool "FC7300 Maiblox Channel 0"
+	default n
+config FC7300_MB_CH0_REQ_INT
+	bool "FC7300 Mailbox Channel 0 Request Event Interrupt"
+	default y
+	depends on FC7300_MB_CH0
+config FC7300_MB_CH0_DONE_INT
+	bool "FC7300 Mailbox Channel 0 Done Event Interrupt"
+	default y
+	depends on FC7300_MB_CH0
+config FC7300_MB_CH1
+	bool "FC7300 Maiblox Channel 1"
+	default n
+config FC7300_MB_CH1_REQ_INT
+	bool "FC7300 Mailbox Channel 1 Request Event Interrupt"
+	default y
+	depends on FC7300_MB_CH1
+config FC7300_MB_CH1_DONE_INT
+	bool "FC7300 Mailbox Channel 1 Done Event Interrupt"
+	default y
+	depends on FC7300_MB_CH1
+config FC7300_MB_CH2
+	bool "FC7300 Maiblox Channel 2"
+	default n
+config FC7300_MB_CH2_REQ_INT
+	bool "FC7300 Mailbox Channel 2 Request Event Interrupt"
+	default y
+	depends on FC7300_MB_CH2
+config FC7300_MB_CH2_DONE_INT
+	bool "FC7300 Mailbox Channel 2 Done Event Interrupt"
+	default y
+	depends on FC7300_MB_CH2
+config FC7300_MB_CH3
+	bool "FC7300 Maiblox Channel 3"
+	default n
+config FC7300_MB_CH3_REQ_INT
+	bool "FC7300 Mailbox Channel 3 Request Event Interrupt"
+	default y
+	depends on FC7300_MB_CH3
+config FC7300_MB_CH3_DONE_INT
+	bool "FC7300 Mailbox Channel 3 Done Event Interrupt"
+	default y
+	depends on FC7300_MB_CH3
+config FC7300_MB_CH4
+	bool "FC7300 Maiblox Channel 4"
+	default n
+config FC7300_MB_CH4_REQ_INT
+	bool "FC7300 Mailbox Channel 4 Request Event Interrupt"
+	default y
+	depends on FC7300_MB_CH4
+config FC7300_MB_CH4_DONE_INT
+	bool "FC7300 Mailbox Channel 4 Done Event Interrupt"
+	default y
+	depends on FC7300_MB_CH4
+config FC7300_MB_CH5
+	bool "FC7300 Maiblox Channel 5"
+	default n
+config FC7300_MB_CH5_REQ_INT
+	bool "FC7300 Mailbox Channel 5 Request Event Interrupt"
+	default y
+	depends on FC7300_MB_CH5
+config FC7300_MB_CH5_DONE_INT
+	bool "FC7300 Mailbox Channel 5 Done Event Interrupt"
+	default y
+	depends on FC7300_MB_CH5
+config FC7300_MB_CH6
+	bool "FC7300 Maiblox Channel 6"
+	default n
+config FC7300_MB_CH6_REQ_INT
+	bool "FC7300 Mailbox Channel 6 Request Event Interrupt"
+	default y
+	depends on FC7300_MB_CH6
+config FC7300_MB_CH6_DONE_INT
+	bool "FC7300 Mailbox Channel 6 Done Event Interrupt"
+	default y
+	depends on FC7300_MB_CH6
+config FC7300_MB_CH7
+	bool "FC7300 Maiblox Channel 7"
+	default n
+config FC7300_MB_CH7_REQ_INT
+	bool "FC7300 Mailbox Channel 7 Request Event Interrupt"
+	default y
+	depends on FC7300_MB_CH7
+config FC7300_MB_CH7_DONE_INT
+	bool "FC7300 Mailbox Channel 7 Done Event Interrupt"
+	default y
+	depends on FC7300_MB_CH7
+config FC7300_MB_CH8
+	bool "FC7300 Maiblox Channel 8"
+	default n
+config FC7300_MB_CH8_REQ_INT
+	bool "FC7300 Mailbox Channel 8 Request Event Interrupt"
+	default y
+	depends on FC7300_MB_CH8
+config FC7300_MB_CH8_DONE_INT
+	bool "FC7300 Mailbox Channel 8 Done Event Interrupt"
+	default y
+	depends on FC7300_MB_CH8
+config FC7300_MB_CH9
+	bool "FC7300 Maiblox Channel 9"
+	default n
+config FC7300_MB_CH9_REQ_INT
+	bool "FC7300 Mailbox Channel 9 Request Event Interrupt"
+	default y
+	depends on FC7300_MB_CH9
+config FC7300_MB_CH9_DONE_INT
+	bool "FC7300 Mailbox Channel 9 Done Event Interrupt"
+	default y
+	depends on FC7300_MB_CH9
+config FC7300_MB_CH10
+	bool "FC7300 Maiblox Channel 10"
+	default n
+config FC7300_MB_CH10_REQ_INT
+	bool "FC7300 Mailbox Channel 10 Request Event Interrupt"
+	default y
+	depends on FC7300_MB_CH10
+config FC7300_MB_CH10_DONE_INT
+	bool "FC7300 Mailbox Channel 10 Done Event Interrupt"
+	default y
+	depends on FC7300_MB_CH10
+config FC7300_MB_CH11
+	bool "FC7300 Maiblox Channel 11"
+	default n
+config FC7300_MB_CH11_REQ_INT
+	bool "FC7300 Mailbox Channel 11 Request Event Interrupt"
+	default y
+	depends on FC7300_MB_CH11
+config FC7300_MB_CH11_DONE_INT
+	bool "FC7300 Mailbox Channel 11 Done Event Interrupt"
+	default y
+	depends on FC7300_MB_CH11
+config FC7300_MB_CH12
+	bool "FC7300 Maiblox Channel 12"
+	default n
+config FC7300_MB_CH12_REQ_INT
+	bool "FC7300 Mailbox Channel 12 Request Event Interrupt"
+	default y
+	depends on FC7300_MB_CH12
+config FC7300_MB_CH12_DONE_INT
+	bool "FC7300 Mailbox Channel 12 Done Event Interrupt"
+	default y
+	depends on FC7300_MB_CH12
+config FC7300_MB_CH13
+	bool "FC7300 Maiblox Channel 13"
+	default n
+config FC7300_MB_CH13_REQ_INT
+	bool "FC7300 Mailbox Channel 13 Request Event Interrupt"
+	default y
+	depends on FC7300_MB_CH13
+config FC7300_MB_CH13_DONE_INT
+	bool "FC7300 Mailbox Channel 13 Done Event Interrupt"
+	default y
+	depends on FC7300_MB_CH13
+config FC7300_MB_CH14
+	bool "FC7300 Maiblox Channel 14"
+	default n
+config FC7300_MB_CH14_REQ_INT
+	bool "FC7300 Mailbox Channel 14 Request Event Interrupt"
+	default y
+	depends on FC7300_MB_CH14
+config FC7300_MB_CH14_DONE_INT
+	bool "FC7300 Mailbox Channel 14 Done Event Interrupt"
+	default y
+	depends on FC7300_MB_CH14
+config FC7300_MB_CH15
+	bool "FC7300 Maiblox Channel 15"
+	default n
+config FC7300_MB_CH15_REQ_INT
+	bool "FC7300 Mailbox Channel 15 Request Event Interrupt"
+	default y
+	depends on FC7300_MB_CH15
+config FC7300_MB_CH15_DONE_INT
+	bool "FC7300 Mailbox Channel 15 Done Event Interrupt"
+	default y
+	depends on FC7300_MB_CH15
+
+endmenu # FC7300 Mailbox Configuration
+
+menu "FC7300 Hardware Spinlock Configuration"
+	depends on FC7300_HWSPINLOCK
+config FC7300_HWSPINLOCK_CHN_NUM
+	int "Hardware Spinlock Channel Number"
+	default 8
+	range 1 16
+	---help---
+		Select the number of mailbox channels used for hardware
+		spinlock.
+config FC7300_HWSPINLOCK_CHN0_ID
+	int "Mailbox Channel ID for Hardware Spinlock Channel 0" if FC7300_HWSPINLOCK_CHN_NUM > 0
+	default 15 if FC7300_HWSPINLOCK_CHN_NUM > 0
+	range 0 15
+config FC7300_HWSPINLOCK_CHN1_ID
+	int "Mailbox Channel ID for Hardware Spinlock Channel 1" if FC7300_HWSPINLOCK_CHN_NUM > 1
+	default 14 if FC7300_HWSPINLOCK_CHN_NUM > 1
+	range 0 15
+config FC7300_HWSPINLOCK_CHN2_ID
+	int "Mailbox Channel ID for Hardware Spinlock Channel 2" if FC7300_HWSPINLOCK_CHN_NUM > 2
+	default 13 if FC7300_HWSPINLOCK_CHN_NUM > 2
+	range 0 15
+config FC7300_HWSPINLOCK_CHN3_ID
+	int "Mailbox Channel ID for Hardware Spinlock Channel 3" if FC7300_HWSPINLOCK_CHN_NUM > 3
+	default 12 if FC7300_HWSPINLOCK_CHN_NUM > 3
+	range 0 15
+config FC7300_HWSPINLOCK_CHN4_ID
+	int "Mailbox Channel ID for Hardware Spinlock Channel 4" if FC7300_HWSPINLOCK_CHN_NUM > 4
+	default 11 if FC7300_HWSPINLOCK_CHN_NUM > 4
+	range 0 15
+config FC7300_HWSPINLOCK_CHN5_ID
+	int "Mailbox Channel ID for Hardware Spinlock Channel 5" if FC7300_HWSPINLOCK_CHN_NUM > 5
+	default 10 if FC7300_HWSPINLOCK_CHN_NUM > 5
+	range 0 15
+config FC7300_HWSPINLOCK_CHN6_ID
+	int "Mailbox Channel ID for Hardware Spinlock Channel 6" if FC7300_HWSPINLOCK_CHN_NUM > 6
+	default 9 if FC7300_HWSPINLOCK_CHN_NUM > 6
+	range 0 15
+config FC7300_HWSPINLOCK_CHN7_ID
+	int "Mailbox Channel ID for Hardware Spinlock Channel 7" if FC7300_HWSPINLOCK_CHN_NUM > 7
+	default 8 if FC7300_HWSPINLOCK_CHN_NUM > 7
+	range 0 15
+config FC7300_HWSPINLOCK_CHN8_ID
+	int "Mailbox Channel ID for Hardware Spinlock Channel 8" if FC7300_HWSPINLOCK_CHN_NUM > 8
+	default 7 if FC7300_HWSPINLOCK_CHN_NUM > 8
+	range 0 15
+config FC7300_HWSPINLOCK_CHN9_ID
+	int "Mailbox Channel ID for Hardware Spinlock Channel 9" if FC7300_HWSPINLOCK_CHN_NUM > 9
+	default 6 if FC7300_HWSPINLOCK_CHN_NUM > 9
+	range 0 15
+config FC7300_HWSPINLOCK_CHN10_ID
+	int "Mailbox Channel ID for Hardware Spinlock Channel 10" if FC7300_HWSPINLOCK_CHN_NUM > 10
+	default 5 if FC7300_HWSPINLOCK_CHN_NUM > 10
+	range 0 15
+config FC7300_HWSPINLOCK_CHN11_ID
+	int "Mailbox Channel ID for Hardware Spinlock Channel 11" if FC7300_HWSPINLOCK_CHN_NUM > 11
+	default 4 if FC7300_HWSPINLOCK_CHN_NUM > 11
+	range 0 15
+config FC7300_HWSPINLOCK_CHN12_ID
+	int "Mailbox Channel ID for Hardware Spinlock Channel 12" if FC7300_HWSPINLOCK_CHN_NUM > 12
+	default 3 if FC7300_HWSPINLOCK_CHN_NUM > 12
+	range 0 15
+config FC7300_HWSPINLOCK_CHN13_ID
+	int "Mailbox Channel ID for Hardware Spinlock Channel 13" if FC7300_HWSPINLOCK_CHN_NUM > 13
+	default 2 if FC7300_HWSPINLOCK_CHN_NUM > 13
+	range 0 15
+config FC7300_HWSPINLOCK_CHN14_ID
+	int "Mailbox Channel ID for Hardware Spinlock Channel 14" if FC7300_HWSPINLOCK_CHN_NUM > 14
+	default 1 if FC7300_HWSPINLOCK_CHN_NUM > 14
+	range 0 15
+config FC7300_HWSPINLOCK_CHN15_ID
+	int "Mailbox Channel ID for Hardware Spinlock Channel 15" if FC7300_HWSPINLOCK_CHN_NUM > 15
+	default 0 if FC7300_HWSPINLOCK_CHN_NUM > 15
+	range 0 15
+
+endmenu # FC7300 Hardware Spinlock Configuration
+
+menu "FC7300 HSM Configuration"
+	depends on FC7300_HSM
+
+choice
+	prompt "FC7300 AES padding type"
+	default FC7300_CRYPTO_AES_PADDING_ZERO
+
+config FC7300_CRYPTO_AES_PADDING_ZERO
+	bool "FC7300 AES padding 0"
+
+config FC7300_CRYPTO_AES_PADDING_PKCS7
+	bool "FC7300 AES padding pkcs7"
+
+endchoice
+
+config FC7300_HSM_SEND_CMD_CHANNEL
+	int "Mailbox Channel ID for sending request CMD to HSM"
+	default 15
+	range 0 15
+
+config FC7300_HSM_CANCEL_CHANNEL
+	int "Mailbox Channel ID for sending cancel CMD to HSM"
+	default 14
+	range 0 15
+
+endmenu # FC7300 HSM Configuration
+
+menu "FC7300 RNG Configuration"
+	depends on FC7300_RNG
+
+config FC7300_RNG_SEND_CMD_CHANNEL
+	int "Mailbox Channel ID for sending RNG request CMD to HSM"
+	default 13
+	range 0 15
+
+endmenu # FC7300 RNG Configuration
+
+menu "FC7300 Temperature Monitor Unit Configuration"
+	depends on FC7300_TMU
+
+config FC7300_TMU_TF_CTRL_125F_INTERRUPT_ENABLE
+	bool "Temperature over 125 degrees Interrupt Enable"
+	default y
+
+config FC7300_TMU_TF_CTRL_150F_INTERRUPT_ENABLE
+	bool "Temperature over 150 degrees Interrupt Enable"
+	default y
+
+config FC7300_TMU_TF_CTRL_HYSOFF_ENABLE
+	bool "Temperature Sensor Hysteresis Enable"
+	default y
+	---help---
+		This is used to select whether hysteresis is on.
+		The hysteresis range is 12 degrees.
+
+config FC7300_TMU_TF_CTRL_FILT_ENABLE
+	bool "Temperature Sensor Filter Enable"
+	default y
+	---help---
+		Bypass or enable the digital filter for 125/150 temperature detection.
+
+endmenu # FC7300 HSM Configuration
+
+source "../vendor/flagchip/chips/fc7300/Kconfig-flexcan"
+source "../vendor/flagchip/chips/fc7300/Kconfig-fcuart"
+source "../vendor/flagchip/chips/fc7300/Kconfig-enet"
+source "../vendor/flagchip/chips/fc7300/Kconfig-erm"
+source "../vendor/flagchip/chips/fc7300/Kconfig-fcsmu"
+source "../vendor/flagchip/chips/fc7300/Kconfig-cmu"
+source "../vendor/flagchip/chips/fc7300/Kconfig-eim"
+source "../vendor/flagchip/chips/fc7300/Kconfig-pmc"
+source "../vendor/flagchip/chips/fc7300/Kconfig-mam"
+
+endif # ARCH_CHIP_CUSTOM

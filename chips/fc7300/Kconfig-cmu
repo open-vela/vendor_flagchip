@@ -1,0 +1,303 @@
+#
+# Copyright (C) 2025 Xiaomi Corporation
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more contributor
+# license agreements.  See the NOTICE file distributed with this work for
+# additional information regarding copyright ownership.  The ASF licenses this
+# file to you under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License.  You may obtain a copy of
+# the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+menu "FC7300 Clock Monitor Unit Configuration"
+	depends on FC7300_CMU
+
+menuconfig FC7300_CMU0
+	bool "Clock Monitor Unit 0 Enable"
+	default n
+
+if FC7300_CMU0
+
+config FC7300_CMU0_ISR_PRIORITY
+	int "ISR PRIORITY"
+	default 192
+
+config FC7300_CMU0_REF_WINDOW
+	int "Sample window for the reference clock"
+	default 188100
+	range 0 16777215
+	---help---
+		Please refer to Reference Manual chapter 36.6.1 for calculation method.
+
+config FC7300_CMU0_MIN_THRESHOLD
+	int "Minimum threshold for the monitor counter"
+	default 472
+	range 0 16777215
+	---help---
+		Please refer to Reference Manual chapter 36.6.2 for calculation method.
+
+config FC7300_CMU0_MAX_THRESHOLD
+	int "Maximum threshold for the monitor counter"
+	default 529
+	range 0 16777215
+	---help---
+		Please refer to Reference Manual chapter 36.6.2 for calculation method.
+
+config FC7300_CMU0_STOP_MODE_SUPPORT
+	bool "Stop Mode Support"
+	default n
+
+config FC7300_CMU0_STANDBY_MODE_SUPPORT
+	bool "Standby Mode Support"
+	default n
+
+config FC7300_CMU0_RESTART_ENABLE
+	bool "Auto enable after exiting from the low-power mode"
+	default n
+	depends on FC7300_CMU0_STOP_MODE_SUPPORT || FC7300_CMU0_STANDBY_MODE_SUPPORT
+
+config FC7300_CMU0_INTERRUPT_ENABLE
+	bool "Interrupt Enable"
+	default y
+
+config FC7300_CMU0_REF_DIVISION_FACTOR
+	int "Reference clock division factor"
+	default 0
+	range 0 7
+
+endif # FC7300_CMU0
+
+menuconfig FC7300_CMU1
+	bool "Clock Monitor Unit 1 Enable"
+	default n
+
+if FC7300_CMU1
+
+config FC7300_CMU1_ISR_PRIORITY
+	int "ISR PRIORITY"
+	default 192
+
+config FC7300_CMU1_REF_WINDOW
+	int "Sample window for the reference clock"
+	default 800
+	range 0 16777215
+	---help---
+		Please refer to Reference Manual chapter 36.6.1 for calculation method.
+
+config FC7300_CMU1_MIN_THRESHOLD
+	int "Minimum threshold for the monitor counter"
+	default 1520
+	range 0 16777215
+	---help---
+		Please refer to Reference Manual chapter 36.6.2 for calculation method.
+
+config FC7300_CMU1_MAX_THRESHOLD
+	int "Maximum threshold for the monitor counter"
+	default 1687
+	range 0 16777215
+	---help---
+		Please refer to Reference Manual chapter 36.6.2 for calculation method.
+
+config FC7300_CMU1_STOP_MODE_SUPPORT
+	bool "Stop Mode Support"
+	default n
+
+config FC7300_CMU1_STANDBY_MODE_SUPPORT
+	bool "Standby Mode Support"
+	default n
+
+config FC7300_CMU1_RESTART_ENABLE
+	bool "Auto enable after exiting from the low-power mode"
+	default n
+	depends on FC7300_CMU1_STOP_MODE_SUPPORT || FC7300_CMU1_STANDBY_MODE_SUPPORT
+
+config FC7300_CMU1_INTERRUPT_ENABLE
+	bool "Interrupt Enable"
+	default y
+
+config FC7300_CMU1_REF_DIVISION_FACTOR
+	int "Reference clock division factor"
+	default 0
+	range 0 7
+
+endif # FC7300_CMU1
+
+menuconfig FC7300_CMU2
+	bool "Clock Monitor Unit 2 Enable"
+	default n
+
+if FC7300_CMU2
+
+config FC7300_CMU2_ISR_PRIORITY
+	int "ISR PRIORITY"
+	default 192
+
+config FC7300_CMU2_REF_WINDOW
+	int "Sample window for the reference clock"
+	default 600
+	range 0 16777215
+	---help---
+		Please refer to Reference Manual chapter 36.6.1 for calculation method.
+
+config FC7300_CMU2_MIN_THRESHOLD
+	int "Minimum threshold for the monitor counter"
+	default 4572
+	range 0 16777215
+	---help---
+		Please refer to Reference Manual chapter 36.6.2 for calculation method.
+
+config FC7300_CMU2_MAX_THRESHOLD
+	int "Maximum threshold for the monitor counter"
+	default 5059
+	range 0 16777215
+	---help---
+		Please refer to Reference Manual chapter 36.6.2 for calculation method.
+
+config FC7300_CMU2_STOP_MODE_SUPPORT
+	bool "Stop Mode Support"
+	default n
+
+config FC7300_CMU2_STANDBY_MODE_SUPPORT
+	bool "Standby Mode Support"
+	default n
+
+config FC7300_CMU2_RESTART_ENABLE
+	bool "Auto enable after exiting from the low-power mode"
+	default n
+	depends on FC7300_CMU2_STOP_MODE_SUPPORT || FC7300_CMU2_STANDBY_MODE_SUPPORT
+
+config FC7300_CMU2_INTERRUPT_ENABLE
+	bool "Interrupt Enable"
+	default y
+
+config FC7300_CMU2_REF_DIVISION_FACTOR
+	int "Reference clock division factor"
+	default 0
+	range 0 7
+
+endif # FC7300_CMU2
+
+menuconfig FC7300_CMU3
+	bool "Clock Monitor Unit 3 Enable"
+	default n
+
+if FC7300_CMU3
+
+config FC7300_CMU3_ISR_PRIORITY
+	int "ISR PRIORITY"
+	default 192
+
+config FC7300_CMU3_REF_WINDOW
+	int "Sample window for the reference clock"
+	default 4600
+	range 0 16777215
+	---help---
+		Please refer to Reference Manual chapter 36.6.1 for calculation method.
+
+config FC7300_CMU3_MIN_THRESHOLD
+	int "Minimum threshold for the monitor counter"
+	default 543
+	range 0 16777215
+	---help---
+		Please refer to Reference Manual chapter 36.6.2 for calculation method.
+
+config FC7300_CMU3_MAX_THRESHOLD
+	int "Maximum threshold for the monitor counter"
+	default 606
+	range 0 16777215
+	---help---
+		Please refer to Reference Manual chapter 36.6.2 for calculation method.
+
+config FC7300_CMU3_STOP_MODE_SUPPORT
+	bool "Stop Mode Support"
+	default n
+
+config FC7300_CMU3_STANDBY_MODE_SUPPORT
+	bool "Standby Mode Support"
+	default n
+
+config FC7300_CMU3_RESTART_ENABLE
+	bool "Auto enable after exiting from the low-power mode"
+	default n
+	depends on FC7300_CMU3_STOP_MODE_SUPPORT || FC7300_CMU3_STANDBY_MODE_SUPPORT
+
+config FC7300_CMU3_INTERRUPT_ENABLE
+	bool "Interrupt Enable"
+	default y
+
+config FC7300_CMU3_REF_DIVISION_FACTOR
+	int "Reference clock division factor"
+	default 0
+	range 0 7
+
+endif # FC7300_CMU3
+
+menuconfig FC7300_CMU4
+	bool "Clock Monitor Unit 4 Enable"
+	default n
+
+if FC7300_CMU4
+
+config FC7300_CMU4_ISR_PRIORITY
+	int "ISR PRIORITY"
+	default 192
+
+config FC7300_CMU4_REF_WINDOW
+	int "Sample window for the reference clock"
+	default 600
+	range 0 16777215
+	---help---
+		Please refer to Reference Manual chapter 36.6.1 for calculation method.
+
+config FC7300_CMU4_MIN_THRESHOLD
+	int "Minimum threshold for the monitor counter"
+	default 3570
+	range 0 16777215
+	---help---
+		Please refer to Reference Manual chapter 36.6.2 for calculation method.
+
+config FC7300_CMU4_MAX_THRESHOLD
+	int "Maximum threshold for the monitor counter"
+	default 3953
+	range 0 16777215
+	---help---
+		Please refer to Reference Manual chapter 36.6.2 for calculation method.
+
+config FC7300_CMU4_STOP_MODE_SUPPORT
+	bool "Stop Mode Support"
+	default n
+
+config FC7300_CMU4_STANDBY_MODE_SUPPORT
+	bool "Standby Mode Support"
+	default n
+
+config FC7300_CMU4_RESTART_ENABLE
+	bool "Auto enable after exiting from the low-power mode"
+	default n
+	depends on FC7300_CMU4_STOP_MODE_SUPPORT || FC7300_CMU4_STANDBY_MODE_SUPPORT
+
+config FC7300_CMU4_INTERRUPT_ENABLE
+	bool "Interrupt Enable"
+	default y
+
+config FC7300_CMU4_REF_DIVISION_FACTOR
+	int "Reference clock division factor"
+	default 0
+	range 0 7
+
+endif # FC7300_CMU4
+
+endmenu # FC7300 CMU Configuration

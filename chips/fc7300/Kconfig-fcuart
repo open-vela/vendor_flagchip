@@ -1,0 +1,2102 @@
+#
+# Copyright (C) 2025 Xiaomi Corporation
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more contributor
+# license agreements.  See the NOTICE file distributed with this work for
+# additional information regarding copyright ownership.  The ASF licenses this
+# file to you under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License.  You may obtain a copy of
+# the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+config FCUART_SERIALDRIVER
+	bool
+	default n
+	select MCU_SERIAL
+
+config FCUART0_SERIALDRIVER
+	bool
+	default n
+	select MCU_SERIAL
+
+config FCUART1_SERIALDRIVER
+	bool
+	default n
+	select MCU_SERIAL
+
+config FCUART2_SERIALDRIVER
+	bool
+	default n
+	select MCU_SERIAL
+
+config FCUART3_SERIALDRIVER
+	bool
+	default n
+	select MCU_SERIAL
+
+config FCUART4_SERIALDRIVER
+	bool
+	default n
+	select MCU_SERIAL
+
+config FCUART5_SERIALDRIVER
+	bool
+	default n
+	select MCU_SERIAL
+
+config FCUART6_SERIALDRIVER
+	bool
+	default n
+	select MCU_SERIAL
+
+config FCUART7_SERIALDRIVER
+	bool
+	default n
+	select MCU_SERIAL
+
+config FCUART8_SERIALDRIVER
+	bool
+	default n
+	select MCU_SERIAL
+
+config FCUART9_SERIALDRIVER
+	bool
+	default n
+	select MCU_SERIAL
+
+config FCUART10_SERIALDRIVER
+	bool
+	default n
+	select MCU_SERIAL
+
+config FCUART11_SERIALDRIVER
+	bool
+	default n
+	select MCU_SERIAL
+
+config FCUART12_SERIALDRIVER
+	bool
+	default n
+	select MCU_SERIAL
+
+config FCUART13_SERIALDRIVER
+	bool
+	default n
+	select MCU_SERIAL
+
+config FCUART14_SERIALDRIVER
+	bool
+	default n
+	select MCU_SERIAL
+
+config FCUART15_SERIALDRIVER
+	bool
+	default n
+	select MCU_SERIAL
+
+config FCUART16_SERIALDRIVER
+	bool
+	default n
+	select MCU_SERIAL
+
+config FCUART17_SERIALDRIVER
+	bool
+	default n
+	select MCU_SERIAL
+
+#####################################################################################
+#####################################################################################
+
+menu "FC7300 FCUART Configuration"
+	depends on FC7300_FCUART
+
+config FC7300_FCUART_ISR_THREAD
+	bool "FCUART ISR THREAD"
+	default n
+	---help---
+		Select the fcuart interrupt function to execute in thread context.
+
+config FC7300_FCUART_ISR_THREAD_PRIORITY
+	int "FCUART ISR THREAD PRIORITY"
+	default 250
+	range 0 255
+	depends on FC7300_FCUART_ISR_THREAD
+	---help---
+		The priority of isr thread.
+
+config FC7300_FCUART_ISR_THREAD_STACKSIZE
+	int "FCUART ISR THREAD STACK SIZE"
+	default 1500
+	range 0 4096
+	depends on FC7300_FCUART_ISR_THREAD
+	---help---
+		The stack size of fcuart isr thread.
+
+config FC7300_FCUART_RXDMA_BUFFER_SIZE
+	int "Rx DMA buffer size"
+	default 64
+	depends on FCUART0_RXDMA || FCUART1_RXDMA || FCUART2_RXDMA || FCUART3_RXDMA || FCUART4_RXDMA || FCUART5_RXDMA || \
+               FCUART7_RXDMA || FCUART8_RXDMA || FCUART9_RXDMA || FCUART10_RXDMA || FCUART11_RXDMA || FCUART12_RXDMA || \
+               FCUART13_RXDMA || FCUART14_RXDMA || FCUART15_RXDMA || FCUART16_RXDMA || FCUART17_RXDMA
+	---help---
+		The DMA buffer size when using RX DMA to emulate a FIFO.
+
+		When streaming data, the generic serial layer will be called
+		every time the FIFO receives half this number of bytes.
+
+config FC7300_FCUART_INVERT
+	bool "Signal Invert Support"
+	default n
+
+#####################################################################################
+
+menu "FCUART0 Configuration"
+	depends on FCUART0_SERIALDRIVER
+
+config FCUART0_RXBUFSIZE
+	int "Receive buffer size"
+	default 256
+	---help---
+		Characters are buffered as they are received. This specifies
+		the size of the receive buffer.
+
+config FCUART0_TXBUFSIZE
+	int "Transmit buffer size"
+	default 256
+	---help---
+		Characters are buffered before being sent.  This specifies
+		the size of the transmit buffer.
+
+config FCUART0_BAUD
+	int "BAUD rate"
+	default 115200
+	---help---
+		The configured BAUD of the FCUART.
+
+config FCUART0_BITS
+	int "Character size"
+	default 8
+	---help---
+		The number of bits.  Must be either 7 or 8.
+
+config FCUART0_PARITY
+	int "Parity setting"
+	default 0
+	range 0 2
+	---help---
+		0=no parity, 1=odd parity, 2=even parity
+
+config FCUART0_2STOP
+	int "Uses 2 stop bits"
+	default 0
+	---help---
+		1=Two stop bits
+choice
+	prompt "IFLOW Control"
+	default FCUART0_NOIFLOWCONTROL
+
+config FCUART0_NOIFLOWCONTROL
+	bool "No IFLOW control"
+	---help---
+		No IFLOW control
+
+config FCUART0_IFLOWCONTROL
+	bool "RTS for IFLOW control"
+	select SERIAL_IFLOWCONTROL
+	---help---
+		Enable RTS flow control
+endchoice
+
+config FCUART0_INVERTIFLOWCONTROL
+	depends on FCUART0_IFLOWCONTROL
+	bool "Invert sense of RTS bit"
+	default n
+	---help---
+		Make RTS bit active high rather than active low
+
+config FCUART0_OFLOWCONTROL
+	bool "CTS OFLOW control"
+	default n
+	select SERIAL_OFLOWCONTROL
+	---help---
+		Enable CTS flow control
+
+config FCUART0_RXDMA
+	bool "FCUART0 Rx DMA support"
+	default n
+	select SERIAL_RXDMA
+	---help---
+		Enable Rx DMA transfers on FCUART0
+
+config FCUART0_RXDMA_CHANNEL
+	depends on FCUART0_RXDMA
+	int "FCUART0 Rx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Rx DMA channel for FCUART0
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+config FCUART0_TXDMA
+	bool "FCUART0 Tx DMA support"
+	default n
+	select SERIAL_TXDMA
+	---help---
+		Enable Tx DMA transfers on FCUART0
+
+config FCUART0_TXDMA_CHANNEL
+	depends on FCUART0_TXDMA
+	int "FCUART0 Tx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Tx DMA channel for FCUART0
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+endmenu
+
+#####################################################################################
+
+menu "FCUART1 Configuration"
+	depends on FCUART1_SERIALDRIVER
+
+config FCUART1_RXBUFSIZE
+	int "Receive buffer size"
+	default 256
+	---help---
+		Characters are buffered as they are received. This specifies
+		the size of the receive buffer.
+
+config FCUART1_TXBUFSIZE
+	int "Transmit buffer size"
+	default 256
+	---help---
+		Characters are buffered before being sent.  This specifies
+		the size of the transmit buffer.
+
+config FCUART1_BAUD
+	int "BAUD rate"
+	default 115200
+	---help---
+		The configured BAUD of the FCUART.
+
+config FCUART1_BITS
+	int "Character size"
+	default 8
+	---help---
+		The number of bits.  Must be either 7 or 8.
+
+config FCUART1_PARITY
+	int "Parity setting"
+	default 0
+	range 0 2
+	---help---
+		0=no parity, 1=odd parity, 2=even parity
+
+config FCUART1_2STOP
+	int "Uses 2 stop bits"
+	default 0
+	---help---
+		1=Two stop bits
+choice
+	prompt "IFLOW Control"
+	default FCUART1_NOIFLOWCONTROL
+
+config FCUART1_NOIFLOWCONTROL
+	bool "No IFLOW control"
+	---help---
+		No IFLOW control
+
+config FCUART1_IFLOWCONTROL
+	bool "RTS for IFLOW control"
+	select SERIAL_IFLOWCONTROL
+	---help---
+		Enable RTS flow control
+endchoice
+
+config FCUART1_INVERTIFLOWCONTROL
+	depends on FCUART1_IFLOWCONTROL
+	bool "Invert sense of RTS bit"
+	default n
+	---help---
+		Make RTS bit active high rather than active low
+
+config FCUART1_OFLOWCONTROL
+	bool "CTS OFLOW control"
+	default n
+	select SERIAL_OFLOWCONTROL
+	---help---
+		Enable CTS flow control
+
+config FCUART1_RXDMA
+	bool "FCUART1 Rx DMA support"
+	default n
+	select SERIAL_RXDMA
+	---help---
+		Enable Rx DMA transfers on FCUART1
+
+config FCUART1_RXDMA_CHANNEL
+	depends on FCUART1_RXDMA
+	int "FCUART1 Rx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Rx DMA channel for FCUART1
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+config FCUART1_TXDMA
+	bool "FCUART1 Tx DMA support"
+	default n
+	select SERIAL_TXDMA
+	---help---
+		Enable Tx DMA transfers on FCUART1
+
+config FCUART1_TXDMA_CHANNEL
+	depends on FCUART1_TXDMA
+	int "FCUART1 Tx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Tx DMA channel for FCUART1
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+endmenu
+
+#####################################################################################
+
+menu "FCUART2 Configuration"
+	depends on FCUART2_SERIALDRIVER
+
+config FCUART2_RXBUFSIZE
+	int "Receive buffer size"
+	default 256
+	---help---
+		Characters are buffered as they are received. This specifies
+		the size of the receive buffer.
+
+config FCUART2_TXBUFSIZE
+	int "Transmit buffer size"
+	default 256
+	---help---
+		Characters are buffered before being sent.  This specifies
+		the size of the transmit buffer.
+
+config FCUART2_BAUD
+	int "BAUD rate"
+	default 115200
+	---help---
+		The configured BAUD of the FCUART.
+
+config FCUART2_BITS
+	int "Character size"
+	default 8
+	---help---
+		The number of bits.  Must be either 7 or 8.
+
+config FCUART2_PARITY
+	int "Parity setting"
+	default 0
+	range 0 2
+	---help---
+		0=no parity, 1=odd parity, 2=even parity
+
+config FCUART2_2STOP
+	int "Uses 2 stop bits"
+	default 0
+	---help---
+		1=Two stop bits
+choice
+	prompt "IFLOW Control"
+	default FCUART2_NOIFLOWCONTROL
+
+config FCUART2_NOIFLOWCONTROL
+	bool "No IFLOW control"
+	---help---
+		No IFLOW control
+
+config FCUART2_IFLOWCONTROL
+	bool "RTS for IFLOW control"
+	select SERIAL_IFLOWCONTROL
+	---help---
+		Enable RTS flow control
+endchoice
+
+config FCUART2_INVERTIFLOWCONTROL
+	depends on FCUART2_IFLOWCONTROL
+	bool "Invert sense of RTS bit"
+	default n
+	---help---
+		Make RTS bit active high rather than active low
+
+config FCUART2_OFLOWCONTROL
+	bool "CTS OFLOW control"
+	default n
+	select SERIAL_OFLOWCONTROL
+	---help---
+		Enable CTS flow control
+
+config FCUART2_RXDMA
+	bool "FCUART2 Rx DMA support"
+	default n
+	select SERIAL_RXDMA
+	---help---
+		Enable Rx DMA transfers on FCUART2
+
+config FCUART2_RXDMA_CHANNEL
+	depends on FCUART2_RXDMA
+	int "FCUART2 Rx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Rx DMA channel for FCUART2
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+config FCUART2_TXDMA
+	bool "FCUART2 Tx DMA support"
+	default n
+	select SERIAL_TXDMA
+	---help---
+		Enable Tx DMA transfers on FCUART2
+
+config FCUART2_TXDMA_CHANNEL
+	depends on FCUART2_TXDMA
+	int "FCUART2 Tx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Tx DMA channel for FCUART2
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+endmenu
+
+#####################################################################################
+
+menu "FCUART3 Configuration"
+	depends on FCUART3_SERIALDRIVER
+
+config FCUART3_RXBUFSIZE
+	int "Receive buffer size"
+	default 256
+	---help---
+		Characters are buffered as they are received. This specifies
+		the size of the receive buffer.
+
+config FCUART3_TXBUFSIZE
+	int "Transmit buffer size"
+	default 256
+	---help---
+		Characters are buffered before being sent.  This specifies
+		the size of the transmit buffer.
+
+config FCUART3_BAUD
+	int "BAUD rate"
+	default 115200
+	---help---
+		The configured BAUD of the FCUART.
+
+config FCUART3_BITS
+	int "Character size"
+	default 8
+	---help---
+		The number of bits.  Must be either 7 or 8.
+
+config FCUART3_PARITY
+	int "Parity setting"
+	default 0
+	range 0 2
+	---help---
+		0=no parity, 1=odd parity, 2=even parity
+
+config FCUART3_2STOP
+	int "Uses 2 stop bits"
+	default 0
+	---help---
+		1=Two stop bits
+choice
+	prompt "IFLOW Control"
+	default FCUART3_NOIFLOWCONTROL
+
+config FCUART3_NOIFLOWCONTROL
+	bool "No IFLOW control"
+	---help---
+		No IFLOW control
+
+config FCUART3_IFLOWCONTROL
+	bool "RTS for IFLOW control"
+	select SERIAL_IFLOWCONTROL
+	---help---
+		Enable RTS flow control
+endchoice
+
+config FCUART3_INVERTIFLOWCONTROL
+	depends on FCUART3_IFLOWCONTROL
+	bool "Invert sense of RTS bit"
+	default n
+	---help---
+		Make RTS bit active high rather than active low
+
+config FCUART3_OFLOWCONTROL
+	bool "CTS OFLOW control"
+	default n
+	select SERIAL_OFLOWCONTROL
+	---help---
+		Enable CTS flow control
+
+config FCUART3_RXDMA
+	bool "FCUART3 Rx DMA support"
+	default n
+	select SERIAL_RXDMA
+	---help---
+		Enable Rx DMA transfers on FCUART3
+
+config FCUART3_RXDMA_CHANNEL
+	depends on FCUART3_RXDMA
+	int "FCUART3 Rx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Rx DMA channel for FCUART3
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+config FCUART3_TXDMA
+	bool "FCUART3 Tx DMA support"
+	default n
+	select SERIAL_TXDMA
+	---help---
+		Enable Tx DMA transfers on FCUART3
+
+config FCUART3_TXDMA_CHANNEL
+	depends on FCUART3_TXDMA
+	int "FCUART3 Tx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Tx DMA channel for FCUART3
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+endmenu
+
+#####################################################################################
+
+menu "FCUART4 Configuration"
+	depends on FCUART4_SERIALDRIVER
+
+config FCUART4_RXBUFSIZE
+	int "Receive buffer size"
+	default 256
+	---help---
+		Characters are buffered as they are received. This specifies
+		the size of the receive buffer.
+
+config FCUART4_TXBUFSIZE
+	int "Transmit buffer size"
+	default 256
+	---help---
+		Characters are buffered before being sent.  This specifies
+		the size of the transmit buffer.
+
+config FCUART4_BAUD
+	int "BAUD rate"
+	default 115200
+	---help---
+		The configured BAUD of the FCUART.
+
+config FCUART4_BITS
+	int "Character size"
+	default 8
+	---help---
+		The number of bits.  Must be either 7 or 8.
+
+config FCUART4_PARITY
+	int "Parity setting"
+	default 0
+	range 0 2
+	---help---
+		0=no parity, 1=odd parity, 2=even parity
+
+config FCUART4_2STOP
+	int "Uses 2 stop bits"
+	default 0
+	---help---
+		1=Two stop bits
+choice
+	prompt "IFLOW Control"
+	default FCUART4_NOIFLOWCONTROL
+
+config FCUART4_NOIFLOWCONTROL
+	bool "No IFLOW control"
+	---help---
+		No IFLOW control
+
+config FCUART4_IFLOWCONTROL
+	bool "RTS for IFLOW control"
+	select SERIAL_IFLOWCONTROL
+	---help---
+		Enable RTS flow control
+endchoice
+
+config FCUART4_INVERTIFLOWCONTROL
+	depends on FCUART4_IFLOWCONTROL
+	bool "Invert sense of RTS bit"
+	default n
+	---help---
+		Make RTS bit active high rather than active low
+
+config FCUART4_OFLOWCONTROL
+	bool "CTS OFLOW control"
+	default n
+	select SERIAL_OFLOWCONTROL
+	---help---
+		Enable CTS flow control
+
+config FCUART4_RXDMA
+	bool "FCUART4 Rx DMA support"
+	default n
+	select SERIAL_RXDMA
+	---help---
+		Enable Rx DMA transfers on FCUART4
+
+config FCUART4_RXDMA_CHANNEL
+	depends on FCUART4_RXDMA
+	int "FCUART4 Rx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Rx DMA channel for FCUART4
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+config FCUART4_TXDMA
+	bool "FCUART4 Tx DMA support"
+	default n
+	select SERIAL_TXDMA
+	---help---
+		Enable Tx DMA transfers on FCUART4
+
+config FCUART4_TXDMA_CHANNEL
+	depends on FCUART4_TXDMA
+	int "FCUART4 Tx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Tx DMA channel for FCUART4
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+endmenu
+
+#####################################################################################
+
+menu "FCUART5 Configuration"
+	depends on FCUART5_SERIALDRIVER
+
+config FCUART5_RXBUFSIZE
+	int "Receive buffer size"
+	default 256
+	---help---
+		Characters are buffered as they are received. This specifies
+		the size of the receive buffer.
+
+config FCUART5_TXBUFSIZE
+	int "Transmit buffer size"
+	default 256
+	---help---
+		Characters are buffered before being sent.  This specifies
+		the size of the transmit buffer.
+
+config FCUART5_BAUD
+	int "BAUD rate"
+	default 115200
+	---help---
+		The configured BAUD of the FCUART.
+
+config FCUART5_BITS
+	int "Character size"
+	default 8
+	---help---
+		The number of bits.  Must be either 7 or 8.
+
+config FCUART5_PARITY
+	int "Parity setting"
+	default 0
+	range 0 2
+	---help---
+		0=no parity, 1=odd parity, 2=even parity
+
+config FCUART5_2STOP
+	int "Uses 2 stop bits"
+	default 0
+	---help---
+		1=Two stop bits
+choice
+	prompt "IFLOW Control"
+	default FCUART5_NOIFLOWCONTROL
+
+config FCUART5_NOIFLOWCONTROL
+	bool "No IFLOW control"
+	---help---
+		No IFLOW control
+
+config FCUART5_IFLOWCONTROL
+	bool "RTS for IFLOW control"
+	select SERIAL_IFLOWCONTROL
+	---help---
+		Enable RTS flow control
+endchoice
+
+config FCUART5_INVERTIFLOWCONTROL
+	depends on FCUART5_IFLOWCONTROL
+	bool "Invert sense of RTS bit"
+	default n
+	---help---
+		Make RTS bit active high rather than active low
+
+config FCUART5_OFLOWCONTROL
+	bool "CTS OFLOW control"
+	default n
+	select SERIAL_OFLOWCONTROL
+	---help---
+		Enable CTS flow control
+
+config FCUART5_RXDMA
+	bool "FCUART5 Rx DMA support"
+	default n
+	select SERIAL_RXDMA
+	---help---
+		Enable Rx DMA transfers on FCUART5
+
+config FCUART5_RXDMA_CHANNEL
+	depends on FCUART5_RXDMA
+	int "FCUART5 Rx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Rx DMA channel for FCUART5
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+config FCUART5_TXDMA
+	bool "FCUART5 Tx DMA support"
+	default n
+	select SERIAL_TXDMA
+	---help---
+		Enable Tx DMA transfers on FCUART5
+
+config FCUART5_TXDMA_CHANNEL
+	depends on FCUART5_TXDMA
+	int "FCUART5 Tx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Tx DMA channel for FCUART5
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+endmenu
+
+#####################################################################################
+
+menu "FCUART6 Configuration"
+	depends on FCUART6_SERIALDRIVER
+
+config FCUART6_RXBUFSIZE
+	int "Receive buffer size"
+	default 256
+	---help---
+		Characters are buffered as they are received. This specifies
+		the size of the receive buffer.
+
+config FCUART6_TXBUFSIZE
+	int "Transmit buffer size"
+	default 256
+	---help---
+		Characters are buffered before being sent.  This specifies
+		the size of the transmit buffer.
+
+config FCUART6_BAUD
+	int "BAUD rate"
+	default 115200
+	---help---
+		The configured BAUD of the FCUART.
+
+config FCUART6_BITS
+	int "Character size"
+	default 8
+	---help---
+		The number of bits.  Must be either 7 or 8.
+
+config FCUART6_PARITY
+	int "Parity setting"
+	default 0
+	range 0 2
+	---help---
+		0=no parity, 1=odd parity, 2=even parity
+
+config FCUART6_2STOP
+	int "Uses 2 stop bits"
+	default 0
+	---help---
+		1=Two stop bits
+choice
+	prompt "IFLOW Control"
+	default FCUART6_NOIFLOWCONTROL
+
+config FCUART6_NOIFLOWCONTROL
+	bool "No IFLOW control"
+	---help---
+		No IFLOW control
+
+config FCUART6_IFLOWCONTROL
+	bool "RTS for IFLOW control"
+	select SERIAL_IFLOWCONTROL
+	---help---
+		Enable RTS flow control
+endchoice
+
+config FCUART6_INVERTIFLOWCONTROL
+	depends on FCUART6_IFLOWCONTROL
+	bool "Invert sense of RTS bit"
+	default n
+	---help---
+		Make RTS bit active high rather than active low
+
+config FCUART6_OFLOWCONTROL
+	bool "CTS OFLOW control"
+	default n
+	select SERIAL_OFLOWCONTROL
+	---help---
+		Enable CTS flow control
+
+config FCUART6_RXDMA
+	bool "FCUART6 Rx DMA support"
+	default n
+	select SERIAL_RXDMA
+	---help---
+		Enable Rx DMA transfers on FCUART6
+
+config FCUART6_RXDMA_CHANNEL
+	depends on FCUART6_RXDMA
+	int "FCUART6 Rx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Rx DMA channel for FCUART6
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+config FCUART6_TXDMA
+	bool "FCUART6 Tx DMA support"
+	default n
+	select SERIAL_TXDMA
+	---help---
+		Enable Tx DMA transfers on FCUART6
+
+config FCUART6_TXDMA_CHANNEL
+	depends on FCUART6_TXDMA
+	int "FCUART6 Tx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Tx DMA channel for FCUART6
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+endmenu
+
+
+#####################################################################################
+
+menu "FCUART7 Configuration"
+	depends on FCUART7_SERIALDRIVER
+
+config FCUART7_RXBUFSIZE
+	int "Receive buffer size"
+	default 256
+	---help---
+		Characters are buffered as they are received. This specifies
+		the size of the receive buffer.
+
+config FCUART7_TXBUFSIZE
+	int "Transmit buffer size"
+	default 256
+	---help---
+		Characters are buffered before being sent.  This specifies
+		the size of the transmit buffer.
+
+config FCUART7_BAUD
+	int "BAUD rate"
+	default 115200
+	---help---
+		The configured BAUD of the FCUART.
+
+config FCUART7_BITS
+	int "Character size"
+	default 8
+	---help---
+		The number of bits.  Must be either 7 or 8.
+
+config FCUART7_PARITY
+	int "Parity setting"
+	default 0
+	range 0 2
+	---help---
+		0=no parity, 1=odd parity, 2=even parity
+
+config FCUART7_2STOP
+	int "Uses 2 stop bits"
+	default 0
+	---help---
+		1=Two stop bits
+choice
+	prompt "IFLOW Control"
+	default FCUART7_NOIFLOWCONTROL
+
+config FCUART7_NOIFLOWCONTROL
+	bool "No IFLOW control"
+	---help---
+		No IFLOW control
+
+config FCUART7_IFLOWCONTROL
+	bool "RTS for IFLOW control"
+	select SERIAL_IFLOWCONTROL
+	---help---
+		Enable RTS flow control
+endchoice
+
+config FCUART7_INVERTIFLOWCONTROL
+	depends on FCUART7_IFLOWCONTROL
+	bool "Invert sense of RTS bit"
+	default n
+	---help---
+		Make RTS bit active high rather than active low
+
+config FCUART7_OFLOWCONTROL
+	bool "CTS OFLOW control"
+	default n
+	select SERIAL_OFLOWCONTROL
+	---help---
+		Enable CTS flow control
+
+config FCUART7_RXDMA
+	bool "FCUART7 Rx DMA support"
+	default n
+	select SERIAL_RXDMA
+	---help---
+		Enable Rx DMA transfers on FCUART7
+
+config FCUART7_RXDMA_CHANNEL
+	depends on FCUART7_RXDMA
+	int "FCUART7 Rx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Rx DMA channel for FCUART7
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+config FCUART7_TXDMA
+	bool "FCUART7 Tx DMA support"
+	default n
+	select SERIAL_TXDMA
+	---help---
+		Enable Tx DMA transfers on FCUART7
+
+config FCUART7_TXDMA_CHANNEL
+	depends on FCUART7_TXDMA
+	int "FCUART7 Tx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Tx DMA channel for FCUART7
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+endmenu
+
+
+#####################################################################################
+
+menu "FCUART8 Configuration"
+	depends on FCUART8_SERIALDRIVER
+
+config FCUART8_RXBUFSIZE
+	int "Receive buffer size"
+	default 256
+	---help---
+		Characters are buffered as they are received. This specifies
+		the size of the receive buffer.
+
+config FCUART8_TXBUFSIZE
+	int "Transmit buffer size"
+	default 256
+	---help---
+		Characters are buffered before being sent.  This specifies
+		the size of the transmit buffer.
+
+config FCUART8_BAUD
+	int "BAUD rate"
+	default 115200
+	---help---
+		The configured BAUD of the FCUART.
+
+config FCUART8_BITS
+	int "Character size"
+	default 8
+	---help---
+		The number of bits.  Must be either 7 or 8.
+
+config FCUART8_PARITY
+	int "Parity setting"
+	default 0
+	range 0 2
+	---help---
+		0=no parity, 1=odd parity, 2=even parity
+
+config FCUART8_2STOP
+	int "Uses 2 stop bits"
+	default 0
+	---help---
+		1=Two stop bits
+choice
+	prompt "IFLOW Control"
+	default FCUART8_NOIFLOWCONTROL
+
+config FCUART8_NOIFLOWCONTROL
+	bool "No IFLOW control"
+	---help---
+		No IFLOW control
+
+config FCUART8_IFLOWCONTROL
+	bool "RTS for IFLOW control"
+	select SERIAL_IFLOWCONTROL
+	---help---
+		Enable RTS flow control
+endchoice
+
+config FCUART8_INVERTIFLOWCONTROL
+	depends on FCUART8_IFLOWCONTROL
+	bool "Invert sense of RTS bit"
+	default n
+	---help---
+		Make RTS bit active high rather than active low
+
+config FCUART8_OFLOWCONTROL
+	bool "CTS OFLOW control"
+	default n
+	select SERIAL_OFLOWCONTROL
+	---help---
+		Enable CTS flow control
+
+config FCUART8_RXDMA
+	bool "FCUART8 Rx DMA support"
+	default n
+	select SERIAL_RXDMA
+	---help---
+		Enable Rx DMA transfers on FCUART8
+
+config FCUART8_RXDMA_CHANNEL
+	depends on FCUART8_RXDMA
+	int "FCUART8 Rx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Rx DMA channel for FCUART8
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+config FCUART8_TXDMA
+	bool "FCUART8 Tx DMA support"
+	default n
+	select SERIAL_TXDMA
+	---help---
+		Enable Tx DMA transfers on FCUART8
+
+config FCUART8_TXDMA_CHANNEL
+	depends on FCUART8_TXDMA
+	int "FCUART8 Tx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Tx DMA channel for FCUART8
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+endmenu
+
+#####################################################################################
+
+menu "FCUART9 Configuration"
+	depends on FCUART9_SERIALDRIVER
+
+config FCUART9_RXBUFSIZE
+	int "Receive buffer size"
+	default 256
+	---help---
+		Characters are buffered as they are received. This specifies
+		the size of the receive buffer.
+
+config FCUART9_TXBUFSIZE
+	int "Transmit buffer size"
+	default 256
+	---help---
+		Characters are buffered before being sent.  This specifies
+		the size of the transmit buffer.
+
+config FCUART9_BAUD
+	int "BAUD rate"
+	default 115200
+	---help---
+		The configured BAUD of the FCUART.
+
+config FCUART9_BITS
+	int "Character size"
+	default 8
+	---help---
+		The number of bits.  Must be either 7 or 8.
+
+config FCUART9_PARITY
+	int "Parity setting"
+	default 0
+	range 0 2
+	---help---
+		0=no parity, 1=odd parity, 2=even parity
+
+config FCUART9_2STOP
+	int "Uses 2 stop bits"
+	default 0
+	---help---
+		1=Two stop bits
+choice
+	prompt "IFLOW Control"
+	default FCUART9_NOIFLOWCONTROL
+
+config FCUART9_NOIFLOWCONTROL
+	bool "No IFLOW control"
+	---help---
+		No IFLOW control
+
+config FCUART9_IFLOWCONTROL
+	bool "RTS for IFLOW control"
+	select SERIAL_IFLOWCONTROL
+	---help---
+		Enable RTS flow control
+endchoice
+
+config FCUART9_INVERTIFLOWCONTROL
+	depends on FCUART9_IFLOWCONTROL
+	bool "Invert sense of RTS bit"
+	default n
+	---help---
+		Make RTS bit active high rather than active low
+
+config FCUART9_OFLOWCONTROL
+	bool "CTS OFLOW control"
+	default n
+	select SERIAL_OFLOWCONTROL
+	---help---
+		Enable CTS flow control
+
+config FCUART9_RXDMA
+	bool "FCUART9 Rx DMA support"
+	default n
+	select SERIAL_RXDMA
+	---help---
+		Enable Rx DMA transfers on FCUART9
+
+config FCUART9_RXDMA_CHANNEL
+	depends on FCUART9_RXDMA
+	int "FCUART9 Rx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Rx DMA channel for FCUART9
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+config FCUART9_TXDMA
+	bool "FCUART9 Tx DMA support"
+	default n
+	select SERIAL_TXDMA
+	---help---
+		Enable Tx DMA transfers on FCUART9
+
+config FCUART9_TXDMA_CHANNEL
+	depends on FCUART9_TXDMA
+	int "FCUART9 Tx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Tx DMA channel for FCUART9
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+endmenu
+
+
+#####################################################################################
+
+menu "FCUART10 Configuration"
+	depends on FCUART10_SERIALDRIVER
+
+config FCUART10_RXBUFSIZE
+	int "Receive buffer size"
+	default 256
+	---help---
+		Characters are buffered as they are received. This specifies
+		the size of the receive buffer.
+
+config FCUART10_TXBUFSIZE
+	int "Transmit buffer size"
+	default 256
+	---help---
+		Characters are buffered before being sent.  This specifies
+		the size of the transmit buffer.
+
+config FCUART10_BAUD
+	int "BAUD rate"
+	default 115200
+	---help---
+		The configured BAUD of the FCUART.
+
+config FCUART10_BITS
+	int "Character size"
+	default 8
+	---help---
+		The number of bits.  Must be either 7 or 8.
+
+config FCUART10_PARITY
+	int "Parity setting"
+	default 0
+	range 0 2
+	---help---
+		0=no parity, 1=odd parity, 2=even parity
+
+config FCUART10_2STOP
+	int "Uses 2 stop bits"
+	default 0
+	---help---
+		1=Two stop bits
+choice
+	prompt "IFLOW Control"
+	default FCUART10_NOIFLOWCONTROL
+
+config FCUART10_NOIFLOWCONTROL
+	bool "No IFLOW control"
+	---help---
+		No IFLOW control
+
+config FCUART10_IFLOWCONTROL
+	bool "RTS for IFLOW control"
+	select SERIAL_IFLOWCONTROL
+	---help---
+		Enable RTS flow control
+endchoice
+
+config FCUART10_INVERTIFLOWCONTROL
+	depends on FCUART10_IFLOWCONTROL
+	bool "Invert sense of RTS bit"
+	default n
+	---help---
+		Make RTS bit active high rather than active low
+
+config FCUART10_OFLOWCONTROL
+	bool "CTS OFLOW control"
+	default n
+	select SERIAL_OFLOWCONTROL
+	---help---
+		Enable CTS flow control
+
+config FCUART10_RXDMA
+	bool "FCUART10 Rx DMA support"
+	default n
+	select SERIAL_RXDMA
+	---help---
+		Enable Rx DMA transfers on FCUART10
+
+config FCUART10_RXDMA_CHANNEL
+	depends on FCUART10_RXDMA
+	int "FCUART10 Rx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Rx DMA channel for FCUART10
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+config FCUART10_TXDMA
+	bool "FCUART10 Tx DMA support"
+	default n
+	select SERIAL_TXDMA
+	---help---
+		Enable Tx DMA transfers on FCUART10
+
+config FCUART10_TXDMA_CHANNEL
+	depends on FCUART10_TXDMA
+	int "FCUART10 Tx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Tx DMA channel for FCUART10
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+endmenu
+
+
+#####################################################################################
+
+menu "FCUART11 Configuration"
+	depends on FCUART11_SERIALDRIVER
+
+config FCUART11_RXBUFSIZE
+	int "Receive buffer size"
+	default 256
+	---help---
+		Characters are buffered as they are received. This specifies
+		the size of the receive buffer.
+
+config FCUART11_TXBUFSIZE
+	int "Transmit buffer size"
+	default 256
+	---help---
+		Characters are buffered before being sent.  This specifies
+		the size of the transmit buffer.
+
+config FCUART11_BAUD
+	int "BAUD rate"
+	default 115200
+	---help---
+		The configured BAUD of the FCUART.
+
+config FCUART11_BITS
+	int "Character size"
+	default 8
+	---help---
+		The number of bits.  Must be either 7 or 8.
+
+config FCUART11_PARITY
+	int "Parity setting"
+	default 0
+	range 0 2
+	---help---
+		0=no parity, 1=odd parity, 2=even parity
+
+config FCUART11_2STOP
+	int "Uses 2 stop bits"
+	default 0
+	---help---
+		1=Two stop bits
+choice
+	prompt "IFLOW Control"
+	default FCUART11_NOIFLOWCONTROL
+
+config FCUART11_NOIFLOWCONTROL
+	bool "No IFLOW control"
+	---help---
+		No IFLOW control
+
+config FCUART11_IFLOWCONTROL
+	bool "RTS for IFLOW control"
+	select SERIAL_IFLOWCONTROL
+	---help---
+		Enable RTS flow control
+endchoice
+
+config FCUART11_INVERTIFLOWCONTROL
+	depends on FCUART11_IFLOWCONTROL
+	bool "Invert sense of RTS bit"
+	default n
+	---help---
+		Make RTS bit active high rather than active low
+
+config FCUART11_OFLOWCONTROL
+	bool "CTS OFLOW control"
+	default n
+	select SERIAL_OFLOWCONTROL
+	---help---
+		Enable CTS flow control
+
+config FCUART11_RXDMA
+	bool "FCUART11 Rx DMA support"
+	default n
+	select SERIAL_RXDMA
+	---help---
+		Enable Rx DMA transfers on FCUART11
+
+config FCUART11_RXDMA_CHANNEL
+	depends on FCUART11_RXDMA
+	int "FCUART11 Rx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Rx DMA channel for FCUART11
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+config FCUART11_TXDMA
+	bool "FCUART11 Tx DMA support"
+	default n
+	select SERIAL_TXDMA
+	---help---
+		Enable Tx DMA transfers on FCUART11
+
+config FCUART11_TXDMA_CHANNEL
+	depends on FCUART11_TXDMA
+	int "FCUART11 Tx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Tx DMA channel for FCUART11
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+endmenu
+
+
+#####################################################################################
+
+menu "FCUART12 Configuration"
+	depends on FCUART12_SERIALDRIVER
+
+config FCUART12_RXBUFSIZE
+	int "Receive buffer size"
+	default 256
+	---help---
+		Characters are buffered as they are received. This specifies
+		the size of the receive buffer.
+
+config FCUART12_TXBUFSIZE
+	int "Transmit buffer size"
+	default 256
+	---help---
+		Characters are buffered before being sent.  This specifies
+		the size of the transmit buffer.
+
+config FCUART12_BAUD
+	int "BAUD rate"
+	default 115200
+	---help---
+		The configured BAUD of the FCUART.
+
+config FCUART12_BITS
+	int "Character size"
+	default 8
+	---help---
+		The number of bits.  Must be either 7 or 8.
+
+config FCUART12_PARITY
+	int "Parity setting"
+	default 0
+	range 0 2
+	---help---
+		0=no parity, 1=odd parity, 2=even parity
+
+config FCUART12_2STOP
+	int "Uses 2 stop bits"
+	default 0
+	---help---
+		1=Two stop bits
+choice
+	prompt "IFLOW Control"
+	default FCUART12_NOIFLOWCONTROL
+
+config FCUART12_NOIFLOWCONTROL
+	bool "No IFLOW control"
+	---help---
+		No IFLOW control
+
+config FCUART12_IFLOWCONTROL
+	bool "RTS for IFLOW control"
+	select SERIAL_IFLOWCONTROL
+	---help---
+		Enable RTS flow control
+endchoice
+
+config FCUART12_INVERTIFLOWCONTROL
+	depends on FCUART12_IFLOWCONTROL
+	bool "Invert sense of RTS bit"
+	default n
+	---help---
+		Make RTS bit active high rather than active low
+
+config FCUART12_OFLOWCONTROL
+	bool "CTS OFLOW control"
+	default n
+	select SERIAL_OFLOWCONTROL
+	---help---
+		Enable CTS flow control
+
+config FCUART12_RXDMA
+	bool "FCUART12 Rx DMA support"
+	default n
+	select SERIAL_RXDMA
+	---help---
+		Enable Rx DMA transfers on FCUART12
+
+config FCUART12_RXDMA_CHANNEL
+	depends on FCUART12_RXDMA
+	int "FCUART12 Rx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Rx DMA channel for FCUART12
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+config FCUART12_TXDMA
+	bool "FCUART12 Tx DMA support"
+	default n
+	select SERIAL_TXDMA
+	---help---
+		Enable Tx DMA transfers on FCUART12
+
+config FCUART12_TXDMA_CHANNEL
+	depends on FCUART12_TXDMA
+	int "FCUART12 Tx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Tx DMA channel for FCUART12
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+endmenu
+
+
+#####################################################################################
+
+menu "FCUART13 Configuration"
+	depends on FCUART13_SERIALDRIVER
+
+config FCUART13_RXBUFSIZE
+	int "Receive buffer size"
+	default 256
+	---help---
+		Characters are buffered as they are received. This specifies
+		the size of the receive buffer.
+
+config FCUART13_TXBUFSIZE
+	int "Transmit buffer size"
+	default 256
+	---help---
+		Characters are buffered before being sent.  This specifies
+		the size of the transmit buffer.
+
+config FCUART13_BAUD
+	int "BAUD rate"
+	default 115200
+	---help---
+		The configured BAUD of the FCUART.
+
+config FCUART13_BITS
+	int "Character size"
+	default 8
+	---help---
+		The number of bits.  Must be either 7 or 8.
+
+config FCUART13_PARITY
+	int "Parity setting"
+	default 0
+	range 0 2
+	---help---
+		0=no parity, 1=odd parity, 2=even parity
+
+config FCUART13_2STOP
+	int "Uses 2 stop bits"
+	default 0
+	---help---
+		1=Two stop bits
+choice
+	prompt "IFLOW Control"
+	default FCUART13_NOIFLOWCONTROL
+
+config FCUART13_NOIFLOWCONTROL
+	bool "No IFLOW control"
+	---help---
+		No IFLOW control
+
+config FCUART13_IFLOWCONTROL
+	bool "RTS for IFLOW control"
+	select SERIAL_IFLOWCONTROL
+	---help---
+		Enable RTS flow control
+endchoice
+
+config FCUART13_INVERTIFLOWCONTROL
+	depends on FCUART13_IFLOWCONTROL
+	bool "Invert sense of RTS bit"
+	default n
+	---help---
+		Make RTS bit active high rather than active low
+
+config FCUART13_OFLOWCONTROL
+	bool "CTS OFLOW control"
+	default n
+	select SERIAL_OFLOWCONTROL
+	---help---
+		Enable CTS flow control
+
+config FCUART13_RXDMA
+	bool "FCUART13 Rx DMA support"
+	default n
+	select SERIAL_RXDMA
+	---help---
+		Enable Rx DMA transfers on FCUART13
+
+config FCUART13_RXDMA_CHANNEL
+	depends on FCUART13_RXDMA
+	int "FCUART13 Rx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Rx DMA channel for FCUART13
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+config FCUART13_TXDMA
+	bool "FCUART13 Tx DMA support"
+	default n
+	select SERIAL_TXDMA
+	---help---
+		Enable Tx DMA transfers on FCUART13
+
+config FCUART13_TXDMA_CHANNEL
+	depends on FCUART13_TXDMA
+	int "FCUART13 Tx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Tx DMA channel for FCUART13
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+endmenu
+
+
+#####################################################################################
+
+menu "FCUART14 Configuration"
+	depends on FCUART14_SERIALDRIVER
+
+config FCUART14_RXBUFSIZE
+	int "Receive buffer size"
+	default 256
+	---help---
+		Characters are buffered as they are received. This specifies
+		the size of the receive buffer.
+
+config FCUART14_TXBUFSIZE
+	int "Transmit buffer size"
+	default 256
+	---help---
+		Characters are buffered before being sent.  This specifies
+		the size of the transmit buffer.
+
+config FCUART14_BAUD
+	int "BAUD rate"
+	default 115200
+	---help---
+		The configured BAUD of the FCUART.
+
+config FCUART14_BITS
+	int "Character size"
+	default 8
+	---help---
+		The number of bits.  Must be either 7 or 8.
+
+config FCUART14_PARITY
+	int "Parity setting"
+	default 0
+	range 0 2
+	---help---
+		0=no parity, 1=odd parity, 2=even parity
+
+config FCUART14_2STOP
+	int "Uses 2 stop bits"
+	default 0
+	---help---
+		1=Two stop bits
+choice
+	prompt "IFLOW Control"
+	default FCUART14_NOIFLOWCONTROL
+
+config FCUART14_NOIFLOWCONTROL
+	bool "No IFLOW control"
+	---help---
+		No IFLOW control
+
+config FCUART14_IFLOWCONTROL
+	bool "RTS for IFLOW control"
+	select SERIAL_IFLOWCONTROL
+	---help---
+		Enable RTS flow control
+endchoice
+
+config FCUART14_INVERTIFLOWCONTROL
+	depends on FCUART14_IFLOWCONTROL
+	bool "Invert sense of RTS bit"
+	default n
+	---help---
+		Make RTS bit active high rather than active low
+
+config FCUART14_OFLOWCONTROL
+	bool "CTS OFLOW control"
+	default n
+	select SERIAL_OFLOWCONTROL
+	---help---
+		Enable CTS flow control
+
+config FCUART14_RXDMA
+	bool "FCUART14 Rx DMA support"
+	default n
+	select SERIAL_RXDMA
+	---help---
+		Enable Rx DMA transfers on FCUART14
+
+config FCUART14_RXDMA_CHANNEL
+	depends on FCUART14_RXDMA
+	int "FCUART14 Rx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Rx DMA channel for FCUART14
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+config FCUART14_TXDMA
+	bool "FCUART14 Tx DMA support"
+	default n
+	select SERIAL_TXDMA
+	---help---
+		Enable Tx DMA transfers on FCUART14
+
+config FCUART14_TXDMA_CHANNEL
+	depends on FCUART14_TXDMA
+	int "FCUART14 Tx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Tx DMA channel for FCUART14
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+endmenu
+
+
+#####################################################################################
+
+menu "FCUART15 Configuration"
+	depends on FCUART15_SERIALDRIVER
+
+config FCUART15_RXBUFSIZE
+	int "Receive buffer size"
+	default 256
+	---help---
+		Characters are buffered as they are received. This specifies
+		the size of the receive buffer.
+
+config FCUART15_TXBUFSIZE
+	int "Transmit buffer size"
+	default 256
+	---help---
+		Characters are buffered before being sent.  This specifies
+		the size of the transmit buffer.
+
+config FCUART15_BAUD
+	int "BAUD rate"
+	default 115200
+	---help---
+		The configured BAUD of the FCUART.
+
+config FCUART15_BITS
+	int "Character size"
+	default 8
+	---help---
+		The number of bits.  Must be either 7 or 8.
+
+config FCUART15_PARITY
+	int "Parity setting"
+	default 0
+	range 0 2
+	---help---
+		0=no parity, 1=odd parity, 2=even parity
+
+config FCUART15_2STOP
+	int "Uses 2 stop bits"
+	default 0
+	---help---
+		1=Two stop bits
+choice
+	prompt "IFLOW Control"
+	default FCUART15_NOIFLOWCONTROL
+
+config FCUART15_NOIFLOWCONTROL
+	bool "No IFLOW control"
+	---help---
+		No IFLOW control
+
+config FCUART15_IFLOWCONTROL
+	bool "RTS for IFLOW control"
+	select SERIAL_IFLOWCONTROL
+	---help---
+		Enable RTS flow control
+endchoice
+
+config FCUART15_INVERTIFLOWCONTROL
+	depends on FCUART15_IFLOWCONTROL
+	bool "Invert sense of RTS bit"
+	default n
+	---help---
+		Make RTS bit active high rather than active low
+
+config FCUART15_OFLOWCONTROL
+	bool "CTS OFLOW control"
+	default n
+	select SERIAL_OFLOWCONTROL
+	---help---
+		Enable CTS flow control
+
+config FCUART15_RXDMA
+	bool "FCUART15 Rx DMA support"
+	default n
+	select SERIAL_RXDMA
+	---help---
+		Enable Rx DMA transfers on FCUART15
+
+config FCUART15_RXDMA_CHANNEL
+	depends on FCUART15_RXDMA
+	int "FCUART15 Rx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Rx DMA channel for FCUART15
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+config FCUART15_TXDMA
+	bool "FCUART15 Tx DMA support"
+	default n
+	select SERIAL_TXDMA
+	---help---
+		Enable Tx DMA transfers on FCUART15
+
+config FCUART15_TXDMA_CHANNEL
+	depends on FCUART15_TXDMA
+	int "FCUART15 Tx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Tx DMA channel for FCUART15
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+endmenu
+
+
+#####################################################################################
+
+menu "FCUART16 Configuration"
+	depends on FCUART16_SERIALDRIVER
+
+config FCUART16_RXBUFSIZE
+	int "Receive buffer size"
+	default 256
+	---help---
+		Characters are buffered as they are received. This specifies
+		the size of the receive buffer.
+
+config FCUART16_TXBUFSIZE
+	int "Transmit buffer size"
+	default 256
+	---help---
+		Characters are buffered before being sent.  This specifies
+		the size of the transmit buffer.
+
+config FCUART16_BAUD
+	int "BAUD rate"
+	default 115200
+	---help---
+		The configured BAUD of the FCUART.
+
+config FCUART16_BITS
+	int "Character size"
+	default 8
+	---help---
+		The number of bits.  Must be either 7 or 8.
+
+config FCUART16_PARITY
+	int "Parity setting"
+	default 0
+	range 0 2
+	---help---
+		0=no parity, 1=odd parity, 2=even parity
+
+config FCUART16_2STOP
+	int "Uses 2 stop bits"
+	default 0
+	---help---
+		1=Two stop bits
+choice
+	prompt "IFLOW Control"
+	default FCUART16_NOIFLOWCONTROL
+
+config FCUART16_NOIFLOWCONTROL
+	bool "No IFLOW control"
+	---help---
+		No IFLOW control
+
+config FCUART16_IFLOWCONTROL
+	bool "RTS for IFLOW control"
+	select SERIAL_IFLOWCONTROL
+	---help---
+		Enable RTS flow control
+endchoice
+
+config FCUART16_INVERTIFLOWCONTROL
+	depends on FCUART16_IFLOWCONTROL
+	bool "Invert sense of RTS bit"
+	default n
+	---help---
+		Make RTS bit active high rather than active low
+
+config FCUART16_OFLOWCONTROL
+	bool "CTS OFLOW control"
+	default n
+	select SERIAL_OFLOWCONTROL
+	---help---
+		Enable CTS flow control
+
+config FCUART16_RXDMA
+	bool "FCUART16 Rx DMA support"
+	default n
+	select SERIAL_RXDMA
+	---help---
+		Enable Rx DMA transfers on FCUART16
+
+config FCUART16_RXDMA_CHANNEL
+	depends on FCUART16_RXDMA
+	int "FCUART16 Rx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Rx DMA channel for FCUART16
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+config FCUART16_TXDMA
+	bool "FCUART16 Tx DMA support"
+	default n
+	select SERIAL_TXDMA
+	---help---
+		Enable Tx DMA transfers on FCUART16
+
+config FCUART16_TXDMA_CHANNEL
+	depends on FCUART16_TXDMA
+	int "FCUART16 Tx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Tx DMA channel for FCUART16
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+endmenu
+
+
+#####################################################################################
+
+menu "FCUART17 Configuration"
+	depends on FCUART17_SERIALDRIVER
+
+config FCUART17_RXBUFSIZE
+	int "Receive buffer size"
+	default 256
+	---help---
+		Characters are buffered as they are received. This specifies
+		the size of the receive buffer.
+
+config FCUART17_TXBUFSIZE
+	int "Transmit buffer size"
+	default 256
+	---help---
+		Characters are buffered before being sent.  This specifies
+		the size of the transmit buffer.
+
+config FCUART17_BAUD
+	int "BAUD rate"
+	default 115200
+	---help---
+		The configured BAUD of the FCUART.
+
+config FCUART17_BITS
+	int "Character size"
+	default 8
+	---help---
+		The number of bits.  Must be either 7 or 8.
+
+config FCUART17_PARITY
+	int "Parity setting"
+	default 0
+	range 0 2
+	---help---
+		0=no parity, 1=odd parity, 2=even parity
+
+config FCUART17_2STOP
+	int "Uses 2 stop bits"
+	default 0
+	---help---
+		1=Two stop bits
+choice
+	prompt "IFLOW Control"
+	default FCUART17_NOIFLOWCONTROL
+
+config FCUART17_NOIFLOWCONTROL
+	bool "No IFLOW control"
+	---help---
+		No IFLOW control
+
+config FCUART17_IFLOWCONTROL
+	bool "RTS for IFLOW control"
+	select SERIAL_IFLOWCONTROL
+	---help---
+		Enable RTS flow control
+endchoice
+
+config FCUART17_INVERTIFLOWCONTROL
+	depends on FCUART17_IFLOWCONTROL
+	bool "Invert sense of RTS bit"
+	default n
+	---help---
+		Make RTS bit active high rather than active low
+
+config FCUART17_OFLOWCONTROL
+	bool "CTS OFLOW control"
+	default n
+	select SERIAL_OFLOWCONTROL
+	---help---
+		Enable CTS flow control
+
+config FCUART17_RXDMA
+	bool "FCUART17 Rx DMA support"
+	default n
+	select SERIAL_RXDMA
+	---help---
+		Enable Rx DMA transfers on FCUART17
+
+config FCUART17_RXDMA_CHANNEL
+	depends on FCUART17_RXDMA
+	int "FCUART17 Rx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Rx DMA channel for FCUART17
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+config FCUART17_TXDMA
+	bool "FCUART17 Tx DMA support"
+	default n
+	select SERIAL_TXDMA
+	---help---
+		Enable Tx DMA transfers on FCUART17
+
+config FCUART17_TXDMA_CHANNEL
+	depends on FCUART17_TXDMA
+	int "FCUART17 Tx DMA Channel"
+	default 0
+	range 0 31
+	---help---
+		Select Tx DMA channel for FCUART17
+		Note: DMA channel for each peripheral Tx/Rx shall be different
+
+endmenu
+
+#####################################################################################
+
+endmenu
