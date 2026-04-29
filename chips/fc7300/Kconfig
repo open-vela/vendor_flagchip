@@ -33,6 +33,7 @@ choice
 config ARCH_CHIP_FC7300F8M_320PIN
 	bool "FC7300F8M_320PIN"
 	select ARCH_CHIP_FC7300F8M
+	select NUTTX_USERSPACE_CUSTOM
 	---help---
 		Cortex-M7F, 8Mb FLASH, 512Kb RAM incl.
 
